@@ -27,7 +27,8 @@
         "hyperf/redis": "~2.0.0",
         "hyperf/database": "~2.0.0",
         "hyperf/websocket-server": "^2.0",
-        "hyperf/constants": "^2.0"
+        "hyperf/constants": "^2.0",
+        "donjan-deng/hyperf-permission": "^2.0"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",
