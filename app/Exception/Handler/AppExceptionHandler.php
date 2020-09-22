@@ -52,7 +52,7 @@ class AppExceptionHandler extends ExceptionHandler
         if ($throwable instanceof BusinessException) {
             // 阻止异常冒泡
             $this->stopPropagation();
-            return $this->error($throwable->getCode(), $message);
+            return $this->error($throwable->getCode(), $throwable->getMessage());
         }
         return $this->error(500, $message);
 

@@ -22,15 +22,10 @@ class IndexController extends AbstractController
      */
     public $userService = '';
 
-    /**
-     * @RequestMapping(path="/", methods="get")
-     */
     public function index()
     {
-        $role = Role::create(['name' => '管理员', 'description' => '']);
-
         return $this->success([
-            $role
+            1
         ]);
     }
 

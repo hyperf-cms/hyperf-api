@@ -6,6 +6,7 @@ use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
+use Illuminate\Support\Facades\Validator;
 use Psr\Container\ContainerInterface;
 use Hyperf\Di\Annotation\Inject;
 use Throwable;

@@ -76,6 +76,16 @@ class StatusCode extends AbstractConstants
      */
     const ERR_USER_ABSENT = 2003;
 
+    /**
+     * @Message("用户不存在！")
+     */
+    const ERR_USER_PASSWORD= 2004;
+
+    /**
+     * @Message("用户被禁用！")
+     */
+    const ERR_USER_DISABLE= 2005;
+
 
     /**
      * @Message("业务逻辑异常！")
@@ -83,16 +93,7 @@ class StatusCode extends AbstractConstants
     const ERR_EXCEPTION = 3001;
 
     /**
-     * 用户相关逻辑异常
-     * @Message("用户密码不正确！")
+     * @Message("验证异常！")
      */
-    const ERR_EXCEPTION_USER = 3002;
-
-    /**
-     * 文件上传
-     * @Message("文件上传异常！")
-     */
-    const ERR_EXCEPTION_UPLOAD = 3003;
-
-
+    const ERR_VALIDATION = 3002;
 }

@@ -6,11 +6,9 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use App\Middleware\CheckTokenMiddleware;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Phper666\JWTAuth\JWT;
 
@@ -26,9 +24,10 @@ class LoginController extends AbstractController
      */
     private $jwt;
 
-
     /**
-     * @RequestMapping(path="/login", methods="post")
+     * 登陆操作
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function login()
     {
@@ -97,23 +96,4 @@ class LoginController extends AbstractController
         $this->jwt->logout();
         return $this->success();
     }
-
-    /**
-     * @RequestMapping(path="/index", methods="get")
-     * @Middleware(CheckTokenMiddleware::class)
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function getData()
-    {
-        $data = [
-            'code' => 0,
-            'msg' => 'success',
-            'data' => [
-                'cache_time' => $this->jwt->getTokenDynamicCacheTime() // 获取token的有效时间，动态的
-            ]
-
-        ];
-        return $this->response->json($data);
-    }
-
 }
