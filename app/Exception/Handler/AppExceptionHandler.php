@@ -18,6 +18,8 @@ use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\Exception\InvalidConfigException;
+use Phper666\JWTAuth\Exception\JWTException;
+use Phper666\JWTAuth\Exception\TokenValidException;
 use Psr\Http\Message\ResponseInterface;
 use Hyperf\Di\Annotation\Inject;
 use Throwable;
@@ -48,6 +50,19 @@ class AppExceptionHandler extends ExceptionHandler
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         $message = '服务器错误 ' . $throwable->getMessage() . ':: FILE:' . $throwable->getFile() . ':: LINE: ' . $throwable->getLine();
+
+        if ($throwable instanceof TokenValidException) {
+            // 阻止异常冒泡
+            $this->stopPropagation();
+            return $this->error($throwable->getCode(), $throwable->getMessage());
+        }
+
+        if ($throwable instanceof JWTException) {
+            // 阻止异常冒泡
+            $this->stopPropagation();
+            return $this->error($throwable->getCode(), $throwable->getMessage());
+        }
+
         // 判断是否由业务异常类抛出的异常
         if ($throwable instanceof BusinessException) {
             // 阻止异常冒泡

@@ -11,6 +11,8 @@ use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Phper666\JWTAuth\Exception\JWTException;
+use Phper666\JWTAuth\Exception\TokenValidException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
