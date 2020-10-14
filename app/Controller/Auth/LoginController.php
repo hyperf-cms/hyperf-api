@@ -9,7 +9,6 @@ use App\Controller\AbstractController;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\RequestMapping;
 use Phper666\JWTAuth\JWT;
 
 /**
