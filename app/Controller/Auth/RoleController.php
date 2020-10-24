@@ -74,4 +74,38 @@ class RoleController extends AbstractController
 
             return $this->successByMessage('添加角色成功');
     }
+
+    /**
+     * 修改角色
+     * @RequestMapping(path="update", methods="put")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function update()
+    {
+        try {
+            if (!intval($id)) $this->throwExp('未知id参数');
+
+            $postData = $request->postData;
+            $params = [
+                'name'          => $postData['name'],
+                'description'   => $postData['description']
+            ];
+            //配置验证
+            $rules = [
+                'name' => 'required',
+            ];
+            $message = [
+                'name.required' => '[name]缺失',
+            ];
+
+            $this->verifyParams($params, $rules, $message);
+
+            if (!Role::query()->where('id', $id)->update($params)) $this->throwExp('400','修改角色信息失败');
+
+            //正确返回信息
+            return $this->success('', '修改角色信息成功');
+        } catch (Exception $e) {
+            return $this->errorExp($e);
+        }
+    }
 }
