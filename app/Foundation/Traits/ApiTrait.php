@@ -42,6 +42,16 @@ trait ApiTrait
         return $this->response->json($this->formatResponse($data, $message));
     }
 
+    /**
+     * 成功响应消息
+     * @param string $message
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function successByMessage($message = '')
+    {
+        return $this->response->json($this->formatResponse([], $message));
+    }
+
 
     /**
      * 错误响应

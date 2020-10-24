@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Auth;
+
+use App\Constants\StatusCode;
+use App\Controller\AbstractController;
+use App\Model\Auth\User;
+use Donjan\Permission\Models\Role;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use App\Middleware\RequestMiddleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
+use Phper666\JWTAuth\JWT;
+
+/**
+ * 角色控制器
+ * Class RoleController
+ * @Controller(prefix="role")
+ */
+class RoleController extends AbstractController
+{
+    /**
+     * @Inject()
+     * @var Role
+     */
+    private $role;
+
+    /**
+     * 获取角色数据列表
+     * @RequestMapping(path="list", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function index()
+    {
+        $roleQuery = $this->role->newQuery();
+
+        $total = $roleQuery->count();
+        $roleQuery = $this->pagingCondition($roleQuery, $this->request->all());
+        //判断是否有查询条件
+        if(!empty( $this->request->input('description'))) $roleQuery->where('description', 'like', '%' . $this->request->input('description') . '%');
+        $list = $roleQuery->get();
+
+        return $this->success([
+            'list' => $list,
+            'total' => $total,
+        ]);
+    }
+
+    /**
+     * 添加角色
+     * @RequestMapping(path="store", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function store()
+    {
+            $postData = $this->request->all();
+            $params = [
+                'name' => $postData['name'] ?? '',
+                'description' => $postData['description'] ?? '',
+            ];
+            //配置验证
+            $rules = [
+                'name' => 'required',
+            ];
+            $message = [
+                'name.required' => '[name]缺失',
+            ];
+            $this->verifyParams($params, $rules, $message);
+
+            if (!Role::create($params)) $this->throwExp(400, '添加角色失败');
+
+            return $this->successByMessage('添加角色成功');
+    }
+}

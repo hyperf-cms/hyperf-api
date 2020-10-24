@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Foundation\Traits\ApiTrait;
+use App\Foundation\Traits\QueryTrait;
 use App\Foundation\Traits\ValidationTrait;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -20,7 +21,7 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
 {
-    use ApiTrait, ValidationTrait;
+    use ApiTrait, ValidationTrait, QueryTrait;
 
     /**
      * @Inject

@@ -9,11 +9,14 @@ use App\Controller\AbstractController;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
+use App\Middleware\RequestMiddleware;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 use Phper666\JWTAuth\JWT;
 
 /**
- * Class LoginController
- * @Controller()
+ * @Controller(prefix="auth")
  */
 class LoginController extends AbstractController
 {
@@ -25,6 +28,7 @@ class LoginController extends AbstractController
 
     /**
      * 登陆操作
+     * @RequestMapping(path="login", methods="post")
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
@@ -87,12 +91,16 @@ class LoginController extends AbstractController
 
     /**
      * 退出登录操作
+     * @RequestMapping(path="logout", methods="post")
+     * @Middlewares({
+            @Middleware(RequestMiddleware::class)
+*     })
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function logOut()
     {
         $this->jwt->logout();
-        return $this->success();
+        return $this->success([], '退出登录成功');
     }
 }
