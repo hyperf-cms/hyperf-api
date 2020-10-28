@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+
 $appEnv = env('APP_ENV', 'dev');
 $handlers = [];
 $handlers = [
@@ -62,6 +66,23 @@ $logConfig = [
         'handlers' => $handlers
     ],
 
+    'code_debug' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler ::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/code_debug.log',
+                'level' => Monolog\Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
 
     'request_log' => [
         'handler' => [

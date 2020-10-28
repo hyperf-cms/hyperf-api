@@ -29,6 +29,15 @@ class Log
     }
 
     /**
+     * debug调试日志
+     * @return \Psr\Log\LoggerInterface
+     */
+    public static function codeDebug()
+    {
+        return self::channel('code_debug', config('app_env', 'app'));
+    }
+
+    /**
      * 接口请求日志
      * @return \Psr\Log\LoggerInterface
      */

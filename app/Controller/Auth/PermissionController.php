@@ -74,7 +74,7 @@ class PermissionController extends AbstractController
 
         if (!Permission::create($params)) $this->throwExp(400, '添加权限失败');
 
-        return $this->successByMessage('添加角色成功');
+        return $this->successByMessage('添加权限成功');
     }
 
     /**
@@ -139,5 +139,4 @@ class PermissionController extends AbstractController
 
         return $this->successByMessage('删除权限信息成功');
     }
-
 }
