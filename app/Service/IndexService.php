@@ -2,13 +2,19 @@
 
 namespace App\Service;
 
+use App\Foundation\Traits\Singleton;
+use App\Http\Service\BaseService;
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\Context;
 
 class IndexService
 {
-    static public function test()
+    use Singleton;
+
+    public $params = [];
+
+    public function test()
     {
-        return 1;
+        return Context::get('params') ?? [];
     }
 }

@@ -17,15 +17,26 @@ use App\Middleware\RequestMiddleware;
  */
 class IndexController extends AbstractController
 {
+
+
     /**
      * 获取用户数据列表
-     * @RequestMapping(path="/test", methods="get")
+     * @RequestMapping(path="/test", methods="get,post")
      * @Middleware(RequestMiddleware::class)
      */
     public function index()
     {
-        return $this->success([
-            IndexService::test()
-        ]);
+        IndexService::getInstance()->params =  conSet('params', $this->request->all());
+        return IndexService::getInstance()->test();
+    }
+
+    /**
+     * 获取用户数据列表
+     * @RequestMapping(path="/test1", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function test()
+    {
+        return IndexService::getInstance()->test();
     }
 }

@@ -19,3 +19,27 @@ if (! function_exists('isStdoutLog')) {
         return in_array(strtolower($level), $config['log_level'], true);
     }
 }
+
+if(! function_exists('ConSet')) {
+    /**
+     * 设置协程上下文
+     * @param string $id
+     * @param $value
+     * @return mixed
+     */
+    function conSet(string $id, $value) {
+        return \Hyperf\Utils\Context::set($id, $value);
+    }
+}
+
+if(! function_exists('ConGet')) {
+    /**
+     * 获取协程上下文
+     * @param string $id
+     * @param $default
+     * @return mixed
+     */
+    function ConGet(string $id, $default = null) {
+        return \Hyperf\Utils\Context::get($id, $default);
+    }
+}

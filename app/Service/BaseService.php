@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Services;
+namespace App\Http\Service;
 
 use App\Exception\Handler\BusinessException;
 
@@ -12,10 +12,6 @@ use App\Exception\Handler\BusinessException;
  */
 abstract class BaseService
 {
-    protected $params = [];
-
-    protected $md5 = [];
-
     /**
      * 抛出异常
      * @param int $code
