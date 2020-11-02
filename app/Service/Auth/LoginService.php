@@ -2,7 +2,7 @@
 namespace App\Http\Service\Auth;
 
 use App\Exception\Handler\BusinessException;
-use App\Http\Services\BaseService;
+use App\Http\Service\BaseService;
 
 /**
  * 登陆服务基础类
@@ -11,6 +11,7 @@ use App\Http\Services\BaseService;
  * @Author YiYuan-Lin
  * @Date: 2020/10/29
  */
-class LoginService extends  BaseService
+class LoginService extends BaseService
 {
+
 }
