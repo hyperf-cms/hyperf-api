@@ -6,6 +6,7 @@ namespace App\Controller\Auth;
 
 use App\Controller\AbstractController;
 use App\Model\Auth\User;
+use Donjan\Permission\Models\Permission;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
