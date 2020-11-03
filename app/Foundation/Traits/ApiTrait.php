@@ -61,7 +61,7 @@ trait ApiTrait
      */
     protected function error(int $statusCode = StatusCode::ERR_EXCEPTION, string $message = null)
     {
-        $message = $message ?? StatusCode::getMessage($statusCode);;
+        $message = $message ?? StatusCode::ERR_EXCEPTION;
         return $this->response->json($this->formatResponse([], $message, $statusCode));
     }
 
@@ -101,8 +101,8 @@ trait ApiTrait
      */
     protected function formatResponse(array $data = [], string $message = 'Success', int $statusCode = StatusCode::SUCCESS) : array
     {
-        $return['errorCode'] = $statusCode;
-        $return['message'] = $message;
+        $return['code'] = $statusCode;
+        $return['msg'] = $message;
         $return['data'] = $data;
 
         //记录请求参数日志记录
