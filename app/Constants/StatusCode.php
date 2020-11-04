@@ -77,7 +77,7 @@ class StatusCode extends AbstractConstants
     const ERR_USER_ABSENT = 2003;
 
     /**
-     * @Message("用户不存在！")
+     * @Message("用户密码错误！")
      */
     const ERR_USER_PASSWORD= 2004;
 

@@ -29,13 +29,4 @@ class IndexController extends AbstractController
         return IndexService::getInstance()->test();
     }
 
-    /**
-     * 获取用户数据列表
-     * @RequestMapping(path="/test1", methods="get")
-     * @Middleware(RequestMiddleware::class)
-     */
-    public function test()
-    {
-        return IndexService::getInstance()->test();
-    }
 }

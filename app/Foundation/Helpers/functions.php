@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 公共函数
  * create by linyiyuan
@@ -102,17 +101,8 @@ if (!function_exists('getClientIp')) {
      *
      * @return mixed|string
      */
-    function getClientIp(){
-        if(!empty($_SERVER["HTTP_CLIENT_IP"]))
-            $cip = $_SERVER["HTTP_CLIENT_IP"];
-        else if(!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))
-            $cip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        else if(!empty($_SERVER["REMOTE_ADDR"]))
-            $cip = $_SERVER["REMOTE_ADDR"];
-        else
-            $cip = "";
-        $cip = str_replace("::ffff:", "", $cip);	//去除冗余字符
-        return $cip;
+    function getClientIp(\Hyperf\HttpServer\Contract\RequestInterface $request){
+      return $request->getHeaders()['x-real-ip'][0];
     }
 }
 

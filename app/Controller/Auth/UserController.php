@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
+use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Model\Auth\User;
-use Donjan\Permission\Models\Permission;
+use Donjan\Permission\Models\Role;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
+use Phper666\JWTAuth;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -35,14 +38,28 @@ class UserController extends AbstractController
     {
         $userQuery = $this->user->newQuery();
 
+        if (!empty($this->request->input('role_name'))) {
+            $role_id = Role::query()->where('name', $this->request->input('role_name'))->value('id');
+            if (!empty($role_id)) {
+                $userQuery->from('sy_users as a');
+                $userQuery->leftJoin('sy_model_has_roles as b', 'a.id', 'b.model_id');
+                $userQuery->where('b.role_id', $role_id);
+            }
+        }
+        $status = $this->params['status'] ?? '';
+        if (!empty($this->request->input('username'))) $userQuery->where('username', 'like', '%' . $this->request->input('username') . '%');
+        if (!empty($this->request->input('desc'))) $userQuery->where('desc', 'like', '%' . $this->request->input('desc') . '%');
+        if (strlen($status)) $userQuery->where('status', $status);
         $total = $userQuery->count();
         $userQuery = $this->pagingCondition($userQuery, $this->request->all());
-        //判断是否有查询条件
-        if (!empty($this->request->input('desc'))) $userQuery->where('desc', 'like', '%' . $this->request->input('desc') . '%');
-        $list = $userQuery->get();
+        $data = $userQuery->get();
+
+        foreach ($data as $key => $value) {
+            $data[$key]['roleData'] = $value->getRoleNames();
+        }
 
         return $this->success([
-            'list' => $list,
+            'list' => $data,
             'total' => $total,
         ]);
     }
@@ -57,27 +74,79 @@ class UserController extends AbstractController
         $postData = $this->request->all();
         $params = [
             'username' => $postData['username'] ?? '',
-            'name' => $postData['name'] ?? '',
-            'display_name' => $postData['display_name'] ?? '',
+            'password' => $postData['password'] ?? '',
+            'password_confirmation' => $postData['password_confirmation'] ?? '',
+            'status' => $postData['status'] ?? 1,
+            'mobile' => $postData['mobile'] ?? '',
+            'roleData' => $postData['roleData'] ?? '',
         ];
         //配置验证
         $rules = [
-            'name' => 'required',
-            'display_name' => 'required',
+            'username' => 'required|min:4|max:18|unique:users',
+            'password' => 'required|confirmed:password_confirmation',
+            'password_confirmation' => 'required',
+            'status' => 'required',
+            'mobile' => 'required',
+            'roleData' => 'required|array',
         ];
+        //错误信息
         $message = [
-            'name.required' => '[name]缺失',
-            'display_name.required' => '[display_name]缺失',
+            'username.required' => '[username]缺失',
+            'username.unique' => '该用户名已经存在',
+            'password.required' => '[password]缺失',
+            'confirm_password.required' => '[confirm_password]缺失',
+            'roleData.required' => '[roleData]缺失',
+            'roleData.array' => '[roleData]必须为数组',
+            'username.min' => '[username]最少4位',
+            'username.max' => '[username]最多18位',
+            'password.confirmed' => '两次密码输入不一致',
+            'mobile.required' => '手机号码不能为空',
         ];
         $this->verifyParams($params, $rules, $message);
+        Db::beginTransaction();
 
-        if (!User::create($params)) $this->throwExp(400, '添加权限失败');
+        $user = new User();
+        $user->username = $postData['username'];
+        $user->password = md5($postData['password']);
+        $user->status = $postData['status'] ?? '1';
+        $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->last_login = time();
+        $user->last_ip = getClientIp($this->request);
+        $user->creater = $postData['creater'] ?? '无';
+        $user->desc = $postData['desc'] ?? '';
+        $user->mobile = $postData['mobile'] ?? '';
+        if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加用户失败');
 
-        return $this->successByMessage('添加权限成功');
+        //分配角色权限
+        foreach ($postData['roleData'] as $key) {
+            $user->assignRole($key);
+        }
+        DB::commit();
+
+        return $this->successByMessage('添加用户成功');
     }
 
     /**
-     * 修改权限
+     * 获取单个用户的数据
+     * @param int $id
+     * @RequestMapping(path="edit/{id}", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function edit($id)
+    {
+        $userInfo = User::getOneByUid($id);
+        if (empty($userInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取用户信息失败');
+        $userInfo['roleData'] = $userInfo->getRoleNames();
+        unset($userInfo['roles']);
+
+        return $this->success([
+            'list' => $userInfo
+        ]);
+    }
+
+    /**
+     * 修改用户资料
      * @param int $id
      * @RequestMapping(path="update/{id}", methods="put")
      * @Middleware(RequestMiddleware::class)
@@ -85,31 +154,55 @@ class UserController extends AbstractController
      */
     public function update(int $id)
     {
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
         $postData = $this->request->all();
+
         $params = [
-            'id' => $id,
-            'name' => $postData['name'] ?? '',
-            'parent_id' => $postData['parent_id'] ?? '',
-            'display_name' => $postData['display_name'] ?? ''
+            'status' => $postData['status'] ?? 1,
+            'mobile' => $postData['mobile'] ?? '',
+            'roleData' => $postData['roleData'] ?? '',
         ];
         //配置验证
         $rules = [
-            'id' => 'required',
-            'name' => 'required',
-            'parent_id' => 'required',
-            'display_name' => 'display_name',
+            'status'    => 'required',
+            'mobile'    => 'required',
+            'roleData'  => 'required|array',
         ];
+        //错误信息
         $message = [
-            'id.required' => '非法参数',
-            'name.required' => '[name]缺失',
-            'parent_id.required' => '[parent_id]缺失',
-            'display_name.required' => '[display_name]缺失',
+            'roleData.required' => '[roleData]缺失',
+            'roleData.array' => '[roleData]必须为数组',
+            'username.min' => '[username]最少4位',
+            'username.max' => '[username]最多18位',
+            'password.confirmed' => '两次密码输入不一致',
+            'mobile.required' => '手机号码不能为空',
         ];
 
+        // 表单验证
         $this->verifyParams($params, $rules, $message);
-        if (!Permission::query()->where('id', $id)->update($params)) $this->throwExp(400, '修改权限信息失败');
 
-        return $this->successByMessage('修改权限信息成功');
+        //开始事务
+        DB::beginTransaction();
+
+        $user = User::getOneByUid($id);
+        $user->status = $postData['status'] ?? '1';
+        $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->desc = $postData['desc'] ?? '';
+        $user->mobile = $postData['mobile'] ?? '';
+        if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION,  '修改用户信息失败');
+
+        //将所有角色移除并重新赋予角色
+        DB::table('model_has_roles')
+            ->where('model_id', $id)
+            ->delete();
+        foreach ($params['roleData'] as $key => $val) {
+            $user->assignRole($val);
+        }
+        //提交事务
+        DB::commit();
+
+        //正确返回信息
+        return $this->successByMessage('修改用户成功');
     }
 
     /**
@@ -121,21 +214,9 @@ class UserController extends AbstractController
      */
     public function destroy(int $id)
     {
-        $params = [
-            'id' => $id,
-        ];
-        //配置验证
-        $rules = [
-            'id' => 'required',
-        ];
-        $message = [
-            'id.required' => '非法参数',
-        ];
+        if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+        if (!User::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
 
-        $this->verifyParams($params, $rules, $message);
-
-        if (!Permission::query()->where('id', $id)->delete()) $this->throwExp(400, '删除权限信息失败');
-
-        return $this->successByMessage('删除权限信息成功');
+        return $this->successByMessage('删除用户成功');
     }
 }

@@ -37,4 +37,20 @@ class User extends Model
      * @var array
      */
     protected $casts = [];
+
+
+    /**
+     * 根据用户ID获取用户信息
+     * @param $id
+     * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
+     */
+    static function getOneByUid($id)
+    {
+        if (empty($id)) return [];
+
+        $query = static::query();
+        $query = $query->where('id', $id);
+
+        return $query->first();
+    }
 }
