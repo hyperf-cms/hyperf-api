@@ -98,7 +98,7 @@ class MenuController extends AbstractController
      */
     public function edit(int $id)
     {
-        $menuInfo = Menu::getOneById($id);
+        $menuInfo = Menu::findById($id);
         if (empty($menuInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取菜单信息失败');
 
         return $this->success([
@@ -140,7 +140,7 @@ class MenuController extends AbstractController
         ];
         $this->verifyParams($params, $rules, $message);
 
-        $menuModel = Menu::getOneById($id);
+        $menuModel = Menu::findById($id);
         $menuModel->title = $postData['username'];
         $menuModel->app = $postData['app'];
         $menuModel->parent_id = $postData['parent_id'] ?? 0;

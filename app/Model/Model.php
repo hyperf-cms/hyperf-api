@@ -22,17 +22,14 @@ abstract class Model extends BaseModel
 
     /**
      * 根据ID获取单条数据
-     * @param $id
+     * @param int $id
      * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
      */
-    static function getOneById($id)
+    static function findById(int $id)
     {
         if (empty($id)) return [];
 
-        $query = static::query();
-        $query = $query->where('id', $id);
-
-        return $query->first();
+        return static::query()->where('id', $id)->first();
     }
 
 }

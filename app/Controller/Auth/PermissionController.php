@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
+use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use App\Model\Auth\User;
+use App\Model\System\Menu;
 use Donjan\Permission\Models\Permission;
+use Donjan\Permission\Models\Role;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -138,5 +141,41 @@ class PermissionController extends AbstractController
         if (!Permission::query()->where('id', $id)->delete()) $this->throwExp(400, '删除权限信息失败');
 
         return $this->successByMessage('删除权限信息成功');
+    }
+
+    /**
+     * 分配角色权限
+     * @RequestMapping(path="accord_role_permission", methods="post")
+     * @Middleware(RequestMiddleware::class
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function accordRolePermission()
+    {
+        $postData = $request->postData ?? [];
+        $params = [
+            'role_id' => $postData['role_id'],
+            'permission_list' => $postData['permission_list']
+        ];
+        //配置验证
+        $rules = [
+            'role_id' => 'required',
+            'permission_list' => 'required|array',
+        ];
+        $message = [
+            'role_id.required' => '[role_id]缺失',
+            'permission_list.required' => '请至少选择一个权限',
+            'permission_list.array' => '权限格式不正确',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $roleModel = Role::findById($params['role_id']);
+
+        //先清空当前角色所有权限
+        Db::table('role_has_permissions')
+            ->where('role_id', $params['role_id'])
+            ->delete();
+
+        if (!$roleModel->givePermissionTo($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配角色权限失败');
+        return $this->successByMessage( '分配角色权限成功');
     }
 }

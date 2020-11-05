@@ -13,7 +13,6 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
-use Phper666\JWTAuth;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
