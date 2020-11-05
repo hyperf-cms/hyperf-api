@@ -2,6 +2,9 @@
 namespace App\Http\Service;
 
 use App\Exception\Handler\BusinessException;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 
 /**
  * Class BaseService
@@ -12,6 +15,18 @@ use App\Exception\Handler\BusinessException;
  */
 abstract class BaseService
 {
+    /**
+     * @Inject
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
+     * @Inject()
+     * @var ResponseInterface
+     */
+    protected $response;
+
     /**
      * 抛出异常
      * @param int $code

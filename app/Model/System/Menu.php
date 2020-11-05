@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Model\Auth;
+namespace App\Model\System;
 
 use App\Model\Model;
-use Donjan\Permission\Traits\HasRoles;
 
-class User extends Model
+class Menu extends Model
 {
-    use HasRoles;
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'menu';
 
     /**
      * The connection name for the model.
@@ -37,20 +35,4 @@ class User extends Model
      * @var array
      */
     protected $casts = [];
-
-
-    /**
-     * 根据用户ID获取用户信息
-     * @param $id
-     * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
-     */
-    static function getOneByUid($id)
-    {
-        if (empty($id)) return [];
-
-        $query = static::query();
-        $query = $query->where('id', $id);
-
-        return $query->first();
-    }
 }
