@@ -45,7 +45,7 @@ class UserController extends AbstractController
                 $userQuery->where('b.role_id', $role_id);
             }
         }
-        $status = $this->params['status'] ?? '';
+        $status = $this->request->input('status') ?? '';
         if (!empty($this->request->input('username'))) $userQuery->where('username', 'like', '%' . $this->request->input('username') . '%');
         if (!empty($this->request->input('desc'))) $userQuery->where('desc', 'like', '%' . $this->request->input('desc') . '%');
         if (strlen($status)) $userQuery->where('status', $status);

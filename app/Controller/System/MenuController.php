@@ -34,7 +34,7 @@ class MenuController extends AbstractController
     {
         $menuQuery = $this->menu->newQuery();
 
-        $status = $this->params['status'] ?? '';
+        $status = $this->request->input('status') ?? '';
         if (!empty($this->request->input('id'))) $menuQuery->where('id', $this->request->input('id'));
         if (strlen($status)) $menuQuery->where('status', $status);
         $total = $menuQuery->count();

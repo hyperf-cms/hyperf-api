@@ -6,7 +6,7 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use App\Model\System\Menu;
+use App\Model\Auth\User;
 use Donjan\Permission\Models\Permission;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
@@ -15,7 +15,6 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Phper666\JWTAuth\JWT;
 
 /**
  * 权限控制器
@@ -144,17 +143,54 @@ class PermissionController extends AbstractController
     }
 
     /**
+     * 分配用户角色
+     * @RequestMapping(path="accord_user_role", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function accordUserRole()
+    {
+        $postData = $this->request->all() ?? [];
+        $params = [
+            'user_id' => $postData['user_id'],
+            'role_list' => $postData['role_list'],
+        ];
+        //配置验证
+        $rules = [
+            'user_id' => 'required',
+            'role_list' => 'required|array',
+        ];
+        $message = [
+            'user_id.required' => '[user_id]缺失',
+            'role_list.required' => '请至少选择一个角色',
+            'role_list.array' => '角色数据格式不正确',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $userModel = User::getOneByUid($params['user_id']);
+
+        //先清空当前用户所有角色
+        Db::table('model_has_roles')
+            ->where('user_id', $params['user_id'])
+            ->delete();
+
+        if (!$userModel->syncRoles($params['role_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配用户角色失败');
+        return $this->successByMessage( '分配用户角色成功');
+    }
+
+
+    /**
      * 分配角色权限
      * @RequestMapping(path="accord_role_permission", methods="post")
-     * @Middleware(RequestMiddleware::class
+     * @Middleware(RequestMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function accordRolePermission()
     {
-        $postData = $request->postData ?? [];
+        $postData = $this->request->all() ?? [];
         $params = [
             'role_id' => $postData['role_id'],
-            'permission_list' => $postData['permission_list']
+            'permission_list' => $postData['permission_list'],
         ];
         //配置验证
         $rules = [
@@ -164,18 +200,54 @@ class PermissionController extends AbstractController
         $message = [
             'role_id.required' => '[role_id]缺失',
             'permission_list.required' => '请至少选择一个权限',
-            'permission_list.array' => '权限格式不正确',
+            'permission_list.array' => '权限数据格式不正确',
         ];
         $this->verifyParams($params, $rules, $message);
 
-        $roleModel = Role::findById($params['role_id']);
+        $roleModel = Role::findById(intval($params['role_id']));
 
         //先清空当前角色所有权限
         Db::table('role_has_permissions')
             ->where('role_id', $params['role_id'])
             ->delete();
 
-        if (!$roleModel->givePermissionTo($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配角色权限失败');
+        if (!$roleModel->syncPermissions($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配角色权限失败');
         return $this->successByMessage( '分配角色权限成功');
+    }
+
+    /**
+     * 分配角色权限
+     * @RequestMapping(path="accord_user_permission", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function accordUserPermission()
+    {
+            $postData = $this->request->all() ?? '';
+            $params = [
+                'user_id' => $postData['user_id'] ?? '',
+                'permission_list' => $postData['permission_list'] ?? ''
+            ];
+            $rules = [
+                'user_id' => 'required',
+                'permission_list' => 'required|array',
+            ];
+            $message = [
+                'user_id.required' => '[user_id]缺失',
+                'permission_list.required' => '请至少选择一个权限',
+                'permission_list.array' => '权限数据格式不正确',
+            ];
+            $this->verifyParams($params, $rules, $message);
+
+            //根据用户获取相应所有权限列表
+            $userModel = User::query()->where('id', $params['user_id'])->first();
+            //先清空当前用户所有权限
+            DB::table('model_has_permissions')
+                ->where('model_id', $params['user_id'])
+                ->delete();
+
+            if (!$userModel->syncPermissions($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配用户权限失败');
+
+            return $this->successByMessage('分配用户权限成功');
     }
 }
