@@ -2,7 +2,6 @@
 namespace App\Http\Service\Auth;
 
 use App\Constants\StatusCode;
-use App\Exception\Handler\BusinessException;
 use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
 use App\Model\Auth\User;
