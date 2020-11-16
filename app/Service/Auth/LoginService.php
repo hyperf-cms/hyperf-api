@@ -53,7 +53,11 @@ class LoginService extends BaseService
         $user->save();
 
         $responseData = $this->respondWithToken($token);
+
+        $menu = $this->getMenuList($user);
         $responseData['user_info'] = $user;
+        $responseData['menu_header'] = $menu['menuHeader'];
+        $responseData['menu_list'] = $menu['menuList'];
 
         return $responseData;
     }
@@ -73,4 +77,29 @@ class LoginService extends BaseService
         return $data;
     }
 
+    /**
+     * 获取头部菜单数据以及菜单列表
+     * @param object $user
+     * @return array
+     */
+    protected function getMenuList(object $user) : array
+    {
+        //获取菜单树形
+        $menuList = $user->getMenu();
+
+        $menuHeader = [];
+        foreach ($menuList as $key => $val) {
+            $menuHeader[] = [
+                'title' => $val['display_name'],
+                'icon' => $val['icon'],
+                'path' => $val['url'],
+                'name' => $val['name'],
+                'id' => $val['id'],
+            ];
+        }
+        return [
+            'menuList' => $menuList,
+            'menuHeader' => $menuHeader
+        ];
+    }
 }

@@ -48,7 +48,7 @@ class MenuController extends AbstractController
 
     /**
      * 添加菜单
-     * @RequestMapping(path="store", m ethods="post")
+     * @RequestMapping(path="store", methods="post")
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function store()

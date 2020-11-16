@@ -53,6 +53,7 @@ class LoginController extends AbstractController
         $this->verifyParams($params, $rules, $message);
 
         $responseData = LoginService::getInstance()->login($params);
+        unset($responseData['user_info']['roles']);
         return $this->success($responseData);
     }
 
