@@ -29,7 +29,8 @@
         "hyperf/websocket-server": "^2.0",
         "hyperf/constants": "^2.0",
         "donjan-deng/hyperf-permission": "^2.0",
-        "phper666/jwt-auth": "~3.0.0"
+        "phper666/jwt-auth": "~3.0.0",
+        "easyswoole/verifycode": "3.x"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",
