@@ -59,7 +59,10 @@ class StatusCode extends AbstractConstants
      */
     const ERR_NOT_EXIST_TOKEN = 1004;
 
-
+    /**
+     * @Message("验证码错误！")
+     */
+    const ERR_CODE = 1005;
 
     /**
      * @Message("请登录！")

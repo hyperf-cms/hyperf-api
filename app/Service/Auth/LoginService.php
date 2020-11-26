@@ -6,6 +6,8 @@ use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
 use Phper666\JWTAuth\JWT;
 
 /**
@@ -41,6 +43,12 @@ class LoginService extends BaseService
         if (md5($params['password']) != $user->password) $this->throwExp(StatusCode::ERR_USER_PASSWORD,'登录失败，用户验证失败，密码错误');
         if ($user['status'] != 1)  $this->throwExp(StatusCode::ERR_USER_DISABLE,'该账户已经被停用，请联系管理员');
 
+        //校验验证码
+        $container = ApplicationContext::getContainer();
+        $redis = $container->get(\Hyperf\Redis\Redis::class);
+        $code = $redis->get($params['code_key']);
+        if (strtolower($params['captcha']) != strtolower($code)) $this->throwExp(StatusCode::ERR_CODE, '验证失败，验证码错误');
+
         $userData = [
             'uid' => $user->id, //如果使用单点登录，必须存在配置文件中的sso_key的值，一般设置为用户的id
             'username' => $user->username,
@@ -51,11 +59,22 @@ class LoginService extends BaseService
         $user->last_login = time();
         $user->last_ip = getClientIp($this->request);
         $user->save();
-
         $responseData = $this->respondWithToken($token);
 
-        $menu = $this->getMenuList($user);
-        $responseData['user_info'] = $user;
+        return $responseData;
+    }
+
+    /**
+     * 登陆初始化，获取用户信息以及一些权限菜单
+     * @return mixed
+     */
+    public function initialization() : array
+    {
+        $responseData = [];
+        //获取用户信息
+        $userInfo = UserService::getInstance()->getUserInfoByToken();
+        $menu = $this->getMenuList($userInfo);
+        $responseData['user_info'] = objToArray($userInfo);
         $responseData['menu_header'] = $menu['menuHeader'];
         $responseData['menu_list'] = $menu['menuList'];
 

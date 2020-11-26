@@ -4,18 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Common;
 
-use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use App\Http\Service\Auth\LoginService;
-use App\Model\Auth\User;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\Middleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
-use Phper666\JWTAuth\JWT;
 
 /**
  * @Controller(prefix="auth")
@@ -44,7 +36,7 @@ class AuthCommonController extends AbstractController
 
        return $this->success([
            'code' => $imageBase64Code,
-           'key' => $key,
+           'code_key' => $key,
        ]);
    }
 }
