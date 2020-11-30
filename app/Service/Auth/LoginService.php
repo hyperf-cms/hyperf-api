@@ -72,9 +72,14 @@ class LoginService extends BaseService
     {
         $responseData = [];
         //获取用户信息
-        $userInfo = UserService::getInstance()->getUserInfoByToken();
-        $menu = $this->getMenuList($userInfo);
+        $user = UserService::getInstance()->getUserInfoByToken();
+        $userInfo = objToArray($user);
+        unset($userInfo['roles']);
+        unset($userInfo['permissions']);
+
+        $menu = $this->getMenuList($user);
         $responseData['user_info'] = objToArray($userInfo);
+        $responseData['role_info'] = $user->getRoleNames();
         $responseData['menu_header'] = $menu['menuHeader'];
         $responseData['menu_list'] = $menu['menuList'];
 
@@ -114,8 +119,11 @@ class LoginService extends BaseService
                 'path' => $val['url'],
                 'name' => $val['name'],
                 'id' => $val['id'],
+                'sort' => $val['sort'],
             ];
         }
+        //排序
+        array_multisort($menuHeader, SORT_ASC,array_column($menuHeader, 'sort'));
         return [
             'menuList' => $menuList,
             'menuHeader' => $menuHeader

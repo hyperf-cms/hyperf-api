@@ -74,9 +74,7 @@ class LoginController extends AbstractController
     public function initialization()
     {
         $list = LoginService::getInstance()->initialization();
-        return $this->success([
-            $list
-        ]);
+        return $this->success($list);
     }
 
     /**
