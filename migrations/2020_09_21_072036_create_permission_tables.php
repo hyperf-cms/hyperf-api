@@ -24,6 +24,8 @@ class CreatePermissionTables extends Migration
             $table->string('display_name', 50)->comment('名称');
             $table->string('url', 255);
             $table->string('guard_name');
+            $table->tinyInteger('status')->comment('启动状态1：启动 0：禁用')->default(1);
+            $table->tinyInteger('type')->comment('类型 1:菜单 2：按钮 3：接口')->default(1);
             $table->smallInteger('sort')->comment('排序，数字越大越在前面');
             $table->timestamps();
         });
