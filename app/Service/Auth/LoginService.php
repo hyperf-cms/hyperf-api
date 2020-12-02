@@ -7,7 +7,6 @@ use App\Http\Service\BaseService;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Phper666\JWTAuth\JWT;
 
 /**
@@ -113,14 +112,17 @@ class LoginService extends BaseService
 
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
-            $menuHeader[] = [
-                'title' => $val['display_name'],
-                'icon' => $val['icon'],
-                'path' => $val['url'],
-                'name' => $val['name'],
-                'id' => $val['id'],
-                'sort' => $val['sort'],
-            ];
+            if ($val['status'] != 0) {
+                $menuHeader[] = [
+                    'title' => $val['display_name'],
+                    'icon' => $val['icon'],
+                    'path' => $val['url'],
+                    'name' => $val['name'],
+                    'id' => $val['id'],
+                    'type' => $val['type'],
+                    'sort' => $val['sort'],
+                ];
+            }
         }
         //排序
         array_multisort($menuHeader, SORT_ASC,array_column($menuHeader, 'sort'));
