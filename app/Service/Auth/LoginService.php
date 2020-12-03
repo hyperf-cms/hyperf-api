@@ -4,7 +4,9 @@ namespace App\Http\Service\Auth;
 use App\Constants\StatusCode;
 use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
+use App\Model\Auth\Permission;
 use App\Model\Auth\User;
+use http\Client\Response;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
 use Phper666\JWTAuth\JWT;
@@ -108,8 +110,7 @@ class LoginService extends BaseService
     protected function getMenuList(object $user) : array
     {
         //获取菜单树形
-        $menuList = $user->getMenu();
-
+        $menuList = Permission::getUserMenuList($user);
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
             if ($val['status'] != 0) {
@@ -126,6 +127,7 @@ class LoginService extends BaseService
         }
         //排序
         array_multisort($menuHeader, SORT_ASC,array_column($menuHeader, 'sort'));
+
         return [
             'menuList' => $menuList,
             'menuHeader' => $menuHeader
