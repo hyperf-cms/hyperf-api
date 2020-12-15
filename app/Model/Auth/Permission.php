@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Model\Auth;
 
-use App\Model\Model;
 use Donjan\Permission\Models\Permission as DonjanPermission;
 
+/**
+ * 权限模型类
+ * Class Permission
+ * @package App\Model\Auth
+ * @Author YiYuan-Lin
+ * @Date: 2020/12/3
+ */
 class Permission extends DonjanPermission
 {
     /**

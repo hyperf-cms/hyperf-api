@@ -6,7 +6,6 @@ use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
 use App\Model\Auth\Permission;
 use App\Model\Auth\User;
-use http\Client\Response;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
 use Phper666\JWTAuth\JWT;
@@ -44,12 +43,13 @@ class LoginService extends BaseService
         if (md5($params['password']) != $user->password) $this->throwExp(StatusCode::ERR_USER_PASSWORD,'登录失败，用户验证失败，密码错误');
         if ($user['status'] != 1)  $this->throwExp(StatusCode::ERR_USER_DISABLE,'该账户已经被停用，请联系管理员');
 
-        //校验验证码
-        $container = ApplicationContext::getContainer();
-        $redis = $container->get(\Hyperf\Redis\Redis::class);
-        $code = $redis->get($params['code_key']);
-        if (strtolower($params['captcha']) != strtolower($code)) $this->throwExp(StatusCode::ERR_CODE, '验证失败，验证码错误');
-
+        //校验验证码 若是测试环境跳过验证码验证
+        if (!env('APP_TEST')) {
+            $container = ApplicationContext::getContainer();
+            $redis = $container->get(\Hyperf\Redis\Redis::class);
+            $code = $redis->get($params['code_key']);
+            if (strtolower($params['captcha']) != strtolower($code)) $this->throwExp(StatusCode::ERR_CODE, '验证失败，验证码错误');
+        }
         $userData = [
             'uid' => $user->id, //如果使用单点登录，必须存在配置文件中的sso_key的值，一般设置为用户的id
             'username' => $user->username,
