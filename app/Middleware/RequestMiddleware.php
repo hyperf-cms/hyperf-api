@@ -51,8 +51,8 @@ class RequestMiddleware implements MiddlewareInterface
     {
         $requireParams = $request->getQueryParams();
         //记录请求参数日志记录
-        if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
 
+        if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
         $isValidToken = false;
         // 根据具体业务判断逻辑走向，这里假设用户携带的token有效
         $token = $request->getHeaderLine('Authorization') ?? '';
@@ -62,11 +62,8 @@ class RequestMiddleware implements MiddlewareInterface
                 $isValidToken = true;
             }
         }
-        if ($isValidToken) {
-            return $handler->handle($request);
-        }
+        if ($isValidToken) return $handler->handle($request);
 
         Throw new BusinessException(StatusCode::ERR_INVALID_TOKEN, 'Token无效或者过期');
-
     }
 }
