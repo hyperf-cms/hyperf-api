@@ -6,3 +6,7 @@ declare(strict_types=1);
  */
 use Hyperf\HttpServer\Router\Router;
 use App\Middleware\RequestMiddleware;
+
+Router::addServer('ws', function () {
+    Router::get('/', 'App\Controller\WebSocketController');
+});
