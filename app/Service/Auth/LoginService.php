@@ -83,6 +83,7 @@ class LoginService extends BaseService
         $responseData['role_info'] = $user->getRoleNames();
         $responseData['menu_header'] = $menu['menuHeader'];
         $responseData['menu_list'] = $menu['menuList'];
+        $responseData['permission'] = $menu['permission'];
 
         return $responseData;
     }
@@ -111,6 +112,7 @@ class LoginService extends BaseService
     {
         //获取菜单树形
         $menuList = Permission::getUserMenuList($user);
+        $permission = $user->getAllPermissions();
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
             if ($val['status'] != 0) {
@@ -130,7 +132,8 @@ class LoginService extends BaseService
 
         return [
             'menuList' => $menuList,
-            'menuHeader' => $menuHeader
+            'menuHeader' => $menuHeader,
+            'permission' => array_column(objToArray($permission), 'name'),
         ];
     }
 }
