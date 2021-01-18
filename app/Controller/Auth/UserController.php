@@ -132,7 +132,7 @@ class UserController extends AbstractController
      * @Middleware(RequestMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         $userInfo = User::getOneByUid($id);
         if (empty($userInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取用户信息失败');

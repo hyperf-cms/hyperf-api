@@ -15,7 +15,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 /**
  * 角色控制器
  * Class RoleController
- * @Controller(prefix="role")
+ * @Controller(prefix="setting/role")
  */
 class RoleController extends AbstractController
 {
@@ -30,7 +30,7 @@ class RoleController extends AbstractController
      * @RequestMapping(path="list", methods="get")
      * @Middleware(RequestMiddleware::class)
      */
-    public function index()
+    public function list()
     {
         $roleQuery = $this->role->newQuery();
 
@@ -43,6 +43,23 @@ class RoleController extends AbstractController
         return $this->success([
             'list' => $list,
             'total' => $total,
+        ]);
+    }
+
+    /**
+     * 获取角色数据列表
+     * @RequestMapping(path="tree", methods="get")
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function tree()
+    {
+        $roleQuery = $this->role->newQuery();
+
+        $list = $roleQuery->get()->toArray();
+        $list = array_column($list, 'description', 'name');
+
+        return $this->success([
+            'list' => $list,
         ]);
     }
 
