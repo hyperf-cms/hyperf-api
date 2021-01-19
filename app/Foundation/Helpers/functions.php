@@ -144,3 +144,15 @@ if (!function_exists('pd')) {
         die;
     }
 }
+
+if (!function_exists('getExtByFile')) {
+    /**
+     * 获取文件后缀
+     * @param $file
+     * @return mixed|string|string[]
+     */
+    function getExtByFile($file)
+    {
+        return pathinfo($file, PATHINFO_EXTENSION);
+    }
+}

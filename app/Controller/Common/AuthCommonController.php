@@ -10,33 +10,33 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\Utils\ApplicationContext;
 
 /**
- * @Controller(prefix="auth")
+ * @Controller(prefix="common/auth")
  */
 class AuthCommonController extends AbstractController
 {
     /**
-     * 获取验证码操作
-     * @RequestMapping(path="verification_code", methods="get")
-     * @return  \Psr\Http\Message\ResponseInterface
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     */
-   public function getVerificationCode()
-   {
-       $config = new \EasySwoole\VerifyCode\Conf();
-       $code = new \EasySwoole\VerifyCode\VerifyCode($config);
+ * 获取验证码操作
+ * @RequestMapping(path="verification_code", methods="get")
+ * @return  \Psr\Http\Message\ResponseInterface
+ * @throws \Psr\SimpleCache\InvalidArgumentException
+ */
+    public function getVerificationCode()
+    {
+        $config = new \EasySwoole\VerifyCode\Conf();
+        $code = new \EasySwoole\VerifyCode\VerifyCode($config);
 
-       $result = $code->DrawCode();
-       $imageBase64Code = $result->getImageBase64();
-       $code = $result->getImageCode();
+        $result = $code->DrawCode();
+        $imageBase64Code = $result->getImageBase64();
+        $code = $result->getImageCode();
 
-       $key = md5_rand();
-       $container = ApplicationContext::getContainer();
-       $redis = $container->get(\Hyperf\Redis\Redis::class);
-       $redis->setex($key, 60, $code);
+        $key = md5_rand();
+        $container = ApplicationContext::getContainer();
+        $redis = $container->get(\Hyperf\Redis\Redis::class);
+        $redis->setex($key, 60, $code);
 
-       return $this->success([
-           'code' => $imageBase64Code,
-           'code_key' => $key,
-       ]);
-   }
+        return $this->success([
+            'code' => $imageBase64Code,
+            'code_key' => $key,
+        ]);
+    }
 }
