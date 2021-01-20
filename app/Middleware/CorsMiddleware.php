@@ -11,8 +11,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * HTTP请求控制（跨域中间件
- * ）
+ * HTTP请求控制（跨域中间件）
  * Class CorsMiddleware
  * @package App\Middleware
  * @Author YiYuan-Lin
