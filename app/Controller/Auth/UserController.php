@@ -40,8 +40,8 @@ class UserController extends AbstractController
         if (!empty($this->request->input('role_name'))) {
             $role_id = Role::query()->where('name', $this->request->input('role_name'))->value('id');
             if (!empty($role_id)) {
-                $userQuery->from('sy_users as a');
-                $userQuery->leftJoin('sy_model_has_roles as b', 'a.id', 'b.model_id');
+                $userQuery->from('users as a');
+                $userQuery->leftJoin('model_has_roles as b', 'a.id', 'b.model_id');
                 $userQuery->where('b.role_id', $role_id);
             }
         }
