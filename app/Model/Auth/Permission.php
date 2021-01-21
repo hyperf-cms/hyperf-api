@@ -40,7 +40,7 @@ class Permission extends DonjanPermission
      */
     public static function getUserMenuList(Object $user) : array
     {
-        $permissionList = $user->getAllPermissions();
+        $permissionList = self::getUserPermissions($user);
         $permissionList = objToArray($permissionList);
         $permissionList = array_column($permissionList, null, 'id');
 
@@ -59,5 +59,21 @@ class Permission extends DonjanPermission
         }
 
         return $menuList;
+    }
+
+    /**
+     * 获取用户权限
+     * @param object $user
+     * @return array
+     */
+    public static function getUserPermissions(object $user) : array
+    {
+        $allPermissions = [];
+        if (empty($user)) return $allPermissions;
+
+        //判断当前登录用户是否为超级管理员,如果是的话返回所有权限
+        return $user->hasRole(Role::SUPER_ADMIN)
+            ? Permission::query()->get()->toArray()
+            : objToArray($user->getAllPermissions());
     }
 }

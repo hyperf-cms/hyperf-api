@@ -112,7 +112,7 @@ class LoginService extends BaseService
     {
         //获取菜单树形
         $menuList = Permission::getUserMenuList($user);
-        $permission = $user->getAllPermissions();
+        $permission = Permission::getUserPermissions($user);
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
             if ($val['status'] != 0) {
@@ -133,7 +133,7 @@ class LoginService extends BaseService
         return [
             'menuList' => $menuList,
             'menuHeader' => $menuHeader,
-            'permission' => array_column(objToArray($permission), 'name'),
+            'permission' => array_column($permission, 'name'),
         ];
     }
 }

@@ -18,7 +18,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 /**
  * 用户控制器
  * Class UserController
- * @Controller(prefix="setting/user")
+ * @Controller(prefix="setting/user_module/user")
  */
 class UserController extends AbstractController
 {

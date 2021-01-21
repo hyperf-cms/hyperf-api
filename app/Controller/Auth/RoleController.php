@@ -15,7 +15,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 /**
  * 角色控制器
  * Class RoleController
- * @Controller(prefix="setting/role")
+ * @Controller(prefix="setting/user_module/role")
  */
 class RoleController extends AbstractController
 {

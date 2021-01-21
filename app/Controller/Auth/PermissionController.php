@@ -19,7 +19,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 /**
  * 权限控制器
  * Class PermissionController
- * @Controller(prefix="permission")
+ * @Controller(prefix="setting/user_module/permission")
  */
 class PermissionController extends AbstractController
 {
