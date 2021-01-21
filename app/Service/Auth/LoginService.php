@@ -128,7 +128,7 @@ class LoginService extends BaseService
             }
         }
         //排序
-        array_multisort($menuHeader, SORT_ASC,array_column($menuHeader, 'sort'));
+        array_multisort(array_column($menuHeader, 'sort'), SORT_ASC, $menuHeader);
 
         return [
             'menuList' => $menuList,
