@@ -84,6 +84,7 @@ class LoginService extends BaseService
         $responseData['menu_header'] = $menu['menuHeader'];
         $responseData['menu_list'] = $menu['menuList'];
         $responseData['permission'] = $menu['permission'];
+        $responseData['permission_info'] = $menu['permission_info'];
 
         return $responseData;
     }
@@ -134,6 +135,7 @@ class LoginService extends BaseService
             'menuList' => $menuList,
             'menuHeader' => $menuHeader,
             'permission' => array_column($permission, 'name'),
+            'permission_info' => $permission,
         ];
     }
 }

@@ -13,6 +13,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
+use App\Middleware\PermissionMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -32,6 +33,7 @@ class UserController extends AbstractController
      * 获取用户数据列表
      * @RequestMapping(path="list", methods="get")
      * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
      */
     public function index()
     {
@@ -67,6 +69,7 @@ class UserController extends AbstractController
      * 添加用户
      * @RequestMapping(path="store", methods="post")
      * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
      */
     public function store()
     {
@@ -149,6 +152,7 @@ class UserController extends AbstractController
      * @param int $id
      * @RequestMapping(path="update/{id}", methods="put")
      * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function update(int $id)
@@ -209,6 +213,7 @@ class UserController extends AbstractController
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
      * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function destroy(int $id)

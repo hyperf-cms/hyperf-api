@@ -35,14 +35,16 @@ class StatusCode extends AbstractConstants
     const SUCCESS = 200;
 
     /**
+     * @Message("无权限访问！")
+     */
+    const ERR_NOT_ACCESS = 401;
+
+
+    /**
      * @Message("Internal Server Error!")
      */
     const ERR_SERVER = 500;
 
-    /**
-     * @Message("无权限访问！")
-     */
-    const ERR_NOT_ACCESS = 1001;
 
     /**
      * @Message("令牌过期！")

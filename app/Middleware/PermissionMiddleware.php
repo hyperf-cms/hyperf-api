@@ -6,18 +6,20 @@ namespace App\Middleware;
 
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
-use App\Foundation\Facades\Log;
+use App\Http\Service\Auth\UserService;
+use App\Model\Auth\Role;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
+use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Utils\Context;
 use Phper666\JWTAuth\JWT;
-use Phper666\JWTAuth\Util\JWTUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RequestMiddleware implements MiddlewareInterface
+class PermissionMiddleware implements MiddlewareInterface
 {
     /**
      * @var ContainerInterface
@@ -48,29 +50,30 @@ class RequestMiddleware implements MiddlewareInterface
     }
 
     /**
-     * 请求校验Token中间件
+     * 权限校验中间件
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     * @throws \Throwable
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requireParams = $request->getQueryParams();
-        //记录请求参数日志记录
-        if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
-        $isValidToken = false;
-        // 根据具体业务判断逻辑走向，这里假设用户携带的token有效
-        $token = $request->getHeaderLine('Authorization') ?? '';
-        if (strlen($token) > 0) {
-            $token = JWTUtil::handleToken($token);
-            if ($token !== false && $this->jwt->checkToken($token)) {
-                $isValidToken = true;
-            }
-        }
-        if ($isValidToken) return $handler->handle($request);
+            //获取访问目标控制器以及方法
+            $requestController = $this->request->getAttribute(Dispatched::class)->handler->callback;
+            $controller = $requestController[0];
+            $actionMethod = $requestController[1];
+            $actionName = 'Api:' .  ltrim($request->getUri()->getPath(), '/'). '-' . $actionMethod;
+            $actionName = preg_replace('/\/\d+/', '', $actionName);
+            var_dump($actionName);
 
-        Throw new BusinessException(StatusCode::ERR_INVALID_TOKEN, 'Token无效或者过期');
+            //获取当前用户
+            $user = UserService::getInstance()->getUserInfoByToken();
+            Context::set('user_info', $user);
+
+            //判断是否是超级管理员
+            if ($user->hasRole(Role::SUPER_ADMIN)) return $handler->handle($request);
+
+            if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_ACCESS, '无权限访问');
+
+            return $handler->handle($request);
     }
 }
