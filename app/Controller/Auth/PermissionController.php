@@ -6,8 +6,8 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
+use App\Model\Auth\Permission;
 use App\Model\Auth\User;
-use Donjan\Permission\Models\Permission;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
@@ -47,6 +47,34 @@ class PermissionController extends AbstractController
         return $this->success([
             'list' => $list,
             'total' => $total,
+        ]);
+    }
+
+    /**
+     * 根据用户获取权限树状列表（用于分配用户权限）
+     * @RequestMapping(path="tree_by_user", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function treeByUser()
+    {
+        $userId = $this->request->all()['user_id'] ?? '';
+        if (empty($userId)) $this->throwExp(StatusCode::ERR_VALIDATION, '用户ID缺失');
+
+        //获取用户信息
+        $userInfo = User::getOneByUid($userId);
+
+        //获取系统所有启用的功能权限
+        $allPermission = Permission::getAllPermissionByTree();
+        foreach ($allPermission as $key => $value) {
+            if (empty($value['child'])) unset($allPermission[$key]);
+        }
+
+        //获取用户拥有的权限
+        $userHasPermission = Permission::getUserMenuList($userInfo);
+
+        return $this->success([
+            'allPermission' => $allPermission,
+            'userHasPermission' => $userHasPermission
         ]);
     }
 

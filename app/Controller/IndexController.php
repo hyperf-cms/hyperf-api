@@ -25,8 +25,11 @@ class IndexController extends AbstractController
      */
     public function index()
     {
-        IndexService::getInstance()->params =  conSet('params', $this->request->all());
-        return IndexService::getInstance()->test();
+        $arr = [3, 2];
+        if (count($arr) == 0) {
+            return '数组为空';
+        }else foreach ($arr as $key => $value) {
+            return $value;
+        }
     }
-
 }

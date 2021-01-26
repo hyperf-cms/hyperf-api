@@ -7,6 +7,8 @@ namespace App\Middleware;
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
+use App\Http\Service\Auth\UserService;
+use App\Model\Auth\User;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Phper666\JWTAuth\JWT;
@@ -69,7 +71,12 @@ class RequestMiddleware implements MiddlewareInterface
                 $isValidToken = true;
             }
         }
-        if ($isValidToken) return $handler->handle($request);
+        if ($isValidToken) {
+            //将用户信息放置协程上下文当中
+            $userInfo = UserService::getInstance()->getUserInfoByToken();
+            conSet('user_info', $userInfo);
+            return $handler->handle($request);
+        }
 
         Throw new BusinessException(StatusCode::ERR_INVALID_TOKEN, 'Token无效或者过期');
     }

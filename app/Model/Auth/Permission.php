@@ -35,7 +35,7 @@ class Permission extends DonjanPermission
 
     /**
      * 获取用户对应的菜单树状列表
-     * @param Object $user
+     * @param Object [用户模型对象] $user
      * @return array
      */
     public static function getUserMenuList(Object $user) : array
@@ -62,8 +62,8 @@ class Permission extends DonjanPermission
     }
 
     /**
-     * 获取用户权限
-     * @param object $user
+     * 获取用户拥有所有权限
+     * @param object [用户模型对象] $user
      * @return array
      */
     public static function getUserPermissions(object $user) : array
@@ -75,5 +75,29 @@ class Permission extends DonjanPermission
         return $user->hasRole(Role::SUPER_ADMIN)
             ? Permission::query()->get()->toArray()
             : objToArray($user->getAllPermissions());
+    }
+
+    /**
+     * 获取所有权限（树状）
+     * @return array
+     */
+    public static function getAllPermissionByTree() : array
+    {
+        //获取所有权限列表
+        $permissionList = static::query()->select('id', 'parent_id', 'display_name', 'name')
+            ->where('status', static::ON_STATUS)
+            ->get()->toArray();
+        $permissionList = array_column($permissionList, null, 'id');
+
+        $allPermission = [];
+        foreach($permissionList as $key => $value){
+            if(isset($permissionList[$value['parent_id']])){
+                $permissionList[$value['parent_id']]['child'][] = &$permissionList[$key];
+            }else{
+                $allPermission[] = &$permissionList[$key];
+            }
+        }
+
+        return $allPermission;
     }
 }
