@@ -63,7 +63,6 @@ class PermissionMiddleware implements MiddlewareInterface
             $actionMethod = $requestController[1];
             $actionName = 'Api:' .  ltrim($request->getUri()->getPath(), '/'). '-' . $actionMethod;
             $actionName = preg_replace('/\/\d+/', '', $actionName);
-            var_dump($actionName);
 
             //获取当前用户
             $user = UserService::getInstance()->getUserInfoByToken();
@@ -71,7 +70,6 @@ class PermissionMiddleware implements MiddlewareInterface
 
             //判断是否是超级管理员
             if ($user->hasRole(Role::SUPER_ADMIN)) return $handler->handle($request);
-
             if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_ACCESS, '无权限访问');
 
             return $handler->handle($request);

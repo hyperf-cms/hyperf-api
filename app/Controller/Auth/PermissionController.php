@@ -14,6 +14,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
+use App\Middleware\PermissionMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -64,17 +65,15 @@ class PermissionController extends AbstractController
         $userInfo = User::getOneByUid($userId);
 
         //获取系统所有启用的功能权限
-        $allPermission = Permission::getAllPermissionByTree();
-        foreach ($allPermission as $key => $value) {
-            if (empty($value['child'])) unset($allPermission[$key]);
-        }
+        $permissionList = Permission::getAllPermissionByTree();
 
         //获取用户拥有的权限
-        $userHasPermission = Permission::getUserMenuList($userInfo);
+        $userHasPermission = Permission::getUserPermissions($userInfo);
+        $userHasPermission = array_column($userHasPermission, 'name');
 
         return $this->success([
-            'allPermission' => $allPermission,
-            'userHasPermission' => $userHasPermission
+            'permission_list' => $permissionList,
+            'user_has_permission' => $userHasPermission
         ]);
     }
 
@@ -244,9 +243,10 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 分配角色权限
+     * 分配用户权限
      * @RequestMapping(path="accord_user_permission", methods="post")
      * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function accordUserPermission()
@@ -254,28 +254,39 @@ class PermissionController extends AbstractController
             $postData = $this->request->all() ?? '';
             $params = [
                 'user_id' => $postData['user_id'] ?? '',
-                'permission_list' => $postData['permission_list'] ?? ''
+                'user_has_permission' => $postData['user_has_permission'] ?? ''
             ];
             $rules = [
-                'user_id' => 'required',
-                'permission_list' => 'required|array',
+                'user_id' => 'required|int',
+                'user_has_permission' => 'required|array',
             ];
             $message = [
                 'user_id.required' => '[user_id]缺失',
-                'permission_list.required' => '请至少选择一个权限',
-                'permission_list.array' => '权限数据格式不正确',
+                'user_id.int' => '[user_id]参数类型错误',
+                'user_has_permission.required' => '请至少选择一个权限',
+                'user_has_permission.array' => '权限数据格式不正确',
             ];
             $this->verifyParams($params, $rules, $message);
 
-            //根据用户获取相应所有权限列表
+            //根据用户信息
             $userModel = User::query()->where('id', $params['user_id'])->first();
+
+            //获取该用户拥有的角色以及角色对应权限
+            $roleName = $userModel->getRoleNames();
+            $roleList = Role::query()->whereIn('name', $roleName)->get();
+            $roleHasPermission = [];
+            foreach ($roleList as $role)  {
+                $roleHasPermission = array_merge($roleHasPermission, array_column($role->permissions->toArray(), 'name'));
+            }
+            $roleHasPermission = array_values(array_unique($roleHasPermission));
+            $userHasPermission = array_diff($params['user_has_permission'], $roleHasPermission);
+
             //先清空当前用户所有权限
             DB::table('model_has_permissions')
                 ->where('model_id', $params['user_id'])
                 ->delete();
-
-            if (!$userModel->syncPermissions($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配用户权限失败');
-
+            //分配用户权限
+            if (!$userModel->syncPermissions($userHasPermission)) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配用户权限失败');
             return $this->successByMessage('分配用户权限成功');
     }
 }

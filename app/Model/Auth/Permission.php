@@ -86,6 +86,7 @@ class Permission extends DonjanPermission
         //获取所有权限列表
         $permissionList = static::query()->select('id', 'parent_id', 'display_name', 'name')
             ->where('status', static::ON_STATUS)
+            ->orderBy('sort', 'asc')
             ->get()->toArray();
         $permissionList = array_column($permissionList, null, 'id');
 
