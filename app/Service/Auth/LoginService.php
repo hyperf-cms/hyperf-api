@@ -90,6 +90,67 @@ class LoginService extends BaseService
     }
 
     /**
+     * 处理权限得到路由（提供给前端注册路由）
+     * @return array
+     */
+    public function getRouters() :array
+    {
+        $userInfo = conGet('user_info');
+        $permissionList = permission::getUserPermissions($userInfo);
+        $permissionList = objToArray($permissionList);
+        $permissionList = array_column($permissionList, null, 'id');
+
+        foreach ($permissionList as $key => $val) {
+            if ($val['status'] == permission::OFF_STATUS) unset($permissionList[$key]);
+            if ($val['type'] != permission::MENU_TYPE) unset($permissionList[$key]);
+        }
+
+        //使用引用传递递归数组
+        $routers = [];
+        $module_children = [];
+        foreach($permissionList as $key => $value){
+            if(isset($permissionList[$value['parent_id']])){
+                $permissionList[$value['parent_id']]['children'][] = &$permissionList[$key];
+            }else{
+                $module_children[] = &$permissionList[$key];
+            }
+        }
+
+        foreach ($module_children as $key => $value) {
+            $routers[$value['id']] = [
+                    'name' => $value['name'],
+                    'path' => $value['url'],
+                    'redirect' => 'noRedirect',
+                    'hidden' => $value['hidden'] ? true : false,
+                    'component' => $value['component'],
+                    'meta' => [
+                        'icon' => $value['icon'],
+                        'title' => $value['display_name'],
+                    ],
+                    'children' => []
+            ];
+            foreach ($value['children'] as $k => $v) {
+                $temp = [];
+                foreach ($v['children'] as $k1 => $v1) {
+                    $temp[] = [
+                        'name' => $v1['name'],
+                        'path' => $v1['url'],
+                        'hidden' => $v1['hidden'] ? true : false,
+                        'component' => $v1['component'],
+                        'meta' => [
+                            'icon' => $v1['icon'],
+                            'title' => $v1['display_name'],
+                        ],
+                    ];
+                }
+                $routers[$value['id']]['children'] =  array_merge($routers[$value['id']]['children'], $temp);
+            }
+        }
+
+        return array_values($routers);
+    }
+
+    /**
      * 处理TOKEN数据
      * @param $token
      * @return array
@@ -138,4 +199,6 @@ class LoginService extends BaseService
             'permission_info' => $permission,
         ];
     }
+
+
 }

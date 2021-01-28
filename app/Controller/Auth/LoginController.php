@@ -78,6 +78,21 @@ class LoginController extends AbstractController
     }
 
     /**
+     * 获取前端路由
+     * @RequestMapping(path="routers", methods="get")
+     * @Middlewares({
+            @Middleware(RequestMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function getRouters()
+    {
+        $list = LoginService::getInstance()->getRouters();
+        return $this->success($list);
+    }
+
+    /**
      * 退出登录操作
      * @RequestMapping(path="logout", methods="post")
      * @Middlewares({

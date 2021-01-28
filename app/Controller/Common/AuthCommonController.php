@@ -15,11 +15,11 @@ use Hyperf\Utils\ApplicationContext;
 class AuthCommonController extends AbstractController
 {
     /**
- * 获取验证码操作
- * @RequestMapping(path="verification_code", methods="get")
- * @return  \Psr\Http\Message\ResponseInterface
- * @throws \Psr\SimpleCache\InvalidArgumentException
- */
+     * 获取验证码操作
+     * @RequestMapping(path="verification_code", methods="get")
+     * @return  \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
     public function getVerificationCode()
     {
         $config = new \EasySwoole\VerifyCode\Conf();

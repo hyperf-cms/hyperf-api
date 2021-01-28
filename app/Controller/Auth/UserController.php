@@ -117,6 +117,7 @@ class UserController extends AbstractController
         $user->creater = $postData['creater'] ?? '无';
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
+        $user->email = $postData['email'] ?? '';
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加用户失败');
 
         //分配角色权限

@@ -7,8 +7,8 @@ namespace App\Controller\Auth;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Model\Auth\Permission;
+use App\Model\Auth\Role;
 use App\Model\Auth\User;
-use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -74,6 +74,32 @@ class PermissionController extends AbstractController
         return $this->success([
             'permission_list' => $permissionList,
             'user_has_permission' => $userHasPermission
+        ]);
+    }
+
+    /**
+     * 根据角色获取权限树状列表（用于分配角色权限）
+     * @RequestMapping(path="tree_by_role", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function treeByRole()
+    {
+        $roleId = $this->request->all()['role_id'] ?? '';
+        if (empty($roleId)) $this->throwExp(StatusCode::ERR_VALIDATION, '角色ID缺失');
+
+        //获取用户信息
+        $roleInfo = Role::getOneByRoleId($roleId);
+
+        //获取系统所有启用的功能权限
+        $permissionList = Permission::getAllPermissionByTree();
+
+        //获取角色拥有的权限
+        $roleHasPermission = $roleInfo->permissions->toArray();
+        $roleHasPermission = array_column($roleHasPermission, 'name');
+
+        return $this->success([
+            'permission_list' => $permissionList,
+            'role_has_permission' => $roleHasPermission
         ]);
     }
 
@@ -217,17 +243,18 @@ class PermissionController extends AbstractController
         $postData = $this->request->all() ?? [];
         $params = [
             'role_id' => $postData['role_id'],
-            'permission_list' => $postData['permission_list'],
+            'role_has_permission' => $postData['role_has_permission'],
         ];
         //配置验证
         $rules = [
-            'role_id' => 'required',
-            'permission_list' => 'required|array',
+            'role_id' => 'required|int',
+            'role_has_permission' => 'required|array',
         ];
         $message = [
             'role_id.required' => '[role_id]缺失',
-            'permission_list.required' => '请至少选择一个权限',
-            'permission_list.array' => '权限数据格式不正确',
+            'role_id.int' => '[role_id]参数格式不正确',
+            'role_has_permission.required' => '请至少选择一个权限',
+            'role_has_permission.array' => '权限数据格式不正确',
         ];
         $this->verifyParams($params, $rules, $message);
 
@@ -238,7 +265,7 @@ class PermissionController extends AbstractController
             ->where('role_id', $params['role_id'])
             ->delete();
 
-        if (!$roleModel->syncPermissions($params['permission_list'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配角色权限失败');
+        if (!$roleModel->syncPermissions($params['role_has_permission'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '分配角色权限失败');
         return $this->successByMessage( '分配角色权限成功');
     }
 

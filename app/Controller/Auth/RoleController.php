@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
+use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use Donjan\Permission\Models\Role;
+use App\Model\Auth\Role;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -55,8 +56,7 @@ class RoleController extends AbstractController
     {
         $roleQuery = $this->role->newQuery();
 
-        $list = $roleQuery->get()->toArray();
-        $list = array_column($list, 'description', 'name');
+        $list = $roleQuery->select('name', 'description')->get()->toArray();
 
         return $this->success([
             'list' => $list,
@@ -87,6 +87,23 @@ class RoleController extends AbstractController
         if (!Role::create($params)) $this->throwExp(400, '添加角色失败');
 
         return $this->successByMessage('添加角色成功');
+    }
+
+    /**
+     * 获取单个角色的数据
+     * @param int $id
+     * @RequestMapping(path="edit/{id}", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function edit(int $id)
+    {
+        $roleInfo = Role::getOneByRoleId($id);
+        if (empty($roleInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '获取角色信息失败');
+
+        return $this->success([
+            'list' => $roleInfo
+        ]);
     }
 
     /**

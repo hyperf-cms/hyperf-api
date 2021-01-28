@@ -20,4 +20,19 @@ class Role extends DonjanRole
      */
     const SUPER_ADMIN = 'super_admin';
 
+    /**
+     * 根据橘色ID获取角色信息
+     * @param $id
+     * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
+     */
+    static function getOneByRoleId($id)
+    {
+        if (empty($id)) return [];
+
+        $query = static::query();
+        $query = $query->where('id', $id);
+
+        return $query->first();
+    }
+
 }
