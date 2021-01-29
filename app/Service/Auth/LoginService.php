@@ -120,7 +120,7 @@ class LoginService extends BaseService
             $routers[$value['id']] = [
                     'name' => $value['name'],
                     'path' => $value['url'],
-                    'redirect' => 'noRedirect',
+//                    'redirect' => 'noRedirect',
                     'hidden' => $value['hidden'] ? true : false,
                     'component' => $value['component'],
                     'meta' => [
@@ -129,24 +129,27 @@ class LoginService extends BaseService
                     ],
                     'children' => []
             ];
-            foreach ($value['children'] as $k => $v) {
-                $temp = [];
-                foreach ($v['children'] as $k1 => $v1) {
-                    $temp[] = [
-                        'name' => $v1['name'],
-                        'path' => $v1['url'],
-                        'hidden' => $v1['hidden'] ? true : false,
-                        'component' => $v1['component'],
-                        'meta' => [
-                            'icon' => $v1['icon'],
-                            'title' => $v1['display_name'],
-                        ],
-                    ];
+            if (!empty($value['children'])) {
+                foreach ($value['children'] as $k => $v) {
+                    $temp = [];
+                    if (!empty($v['children'])) {
+                        foreach ($v['children'] as $k1 => $v1) {
+                            $temp[] = [
+                                'name' => $v1['name'],
+                                'path' => $v1['url'],
+                                'hidden' => $v1['hidden'] ? true : false,
+                                'component' => $v1['component'],
+                                'meta' => [
+                                    'icon' => $v1['icon'],
+                                    'title' => $v1['display_name'],
+                                ],
+                            ];
+                        }
+                    }
+                    $routers[$value['id']]['children'] =  array_merge($routers[$value['id']]['children'], $temp);
                 }
-                $routers[$value['id']]['children'] =  array_merge($routers[$value['id']]['children'], $temp);
             }
         }
-
         return array_values($routers);
     }
 
