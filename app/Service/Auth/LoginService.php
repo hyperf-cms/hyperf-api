@@ -116,11 +116,13 @@ class LoginService extends BaseService
             }
         }
 
+
         foreach ($module_children as $key => $value) {
-            $routers[$value['id']] = [
+            if (!empty($value['children'])) {
+                $routers[$value['id']] = [
                     'name' => $value['name'],
                     'path' => $value['url'],
-//                    'redirect' => 'noRedirect',
+                    'redirect' => 'noRedirect',
                     'hidden' => $value['hidden'] ? true : false,
                     'component' => $value['component'],
                     'meta' => [
@@ -128,8 +130,7 @@ class LoginService extends BaseService
                         'title' => $value['display_name'],
                     ],
                     'children' => []
-            ];
-            if (!empty($value['children'])) {
+                ];
                 foreach ($value['children'] as $k => $v) {
                     $temp = [];
                     if (!empty($v['children'])) {
@@ -150,6 +151,7 @@ class LoginService extends BaseService
                 }
             }
         }
+
         return array_values($routers);
     }
 
@@ -180,7 +182,7 @@ class LoginService extends BaseService
         $permission = Permission::getUserPermissions($user);
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
-            if ($val['status'] != 0) {
+            if ($val['status'] != 0 && !empty($val['child'])) {
                 $menuHeader[] = [
                     'title' => $val['display_name'],
                     'icon' => $val['icon'],
