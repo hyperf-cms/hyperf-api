@@ -38,16 +38,24 @@ class PermissionController extends AbstractController
     public function index()
     {
         $permissionQuery = $this->permission->newQuery();
+        if (!empty($this->request->input('display_name'))) $permissionQuery->where('display_name', 'like', '%' . $this->request->input('display_name') .'%');
+        if (!empty($this->request->input('name'))) $permissionQuery->where('name', 'like', '%' . $this->request->input('name') .'%');
 
-        $total = $permissionQuery->count();
-        $permissionQuery = $this->pagingCondition($permissionQuery, $this->request->all());
-        //判断是否有查询条件
-        if (!empty($this->request->input('display_name'))) $permissionQuery->where('display_name', 'like', '%' . $this->request->input('display_name') . '%');
-        $list = $permissionQuery->get();
+        $permissionList = $permissionQuery->get()->toArray();
+        $permissionList = array_column($permissionList, null, 'id');
+
+        //使用引用传递递归数组
+        $list = [];
+        foreach($permissionList as $key => $value){
+            if(isset($permissionList[$value['parent_id']])){
+                $permissionList[$value['parent_id']]['children'][] = &$permissionList[$key];
+            }else{
+                $list[] = &$permissionList[$key];
+            }
+        }
 
         return $this->success([
             'list' => $list,
-            'total' => $total,
         ]);
     }
 
