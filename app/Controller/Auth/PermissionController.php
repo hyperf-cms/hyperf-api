@@ -40,6 +40,7 @@ class PermissionController extends AbstractController
         $permissionQuery = $this->permission->newQuery();
         if (!empty($this->request->input('display_name'))) $permissionQuery->where('display_name', 'like', '%' . $this->request->input('display_name') .'%');
         if (!empty($this->request->input('name'))) $permissionQuery->where('name', 'like', '%' . $this->request->input('name') .'%');
+        if (strlen($this->request->input('status') ?? '') > 0) $permissionQuery->where('status', $this->request->input('status'));
 
         $permissionList = $permissionQuery->get()->toArray();
         $permissionList = array_column($permissionList, null, 'id');

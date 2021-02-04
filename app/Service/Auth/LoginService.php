@@ -116,7 +116,6 @@ class LoginService extends BaseService
             }
         }
 
-
         foreach ($module_children as $key => $value) {
             if (!empty($value['children'])) {
                 $routers[$value['id']] = [
