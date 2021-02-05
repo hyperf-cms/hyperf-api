@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Setting;
 
 use App\Controller\AbstractController;
-use App\Http\Service\Setting\ServerMonitorService;
+use App\Http\Service\Setting\ServeMonitorService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -21,20 +21,25 @@ class MonitoringController extends AbstractController
 {
     /**
      * 获取服务监控
-     * @RequestMapping(path="server", methods="get")
+     * @RequestMapping(path="serve", methods="get")
      * @Middleware(RequestMiddleware::class)
      * @Middleware(PermissionMiddleware::class)
      */
-    public function server()
+    public function serve()
     {
-        $cpuInfo = ServerMonitorService::getInstance()->getCpuInfo();
+        $cpuInfo = ServeMonitorService::getInstance()->getCpuInfo();
 
-        $memoryInfo = ServerMonitorService::getInstance()->getMemoryInfo();
+        $memoryInfo = ServeMonitorService::getInstance()->getMemoryInfo();
 
-        $uptime = ServerMonitorService::getInstance()->getUptime();
+        $uptime = ServeMonitorService::getInstance()->getUptime();
 
+        $serveInfo = ServeMonitorService::getInstance()->getServeInfo();
 
-
-        return getrusage();
+        return $this->success([
+            'cpu_info' => $cpuInfo,
+            'memory_info' => $memoryInfo,
+            'uptime' => $uptime,
+            'serve_info' => $serveInfo,
+        ]);
     }
 }

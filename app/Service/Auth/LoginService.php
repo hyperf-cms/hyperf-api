@@ -123,6 +123,7 @@ class LoginService extends BaseService
                     'path' => $value['url'],
                     'redirect' => 'noRedirect',
                     'hidden' => $value['hidden'] ? true : false,
+                    'alwaysShow' => true,
                     'component' => $value['component'],
                     'meta' => [
                         'icon' => $value['icon'],
@@ -138,6 +139,7 @@ class LoginService extends BaseService
                                 'name' => $v1['name'],
                                 'path' => $v1['url'],
                                 'hidden' => $v1['hidden'] ? true : false,
+                                'alwaysShow' => true,
                                 'component' => $v1['component'],
                                 'meta' => [
                                     'icon' => $v1['icon'],
