@@ -55,6 +55,23 @@ class DictDataController extends AbstractController
     }
 
     /**
+     * 根据字典类型获取字典数据
+     * @param string $dictType
+     * @RequestMapping(path="dict/{dictType}", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getDict(string $dictType)
+    {
+        if (!is_string($dictType) && empty($dictType)) $this->throwExp(StatusCode::ERR_VALIDATION, '字典类型为空或者参数格式不正确');
+
+        $list = DictData::query()->where('dict_type', $dictType)->get()->toArray();
+        return $this->success([
+            'list' => $list,
+        ]);
+    }
+
+    /**
      * 添加字典数据
      * @RequestMapping(path="store", methods="post")
      * @Middleware(RequestMiddleware::class)

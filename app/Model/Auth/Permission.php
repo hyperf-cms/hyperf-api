@@ -34,6 +34,14 @@ class Permission extends DonjanPermission
     const OFF_STATUS = 0;
 
     /**
+     * 声明是否隐藏显示枚举
+     * 1： 是
+     * 0： 否
+     */
+    const IS_HIDDEN = 1;
+    const IS_NOT_HIDDEN = 0;
+
+    /**
      * 获取用户对应的菜单树状列表
      * @param Object [用户模型对象] $user
      * @return array
@@ -47,6 +55,7 @@ class Permission extends DonjanPermission
         foreach ($permissionList as $key => $val) {
             if ($val['status'] == self::OFF_STATUS) unset($permissionList[$key]);
             if ($val['type'] != self::MENU_TYPE) unset($permissionList[$key]);
+            if ($val['hidden'] === self::IS_HIDDEN) unset($permissionList[$key]);
         }
         //使用引用传递递归数组
         $menuList = [];
