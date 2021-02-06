@@ -36,7 +36,7 @@ class DictTypeController extends AbstractController
     public function index()
     {
         $dictTypeQuery = $this->dictType->newQuery();
-        $status = $this->request->input('status');
+        $status = $this->request->input('status') ?? '';
         $dictName = $this->request->input('dict_name') ?? '';
         $dictType = $this->request->input('dict_type') ?? '';
 
@@ -71,14 +71,14 @@ class DictTypeController extends AbstractController
         ];
         //配置验证
         $rules = [
-            'dict_name' => 'required|min:4|max:18|',
-            'dict_type' => 'required|unique:dictType',
+            'dict_name' => 'required|min:2|max:60|',
+            'dict_type' => 'required|unique:dict_type',
         ];
         //错误信息
         $message = [
             'dict_name.required' => '[dict_name]缺失',
-            'dict_name.min' => '[dict_name]最少4位',
-            'dict_name.max' => '[dict_name]最多18位',
+            'dict_name.min' => '[dict_name]最少2位',
+            'dict_name.max' => '[dict_name]最多60位',
             'dict_type.required' => '[dict_type]缺失',
             'dict_type.unique' => '[dict_type]已经存在',
         ];
@@ -133,7 +133,7 @@ class DictTypeController extends AbstractController
         ];
         $rules = [
             'dict_name' => 'required|min:4|max:18|',
-            'dict_type' => 'required|unique:dictType',
+            'dict_type' => 'required|unique:dict_type',
         ];
         $message = [
             'dict_name.required' => '[dict_name]缺失',

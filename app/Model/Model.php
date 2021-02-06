@@ -15,6 +15,12 @@ use Hyperf\DbConnection\Model\Model as BaseModel;
 use Hyperf\DbConnection\Traits\HasContainer;
 use Hyperf\DbConnection\Traits\HasRepository;
 
+/**
+ * Class Model
+ * @package App\Model
+ * @Author YiYuan-Lin
+ * @Date: 2021/2/6
+ */
 abstract class Model extends BaseModel
 {
     use HasContainer;
@@ -29,7 +35,7 @@ abstract class Model extends BaseModel
     {
         if (empty($id)) return [];
 
-        return static::query()->where('id', $id)->first();
+        return static::query()->find($id);
     }
 
 }
