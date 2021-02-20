@@ -66,6 +66,9 @@ class DictDataController extends AbstractController
         if (!is_string($dictType) && empty($dictType)) $this->throwExp(StatusCode::ERR_VALIDATION, '字典类型为空或者参数格式不正确');
 
         $list = DictData::query()->where('dict_type', $dictType)->get()->toArray();
+        foreach ($list as $key => $val) {
+            if(is_numeric($val['dict_value'])) $list[$key]['dict_value'] = intval($val['dict_value']);
+        }
         return $this->success([
             'list' => $list,
         ]);
