@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
+use App\Constants\UploadCode;
 use App\Controller\AbstractController;
+use App\Http\Service\Auth\UserService;
+use App\Http\Service\Common\UploadService;
 use App\Model\Auth\User;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
@@ -15,6 +18,7 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use League\Flysystem\Filesystem;
 
 /**
  * 用户控制器
@@ -28,6 +32,12 @@ class UserController extends AbstractController
      * @var User
      */
     private $user;
+
+    /**
+     * @Inject()
+     * @var Filesystem
+     */
+    private $filesystem;
 
     /**
      * 获取用户数据列表
@@ -118,6 +128,7 @@ class UserController extends AbstractController
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->email = $postData['email'] ?? '';
+        $user->sex = $postData['sex'] ?? 0;
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加用户失败');
 
         //分配角色权限
@@ -147,6 +158,106 @@ class UserController extends AbstractController
             'list' => $userInfo
         ]);
     }
+
+
+    /**
+     * 获取当前登陆用户的数据
+     * @RequestMapping(path="profile", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function profile()
+    {
+        $userInfo = UserService::getInstance()->getUserInfoByToken();
+        $roleArr = '';
+        foreach ($userInfo->roles as $key => $value) {
+            $roleArr .= $value['description'] . ' ';
+        }
+        $userInfo->last_login = date('Y-m-d H:i:s', $userInfo->last_login);
+
+        return $this->success([
+            'list' => $userInfo,
+            'role' => $roleArr
+        ]);
+    }
+
+    /**
+     * 获取当前登陆用户的数据
+     * @param int $id
+     * @RequestMapping(path="profile/{id}", methods="put")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function profileEdit($id)
+    {
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        $postData = $this->request->all();
+
+        $user = User::getOneByUid($id);
+        $user->email = $postData['email'] ?? '';
+        $user->desc = $postData['desc'] ?? '';
+        $user->mobile = $postData['mobile'] ?? '';
+        $user->sex = $postData['sex'] ?? '';
+        if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION,  '修改用户信息失败');
+
+        //正确返回信息
+        return $this->successByMessage('修改用户成功');
+    }
+
+    /**
+     * 上传用户头像
+     * @RequestMapping(path="upload_avatar", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     */
+    public function uploadAvatar()
+    {
+        $params = [
+            'savePath' => $this->request->input('save_path'),
+            'file' => $this->request->file('file'),
+            'id' => $this->request->input('id'),
+        ];
+        //配置验证
+        $rules = [
+            'id' => 'required',
+            'savePath' => 'required',
+            'file' => 'required |file',
+        ];
+        $message = [
+            'id.required' => '[id]缺失',
+            'savePath.required' => '[savePath]缺失',
+            'file.required' => '[name]缺失',
+            'file.file' => '[file] 参数必须为文件类型',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        if ($params['file']->getSize() > 30000000) $this->throwExp(UploadCode::ERR_UPLOAD_SIZE, '上传图片尺寸过大');
+
+        //拼接得到文件名以及对应路径
+        $fileName =  md5(uniqid())  . '.' . 'jpg';
+        $uploadPath = $params['savePath'] . '/' . $fileName;
+
+        //外网访问的路径
+        $fileUrl = env('OSS_URL') . $uploadPath;
+
+        $stream = fopen($params['file']->getRealPath(), 'r+');
+        $this->filesystem->writeStream(
+            $uploadPath,
+            $stream
+        );
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+        $user = User::getOneByUid($params['id']);
+        $user->avatar = $fileUrl;
+        $user->save();
+        if (!$user->save()) $this->throwExp(StatusCode::ERR_VALIDATION, '修改用户头像失败');
+
+        return $this->success([
+            'fileName' => $fileName,
+            'url' => $fileUrl
+        ], '上传图片成功');
+    }
+
 
     /**
      * 修改用户资料
@@ -193,6 +304,7 @@ class UserController extends AbstractController
         $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
+        $user->sex = $postData['sex'] ?? '';
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION,  '修改用户信息失败');
 
         //将所有角色移除并重新赋予角色
@@ -210,7 +322,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * 修改角色
+     * 删除用户
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
      * @Middleware(RequestMiddleware::class)
@@ -224,4 +336,49 @@ class UserController extends AbstractController
 
         return $this->successByMessage('删除用户成功');
     }
+
+    /**
+     * 修改用户密码
+     * @RequestMapping(path="reset_password", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function resetPassword()
+    {
+        $postData = $this->request->all() ?? [];
+        $params = [
+            'id' => $postData['id'],
+            'old_password' => $postData['old_password'] ?? '',
+            'new_password' => $postData['new_password'] ?? '',
+            'confirm_password' => $postData['confirm_password'] ?? '',
+        ];
+        //配置验证
+        $rules = [
+            'id' => 'required',
+            'old_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required',
+        ];
+        $message = [
+            'id.required' => '[id]缺失',
+            'old_password.required' => '[old_password]缺失',
+            'new_password.required' => '[new_password]缺失',
+            'confirm_password.required' => '[confirm_password]缺失',
+        ];
+
+        $this->verifyParams($params, $rules, $message);
+        $userInfo = User::getOneByUid($params['id']);
+
+        if (empty($userInfo)) $this->throwExp(400, '账号不存在');
+        if (md5($params['old_password']) != $userInfo['password']) $this->throwExp(StatusCode::ERR_EXCEPTION, '输入密码与原先密码不一致');
+        if (md5($params['new_password']) != md5($params['confirm_password'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '两次密码输入不一致');
+
+        $userInfo->password  = md5($params['new_password']);
+        $updateRes = $userInfo->save();
+
+        if (!$updateRes) $this->throwExp(400, '修改密码失败');
+
+        return $this->success([], '修改密码成功');
+    }
+
 }
