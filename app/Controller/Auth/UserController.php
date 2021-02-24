@@ -381,4 +381,41 @@ class UserController extends AbstractController
         return $this->success([], '修改密码成功');
     }
 
+    /**
+     * 修改用户密码
+     * @RequestMapping(path="change_status", methods="post")
+     * @Middleware(RequestMiddleware::class)
+     * @Middleware(PermissionMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function changeStatus()
+    {
+        $postData = $this->request->all() ?? [];
+        $params = [
+            'id' => $postData['id'],
+            'status' => $postData['status']
+        ];
+        //配置验证
+        $rules = [
+            'id' => 'required',
+            'status' => 'required',
+        ];
+        $message = [
+            'id.required' => '[id]缺失',
+            'status.required' => '[status]缺失',
+        ];
+
+        $this->verifyParams($params, $rules, $message);
+        $userInfo = User::getOneByUid($params['id']);
+
+        if (empty($userInfo)) $this->throwExp(400, '账号不存在');
+
+        $userInfo->status = $params['status'];
+        $updateRes = $userInfo->save();
+
+        if (!$updateRes) $this->throwExp(400, '更改用户状态失败');
+
+        return $this->success([], '更改用户状态成功');
+    }
+
 }
