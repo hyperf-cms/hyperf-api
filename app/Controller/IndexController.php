@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\IndexService;
-use Hyperf\DbConnection\Db;
+use App\Foundation\Annotation\Explanation;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use Hyperf\HttpServer\Annotation\RequestMapping;
 use App\Middleware\RequestMiddleware;
+use Hyperf\HttpServer\Annotation\RequestMapping;
 
  /**
  * 测试控制器，一般用来测试一些代码
@@ -19,17 +19,12 @@ use App\Middleware\RequestMiddleware;
 class IndexController extends AbstractController
 {
     /**
-     * 获取用户数据列表
-     * @RequestMapping(path="/test", methods="get,post")
+     * @Explanation(content="获取用户数据列表")
      * @Middleware(RequestMiddleware::class)
+     * @RequestMapping(path="/test", methods="get,post")
      */
     public function index()
     {
-        $arr = [3, 2];
-        if (count($arr) == 0) {
-            return '数组为空';
-        }else foreach ($arr as $key => $value) {
-            return $value;
-        }
+        return $this->success(['key' => 'value'], '获取数据成功');
     }
 }

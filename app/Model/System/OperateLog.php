@@ -6,6 +6,13 @@ namespace App\Model\System;
 
 use App\Model\Model;
 
+/**
+ * 操作日志模型类
+ * Class OperateLog
+ * @package App\Model\System
+ * @Author YiYuan-Lin
+ * @Date: 2021/2/25
+ */
 class OperateLog extends Model
 {
     /**
@@ -35,4 +42,27 @@ class OperateLog extends Model
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * 记录操作日志
+     * @param array $logData
+     * @return bool
+     */
+    public static function recordLog(array $logData = []) : bool
+    {
+        if (empty($logData)) return false;
+        $operateLog = new static;
+        $operateLog->created_at = date('Y-m-d H:i:s');
+        $operateLog->updated_at = date('Y-m-d H:i:s');
+
+        foreach ($logData as $key => $value) {
+            $operateLog->{$key} = $value;
+        }
+
+        var_dump($operateLog);
+        if (!$operateLog->save()) return false;
+        return true;
+    }
+
+
 }
