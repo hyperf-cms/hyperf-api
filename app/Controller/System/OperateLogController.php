@@ -6,11 +6,16 @@ use App\Controller\AbstractController;
 use App\Model\System\OperateLog;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use App\Middleware\RequestMiddleware;
+use App\Middleware\PermissionMiddleware;
+
 
 /**
  * Class MenuController
- * @Controller(prefix="operate_log")
+ * @Controller(prefix="setting/log_module/operate_log")
  * @package App\Controller\System
  * @Author YiYuan-Lin
  * @Date: 2020/11/7
@@ -22,12 +27,17 @@ class OperateLogController extends AbstractController
      * @var OperateLog
      */
     protected $operate;
+
     /**
-     * 获取菜单列表
+     * 获取操作日志列表
      * @RequestMapping(path="list", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function index()
+    public function list()
     {
         $beginTime = $this->request->input('time')[0] ?? '';
         $endTime = $this->request->input('time')[1] ?? '';

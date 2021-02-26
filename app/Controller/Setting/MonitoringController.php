@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Http\Service\Setting\ServeMonitorService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
@@ -22,8 +23,10 @@ class MonitoringController extends AbstractController
     /**
      * 获取服务监控
      * @RequestMapping(path="serve", methods="get")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function serve()
     {

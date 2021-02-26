@@ -6,11 +6,14 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
+use App\Foundation\Annotation\Explanation;
 use App\Model\Auth\Role;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
+use App\Middleware\PermissionMiddleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -29,7 +32,10 @@ class RoleController extends AbstractController
     /**
      * 获取角色数据列表
      * @RequestMapping(path="list", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function list()
     {
@@ -64,9 +70,12 @@ class RoleController extends AbstractController
     }
 
     /**
-     * 添加角色
+     * @Explanation(content="添加角色操作")
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function store()
     {
@@ -107,10 +116,13 @@ class RoleController extends AbstractController
     }
 
     /**
-     * 修改角色
+     * @Explanation(content="修改角色操作")
      * @param int $id
      * @RequestMapping(path="update/{id}", methods="put")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function update(int $id)
@@ -139,10 +151,13 @@ class RoleController extends AbstractController
     }
 
     /**
-     * 修改角色
+     * @Explanation(content="删除角色操作")
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function destroy(int $id)

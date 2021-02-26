@@ -8,7 +8,6 @@ use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Http\Service\Auth\LoginService;
 use App\Middleware\RequestMiddleware;
-use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;

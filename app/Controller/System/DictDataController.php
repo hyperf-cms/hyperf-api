@@ -6,10 +6,12 @@ namespace App\Controller\System;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
+use App\Foundation\Annotation\Explanation;
 use App\Model\System\DictData;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
@@ -30,8 +32,10 @@ class DictDataController extends AbstractController
     /**
      * 获取字典类型列表
      * @RequestMapping(path="list", methods="get")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function index()
     {
@@ -58,7 +62,9 @@ class DictDataController extends AbstractController
      * 根据字典类型获取字典数据
      * @param string $dictType
      * @RequestMapping(path="dict/{dictType}", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function getDict(string $dictType)
@@ -75,10 +81,12 @@ class DictDataController extends AbstractController
     }
 
     /**
-     * 添加字典数据
+     * @Explanation(content="添加字典数据")
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function store()
     {
@@ -123,7 +131,9 @@ class DictDataController extends AbstractController
      * 获取单个字典数据信息
      * @param int $id
      * @RequestMapping(path="edit/{id}", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function edit(int $id)
@@ -137,11 +147,13 @@ class DictDataController extends AbstractController
     }
 
     /**
-     * 修改字典数据信息
+     * @Explanation(content="修改字典数据信息")
      * @param int $id
      * @RequestMapping(path="update/{id}", methods="put")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function update(int $id)
@@ -184,11 +196,13 @@ class DictDataController extends AbstractController
     }
 
     /**
-     * 删除字典数据
+     * @Explanation(content="删除字典数据")
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function destroy(int $id)

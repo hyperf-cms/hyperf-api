@@ -6,6 +6,7 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
+use App\Foundation\Annotation\Explanation;
 use App\Model\Auth\Permission;
 use App\Model\Auth\Role;
 use App\Model\Auth\User;
@@ -15,6 +16,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -33,7 +35,10 @@ class PermissionController extends AbstractController
     /**
      * 获取权限数据列表
      * @RequestMapping(path="list", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function index()
     {
@@ -113,9 +118,12 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 添加权限
+     * @Explanation(content="添加权限操作")
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function store()
     {
@@ -124,28 +132,68 @@ class PermissionController extends AbstractController
             'parent_id' => $postData['parent_id'] ?? 0,
             'name' => $postData['name'] ?? '',
             'display_name' => $postData['display_name'] ?? '',
+            'type' => $postData['type'] ?? ''
         ];
         //配置验证
         $rules = [
+            'parent_id' => 'required',
             'name' => 'required',
             'display_name' => 'required',
+            'type' => 'required',
         ];
         $message = [
+            'parent_id.required' => '[parent_id]缺失',
             'name.required' => '[name]缺失',
+            'type.required' => '[type]缺失',
             'display_name.required' => '[display_name]缺失',
         ];
         $this->verifyParams($params, $rules, $message);
+        $permission = new Permission();
+        $permission->parent_id = $params['parent_id'];
+        $permission->type = $params['type'];
+        $permission->name = $params['name'];
+        $permission->display_name = $params['display_name'];
+        $permission->display_desc = $postData['display_desc'] ?? '';
+        $permission->url = $postData['url'] ?? '';
+        $permission->component = $postData['component'] ?? '';
+        $permission->guard_name = $postData['guard_name'] ?? '';
+        $permission->icon = $postData['icon'] ?? '';
+        $permission->hidden = $postData['hidden'] ?? false;
+        $permission->status = $postData['status'] ?? 1;
+        $permission->sort = $postData['sort'] ?? 99;
+        $permission->created_at = date('Y-m-d H:i:s');
+        $permission->updated_at = date('Y-m-d H:i:s');
 
-        if (!Permission::create($params)) $this->throwExp(400, '添加权限失败');
+        if (!$permission->save()) $this->throwExp(400, '添加权限失败');
 
         return $this->successByMessage('添加权限成功');
     }
 
     /**
-     * 修改权限
+     * 获取单个权限的数据
+     * @param int $id
+     * @RequestMapping(path="edit/{id}", methods="get")
+     * @Middleware(RequestMiddleware::class)
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function edit(int $id)
+    {
+        $permissionInfo = Permission::findById($id);
+        if (empty($permissionInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '获取权限信息失败');
+
+        return $this->success([
+            'list' => $permissionInfo
+        ]);
+    }
+
+    /**
+     * @Explanation(content="修改权限操作")
      * @param int $id
      * @RequestMapping(path="update/{id}", methods="put")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function update(int $id)
@@ -153,35 +201,55 @@ class PermissionController extends AbstractController
         $postData = $this->request->all();
         $params = [
             'id' => $id,
+            'parent_id' => $postData['parent_id'] ?? 0,
             'name' => $postData['name'] ?? '',
-            'parent_id' => $postData['parent_id'] ?? '',
-            'display_name' => $postData['display_name'] ?? ''
+            'display_name' => $postData['display_name'] ?? '',
+            'type' => $postData['type'] ?? ''
         ];
         //配置验证
         $rules = [
             'id' => 'required',
-            'name' => 'required',
             'parent_id' => 'required',
-            'display_name' => 'display_name',
+            'name' => 'required',
+            'display_name' => 'required',
+            'type' => 'required',
         ];
         $message = [
-            'id.required' => '非法参数',
-            'name.required' => '[name]缺失',
+            'id.required' => '[id]缺失',
             'parent_id.required' => '[parent_id]缺失',
+            'name.required' => '[name]缺失',
+            'type.required' => '[type]缺失',
             'display_name.required' => '[display_name]缺失',
         ];
 
         $this->verifyParams($params, $rules, $message);
-        if (!Permission::query()->where('id', $id)->update($params)) $this->throwExp(400, '修改权限信息失败');
+        $permission = Permission::findById($id);
+        $permission->parent_id = $params['parent_id'];
+        $permission->type = $params['type'];
+        $permission->name = $params['name'];
+        $permission->display_name = $params['display_name'];
+        $permission->display_desc = $postData['display_desc'] ?? '';
+        $permission->url = $postData['url'] ?? '';
+        $permission->component = $postData['component'] ?? '';
+        $permission->guard_name = $postData['guard_name'] ?? '';
+        $permission->icon = $postData['icon'] ?? '';
+        $permission->hidden = $postData['hidden'] ?? false;
+        $permission->status = $postData['status'] ?? 1;
+        $permission->sort = $postData['sort'] ?? 99;
+        $permission->updated_at = date('Y-m-d H:i:s');
+        if (!$permission->save()) $this->throwExp(400, '修改权限信息失败');
 
         return $this->successByMessage('修改权限信息成功');
     }
 
     /**
-     * 修改角色
+     * @Explanation(content="删除权限操作")
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function destroy(int $id)
@@ -205,9 +273,12 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 分配用户角色
+     * @Explanation(content="分配用户角色")
      * @RequestMapping(path="accord_user_role", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function accordUserRole()
@@ -242,9 +313,12 @@ class PermissionController extends AbstractController
 
 
     /**
-     * 分配角色权限
+     * @Explanation(content="分配角色权限")
      * @RequestMapping(path="accord_role_permission", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function accordRolePermission()
@@ -279,10 +353,12 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 分配用户权限
+     * @Explanation(content="分配用户权限")
      * @RequestMapping(path="accord_user_permission", methods="post")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function accordUserPermission()
