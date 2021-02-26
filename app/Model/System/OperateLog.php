@@ -59,7 +59,6 @@ class OperateLog extends Model
             $operateLog->{$key} = $value;
         }
 
-        var_dump($operateLog);
         if (!$operateLog->save()) return false;
         return true;
     }

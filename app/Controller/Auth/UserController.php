@@ -7,8 +7,8 @@ namespace App\Controller\Auth;
 use App\Constants\StatusCode;
 use App\Constants\UploadCode;
 use App\Controller\AbstractController;
+use App\Foundation\Annotation\Explanation;
 use App\Http\Service\Auth\UserService;
-use App\Http\Service\Common\UploadService;
 use App\Model\Auth\User;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use League\Flysystem\Filesystem;
 
@@ -42,8 +43,10 @@ class UserController extends AbstractController
     /**
      * 获取用户数据列表
      * @RequestMapping(path="list", methods="get")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function index()
     {
@@ -76,10 +79,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * 添加用户
+     * @Explanation(content="添加用户操作")
      * @RequestMapping(path="store", methods="post")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      */
     public function store()
     {
@@ -205,7 +210,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * 上传用户头像
+     * @Explanation(content="上传用户头像")
      * @RequestMapping(path="upload_avatar", methods="post")
      * @Middleware(RequestMiddleware::class)
      */
@@ -260,11 +265,13 @@ class UserController extends AbstractController
 
 
     /**
-     * 修改用户资料
+     * @Explanation(content="修改用户资料")
      * @param int $id
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @RequestMapping(path="update/{id}", methods="put")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function update(int $id)
@@ -322,11 +329,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * 删除用户
+     * @Explanation(content="删除用户")
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function destroy(int $id)
@@ -338,7 +347,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * 修改用户密码
+     * @Explanation(content="修改用户密码")
      * @RequestMapping(path="reset_password", methods="post")
      * @Middleware(RequestMiddleware::class)
      * @return \Psr\Http\Message\ResponseInterface
@@ -382,10 +391,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * 修改用户密码
+     * @Explanation(content="修改用户状态")
      * @RequestMapping(path="change_status", methods="post")
-     * @Middleware(RequestMiddleware::class)
-     * @Middleware(PermissionMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function changeStatus()

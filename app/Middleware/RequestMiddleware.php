@@ -59,7 +59,7 @@ class RequestMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requireParams = $request->getQueryParams();
+        $requireParams = $this->request->all();
         //记录请求参数日志记录
         if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
         $isValidToken = false;
