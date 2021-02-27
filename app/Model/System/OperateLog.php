@@ -48,7 +48,7 @@ class OperateLog extends Model
      * @param array $logData
      * @return bool
      */
-    public static function recordLog(array $logData = []) : bool
+    public static function add(array $logData = []) : bool
     {
         if (empty($logData)) return false;
         $operateLog = new static;

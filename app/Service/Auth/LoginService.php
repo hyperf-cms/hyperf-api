@@ -122,7 +122,7 @@ class LoginService extends BaseService
                     'name' => $value['name'],
                     'path' => $value['url'],
                     'redirect' => 'noRedirect',
-                    'hidden' => $value['hidden'] ? true : false,
+                    'hidden' => $value['hidden'],
                     'alwaysShow' => true,
                     'component' => $value['component'],
                     'meta' => [
@@ -138,7 +138,7 @@ class LoginService extends BaseService
                             $temp[] = [
                                 'name' => $v1['name'],
                                 'path' => $v1['url'],
-                                'hidden' => $v1['hidden'] ? true : false,
+                                'hidden' => $v1['hidden'],
                                 'alwaysShow' => true,
                                 'component' => $v1['component'],
                                 'meta' => [

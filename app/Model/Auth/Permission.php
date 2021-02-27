@@ -52,11 +52,6 @@ class Permission extends DonjanPermission
         $permissionList = objToArray($permissionList);
         $permissionList = array_column($permissionList, null, 'id');
 
-        foreach ($permissionList as $key => $val) {
-            if ($val['status'] == self::OFF_STATUS) unset($permissionList[$key]);
-            if ($val['type'] != self::MENU_TYPE) unset($permissionList[$key]);
-            if ($val['hidden'] === self::IS_HIDDEN) unset($permissionList[$key]);
-        }
         //使用引用传递递归数组
         $menuList = [];
         foreach($permissionList as $key => $value){
@@ -66,8 +61,30 @@ class Permission extends DonjanPermission
                 $menuList[] = &$permissionList[$key];
             }
         }
+        //递归过滤 不符合条件的数据
+        $menuList = static::checkPermissionFilter($menuList);
 
         return $menuList;
+    }
+
+    /**
+     * 检查权限是否需要过滤
+     * @param array $item
+     * @return array
+     */
+    private static function checkPermissionFilter(array $item) : array
+    {
+        if (!empty($item)) {
+            foreach ($item as $key => $value) {
+                if ($value['status'] == self::OFF_STATUS) unset($item[$key]);
+                if ($value['type'] != self::MENU_TYPE) unset($item[$key]);
+                if ($value['hidden'] == self::IS_HIDDEN) unset($item[$key]);
+                if (!empty($item[$key]['child']))  {
+                    $item[$key]['child'] = array_values(static::checkPermissionFilter($item[$key]['child']));
+                }
+            }
+           return array_values($item);
+        }
     }
 
     /**

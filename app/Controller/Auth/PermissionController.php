@@ -165,6 +165,8 @@ class PermissionController extends AbstractController
         $permission->updated_at = date('Y-m-d H:i:s');
 
         if (!$permission->save()) $this->throwExp(400, '添加权限失败');
+        //清楚缓存操作
+        $permission->forgetCachedPermissions();
 
         return $this->successByMessage('添加权限成功');
     }
@@ -239,6 +241,7 @@ class PermissionController extends AbstractController
         $permission->updated_at = date('Y-m-d H:i:s');
         if (!$permission->save()) $this->throwExp(400, '修改权限信息失败');
 
+        $permission->forgetCachedPermissions();
         return $this->successByMessage('修改权限信息成功');
     }
 

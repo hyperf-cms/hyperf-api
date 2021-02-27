@@ -156,3 +156,16 @@ if (!function_exists('getExtByFile')) {
         return pathinfo($file, PATHINFO_EXTENSION);
     }
 }
+
+if (!function_exists('is_true')) {
+    /**
+     * 将字符串的true 跟 false 转换成布尔值
+     * @param $val
+     * @param bool $return_null
+     * @return bool|mixed|null
+     */
+    function is_true($val, $return_null=false){
+        $boolval = ( is_string($val) ? filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $val );
+        return ( $boolval===null && !$return_null ? false : $boolval );
+    }
+}

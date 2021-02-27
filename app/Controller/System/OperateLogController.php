@@ -48,9 +48,11 @@ class OperateLogController extends AbstractController
         if (!empty($beginTime) && !empty($endTime)) $operateLogQuery->whereBetween('created_at', [$beginTime, $endTime]);
         if (!empty($userId)) $operateLogQuery->where('user_id', $userId);
         if (!empty($operate)) $operateLogQuery->where('operate', $operate);
+        $operateLogQuery->orderBy('created_at', 'desc');
 
         $total = $operateLogQuery->count();
-        $data = $operateLogQuery->get();
+        $operateLogQuery = $this->pagingCondition($operateLogQuery, $this->request->all());
+        $data = $operateLogQuery->get()->toArray();
 
         return $this->success([
             'list' => $data,
