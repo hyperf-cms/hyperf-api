@@ -1,11 +1,9 @@
 <?php
 namespace App\Http\Service\System;
 
-use App\Foundation\Annotation\Explanation;
 use App\Foundation\Traits\Singleton;
+use App\Foundation\Utils\FreeApi;
 use App\Http\Service\BaseService;
-use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\HttpServer\Router\Dispatched;
 
 /**
  * 登陆日志服务类
@@ -24,14 +22,27 @@ class LoginLogService extends BaseService
      */
     public function collectLoginLogInfo() : array
     {
-        //获取用户信息
-        $userInfo = ConGet('user_info');
+        //获取请求参数
+        $requireParams = $this->request->all();
+
+        //获取登陆信息
         $loginIp = getClientIp($this->request) ?? '';
-        $loginAddress = ip_to_address($loginIp);
-        $userAgent = $this->request->header('user-agent');
+        $ipAddress = FreeApi::getResult($loginIp);
+        $province = empty($ipAddress['province']) ? '' : $ipAddress['province'];
+        $city = empty($ipAddress['city']) ? '' : $ipAddress['city'];
+        $loginAddress = $province . $city;
+        $browser = get_browser_os();
+        $os = get_os();
+        $loginTime = date('Y-m-d H:i:s');
 
-
-
+        return [
+           'username' => $requireParams['username'],
+           'login_ip' => $loginIp,
+           'login_address' => $loginAddress,
+           'login_browser' => $browser,
+           'os' => $os,
+           'login_date' => $loginTime,
+        ];
     }
 
 }

@@ -30,6 +30,12 @@ class LoginLog extends Model
     protected $connection = 'default';
 
     /**
+     * 是否自定更新时间戳
+     * @var string
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -42,24 +48,4 @@ class LoginLog extends Model
      * @var array
      */
     protected $casts = [];
-
-    /**
-     * 记录操登陆
-     * @param array $logData
-     * @return bool
-     */
-    public static function add(array $logData = []) : bool
-    {
-        if (empty($logData)) return false;
-        $operateLog = new static;
-        $operateLog->created_at = date('Y-m-d H:i:s');
-        $operateLog->updated_at = date('Y-m-d H:i:s');
-
-        foreach ($logData as $key => $value) {
-            $operateLog->{$key} = $value;
-        }
-
-        if (!$operateLog->save()) return false;
-        return true;
-    }
 }

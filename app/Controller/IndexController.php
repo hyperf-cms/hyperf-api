@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Foundation\Annotation\Explanation;
+use App\Foundation\Utils\FreeApi;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -30,7 +31,6 @@ class IndexController extends AbstractController
 //        $loginAddress = ip_to_address($loginIp);
         $userAgent = $this->request->header('user-agent');
 
-
-        return $this->success([$loginIp], '获取数据成功');
+        return $this->success([get_browser($this->request->getHeader('user-agent')[0])], '获取数据成功');
     }
 }

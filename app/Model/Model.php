@@ -38,4 +38,21 @@ abstract class Model extends BaseModel
         return static::query()->find($id);
     }
 
+    /**
+     * 添加数据
+     * @param array $data
+     * @return bool
+     */
+     static function add(array $data = []) : bool
+    {
+        if (empty($data)) return false;
+        $model = new static;
+
+        foreach ($data as $key => $value) {
+            $model->{$key} = $value;
+        }
+
+        if (!$model->save()) return false;
+        return true;
+    }
 }

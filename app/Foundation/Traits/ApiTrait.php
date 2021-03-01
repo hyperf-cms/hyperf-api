@@ -4,7 +4,9 @@ namespace App\Foundation\Traits;
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
+use App\Http\Service\System\LoginLogService;
 use App\Http\Service\System\OperateLogService;
+use App\Model\System\LoginLog;
 use App\Model\System\OperateLog;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -62,14 +64,26 @@ trait ApiTrait
     protected function error(int $statusCode = StatusCode::ERR_EXCEPTION, string $message = null)
     {
         $message = $message ?? StatusCode::ERR_EXCEPTION;
-        //记录操作日志
-        $logData = OperateLogService::getInstance()->collectLogInfo();
-        if(!empty($logData)) {
-            $logData['response_result'] = $message;
-            $logData['response_code'] = $statusCode;
-            if (!empty($logData['action'])) OperateLog::add($logData);
+
+        $targetUrl = $this->request->getUri()->getPath();
+
+        if ($targetUrl == '/auth/login') {
+            //记录登陆异常日志
+            $loginLogData = LoginLogService::getInstance()->collectLoginLogInfo();
+            $loginLogData['response_code'] = $statusCode;
+            $loginLogData['response_result'] = $message;
+            LoginLog::add($loginLogData);
+            return $this->response->json($this->formatResponse([], $message, $statusCode));
+        }else {
+            //记录操作异常日志
+            $logData = OperateLogService::getInstance()->collectLogInfo();
+            if(!empty($logData)) {
+                $logData['response_result'] = $message;
+                $logData['response_code'] = $statusCode;
+                if (!empty($logData['action'])) OperateLog::add($logData);
+            }
+            return $this->response->json($this->formatResponse([], $message, $statusCode));
         }
-        return $this->response->json($this->formatResponse([], $message, $statusCode));
     }
 
     /**

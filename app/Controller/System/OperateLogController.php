@@ -14,7 +14,7 @@ use App\Middleware\PermissionMiddleware;
 
 
 /**
- * Class MenuController
+ * Class OperateLogController
  * @Controller(prefix="setting/log_module/operate_log")
  * @package App\Controller\System
  * @Author YiYuan-Lin
@@ -37,7 +37,7 @@ class OperateLogController extends AbstractController
      * })
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function list()
+    public function index()
     {
         $beginTime = $this->request->input('created_at')[0] ?? '';
         $endTime = $this->request->input('created_at')[1] ?? '';

@@ -161,6 +161,7 @@ class PermissionController extends AbstractController
         $permission->hidden = $postData['hidden'] ?? false;
         $permission->status = $postData['status'] ?? 1;
         $permission->sort = $postData['sort'] ?? 99;
+        $permission->guard_name = 'web';
         $permission->created_at = date('Y-m-d H:i:s');
         $permission->updated_at = date('Y-m-d H:i:s');
 
@@ -180,6 +181,7 @@ class PermissionController extends AbstractController
      */
     public function edit(int $id)
     {
+
         $permissionInfo = Permission::findById($id);
         if (empty($permissionInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '获取权限信息失败');
 

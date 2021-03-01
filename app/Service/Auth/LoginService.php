@@ -4,8 +4,10 @@ namespace App\Http\Service\Auth;
 use App\Constants\StatusCode;
 use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
+use App\Http\Service\System\LoginLogService;
 use App\Model\Auth\Permission;
 use App\Model\Auth\User;
+use App\Model\System\LoginLog;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
 use Phper666\JWTAuth\JWT;
@@ -61,6 +63,12 @@ class LoginService extends BaseService
         $user->last_ip = getClientIp($this->request);
         $user->save();
         $responseData = $this->respondWithToken($token);
+
+        //记录登陆日志
+        $loginLogData = LoginLogService::getInstance()->collectLoginLogInfo();
+        $loginLogData['response_code'] = 200;
+        $loginLogData['response_result'] = '登陆成功';
+        LoginLog::add($loginLogData);
 
         return $responseData;
     }
