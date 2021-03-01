@@ -37,7 +37,7 @@ class RoleController extends AbstractController
      *     @Middleware(PermissionMiddleware::class)
      * })
      */
-    public function list()
+    public function index()
     {
         $roleQuery = $this->role->newQuery();
 

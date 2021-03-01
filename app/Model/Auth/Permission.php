@@ -97,10 +97,13 @@ class Permission extends DonjanPermission
         $allPermissions = [];
         if (empty($user)) return $allPermissions;
 
+        $superRoleHasPermission = Permission::query()->orderBy('sort', 'asc')->get()->toArray();
+        $userHasPermission = objToArray($user->getAllPermissions());
+        array_multisort(array_column($userHasPermission, 'sort'), SORT_ASC, $userHasPermission);
+
         //判断当前登录用户是否为超级管理员,如果是的话返回所有权限
-        return $user->hasRole(Role::SUPER_ADMIN)
-            ? Permission::query()->get()->toArray()
-            : objToArray($user->getAllPermissions());
+        return $user->hasRole(Role::SUPER_ADMIN) ? $superRoleHasPermission : $userHasPermission;
+
     }
 
     /**
