@@ -1,18 +1,16 @@
 <?php
-namespace App\Http\Service\Auth;
+namespace App\Http\Service\System;
 
-use App\Constants\StatusCode;
+use App\Foundation\Annotation\Explanation;
 use App\Foundation\Traits\Singleton;
 use App\Http\Service\BaseService;
-use App\Model\Auth\User;
-use App\Model\System\OperateLog;
-use Hyperf\Di\Annotation\Inject;
-use phpDocumentor\Reflection\Types\Integer;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\HttpServer\Router\Dispatched;
 
 /**
  * 操作日志服务类
  * Class OperateLogService
- * @package App\Http\Service\Auth
+ * @package App\Http\Service\System
  * @Author YiYuan-Lin
  * @Date: 2020/12/16
  */
@@ -20,36 +18,45 @@ class OperateLogService extends BaseService
 {
     use Singleton;
 
-
     /**
-     * 添加操作日志
-     * @param integer [用户ID] $uid
-     * @param string [操作] $action
-     * @param string [返回数据] $data
-     * @param string [处理结果] $dealResult
-     * @return bool
+     * 收集操作日志信息
+     * @return array
      */
-   public function add(Integer $uid, string $action = '', string $data = '', string $dealResult = '') : bool
-   {
-       if (empty($uid)) return false;
-       if (empty($action)) return false;
+    public function collectLogInfo() : array
+    {
+        //获取请求参数
+        $requireParams = $this->request->all();
+        //获取目标控制器以及方法
+        $requestController = $this->request->getAttribute(Dispatched::class)->handler->callback;
+        $actionController = $requestController[0];
+        $actionMethod = $requestController[1];
+        //获取请求路由
+        $actionUrl = $this->request->getUri()->getPath();
+        //获取注解信息
+        $explanation = AnnotationCollector::getMethodsByAnnotation(Explanation::class);
+        $classMethodsExplanation = [];
+        foreach ($explanation as $key => $value) {
+            $classMethodsExplanation[$value['class']][$value['method']] = $value['annotation']->content;
+        }
+        $content = $classMethodsExplanation[$actionController][$actionMethod] ?? '';
+        if (empty($content))  return [];
 
-       //获取操作用户信息
-       $userInfo = User::getOneByUid($uid);
+        //获取用户信息
+        $userInfo = ConGet('user_info');
 
-       $username = $userInfo->username;
-       $operator = $userInfo->desc;
+        return [
+            'action' => $content ?? '',
+            'data' => json_encode($requireParams) ?? [],
+            'username' => $userInfo['username'] ?? '',
+            'operator' => $userInfo['desc'] ?? '',
+            'uid' => $userInfo['id'] ?? '',
+            'target_class' => $actionController ?? '',
+            'target_method' => $actionMethod ?? '',
+            'target_url' => $actionUrl ?? '',
+            'request_ip' => getClientIp($this->request) ?? '',
+            'request_method' => ucwords($this->request->getMethod()) ?? '',
+        ];
+    }
 
-       //初始化日志对象
-       $operatorLog = new OperateLog();
-       $operatorLog->action    = $action;
-       $operatorLog->data      = $data;
-       $operatorLog->uid       = $uid;
-       $operatorLog->username  = $username;
-       $operatorLog->operator  = $operator;
-       $operatorLog->dealResult = $dealResult;
 
-       $operatorLog->save();
-       return true;
-   }
 }

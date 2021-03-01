@@ -4,12 +4,12 @@ namespace App\Foundation\Traits;
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
+use App\Http\Service\System\OperateLogService;
+use App\Model\System\OperateLog;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Illuminate\Support\Facades\Validator;
 use Psr\Container\ContainerInterface;
 use Hyperf\Di\Annotation\Inject;
-use Throwable;
 
 trait ApiTrait
 {
@@ -62,6 +62,13 @@ trait ApiTrait
     protected function error(int $statusCode = StatusCode::ERR_EXCEPTION, string $message = null)
     {
         $message = $message ?? StatusCode::ERR_EXCEPTION;
+        //记录操作日志
+        $logData = OperateLogService::getInstance()->collectLogInfo();
+        if(!empty($logData)) {
+            $logData['response_result'] = $message;
+            $logData['response_code'] = $statusCode;
+            if (!empty($logData['action'])) OperateLog::add($logData);
+        }
         return $this->response->json($this->formatResponse([], $message, $statusCode));
     }
 

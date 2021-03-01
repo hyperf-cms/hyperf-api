@@ -1,17 +1,14 @@
 <?php
 namespace App\Foundation\Aspect;
 
-use App\Controller\Auth\UserController;
-use App\Controller\IndexController;
 use App\Foundation\Annotation\Explanation;
+use App\Http\Service\System\OperateLogService;
 use App\Model\System\OperateLog;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Router\Dispatched;
 
 /**
  * 操作日志类切面（用于记录操作日志）
@@ -42,47 +39,17 @@ class OperateLogAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        try {
-            // 在调用前进行某些处理
-            $requireParams = $this->request->all();
+        // 在调用前进行某些处理
+        $logData = OperateLogService::getInstance()->collectLogInfo();
 
-            $requestController = $this->request->getAttribute(Dispatched::class)->handler->callback;
-            $actionController = $requestController[0];
-            $actionMethod = $requestController[1];
-            $actionUrl = $this->request->getUri()->getPath();
-            $explanation = AnnotationCollector::getMethodsByAnnotation(Explanation::class);
-            $classMethodsExplanation = [];
-            foreach ($explanation as $key => $value) {
-                $classMethodsExplanation[$value['class']][$value['method']] = $value['annotation']->content;
-            }
-            $content = $classMethodsExplanation[$actionController][$actionMethod];
-            $userInfo = ConGet('user_info');
+        $result = $proceedingJoinPoint->process();
 
-            $logData = [];
-            $logData['action'] = $content ?? '';
-            $logData['data'] = json_encode($requireParams) ?? '';
-            $logData['username'] = $userInfo['username'] ?? '';
-            $logData['operator'] = $userInfo['desc'] ?? '';
-            $logData['uid'] = $userInfo['id'];
-            $logData['target_class'] = $actionController;
-            $logData['target_method'] = $actionMethod;
-            $logData['target_url'] = $actionUrl;
-            $logData['request_ip'] = getClientIp($this->request);
-            $logData['request_method'] = ucwords($this->request->getMethod());
+        //请求后处理
+        $responseResult = json_decode($result->__toString(), true);
+        $logData['response_result'] = $responseResult['msg'];
+        $logData['response_code'] = $responseResult['code'];
+        if (!empty($logData['action'])) OperateLog::add($logData);
 
-            $result = $proceedingJoinPoint->process();
-
-            //请求后处理
-            $responseResult = json_decode($this->result->__toString(), true);
-            $logData['response_result'] = $responseResult['msg'];
-            $logData['response_code'] = $responseResult['code'];
-            OperateLog::add($logData);
-
-            return $result;
-        }catch (\Exception $e) {
-            $logData['response_result'] = $e->getMessage();
-            $logData['response_code'] = $e->getCode();
-            OperateLog::add($logData);
-        }
+        return $result;
     }
 }

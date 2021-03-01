@@ -19,12 +19,18 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 class IndexController extends AbstractController
 {
     /**
-     * @Explanation(content="获取用户数据列表")
-     * @Middleware(RequestMiddleware::class)
+     * 获取用户数据列表
      * @RequestMapping(path="/test", methods="get,post")
      */
     public function index()
     {
-        return $this->success(['key' => 'value'], '获取数据成功');
+        //获取用户信息
+        $userInfo = ConGet('user_info');
+        $loginIp = getClientIp($this->request) ?? '';
+//        $loginAddress = ip_to_address($loginIp);
+        $userAgent = $this->request->header('user-agent');
+
+
+        return $this->success([$loginIp], '获取数据成功');
     }
 }

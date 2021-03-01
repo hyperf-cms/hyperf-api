@@ -127,7 +127,6 @@ class RoleController extends AbstractController
      */
     public function update(int $id)
     {
-        $this->throwExp(400, '修改角色信息失败');
         $postData = $this->request->all();
         $params = [
             'id' => $id,

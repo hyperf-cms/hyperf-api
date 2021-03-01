@@ -59,7 +59,8 @@
             "app/Foundation/Helpers/curl.php",
             "app/Foundation/Helpers/functions.php",
             "app/Foundation/Helpers/math.php",
-            "app/Foundation/Helpers/time.php"
+            "app/Foundation/Helpers/time.php",
+            "app/Foundation/Helpers/system.php"
         ]
     },
     "autoload-dev": {

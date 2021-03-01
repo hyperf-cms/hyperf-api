@@ -39,15 +39,20 @@ class OperateLogController extends AbstractController
      */
     public function list()
     {
-        $beginTime = $this->request->input('time')[0] ?? '';
-        $endTime = $this->request->input('time')[1] ?? '';
-        $userId = $this->request->input('user_id') ?? '';
-        $operate = $this->request->input('operator') ?? '';
+        $beginTime = $this->request->input('created_at')[0] ?? '';
+        $endTime = $this->request->input('created_at')[1] ?? '';
+        $action = $this->request->input('action') ?? '';;
+        $operator = $this->request->input('operator') ?? '';
+        $status = $this->request->input('status') ?? '';
 
         $operateLogQuery = $this->operate->newQuery();
         if (!empty($beginTime) && !empty($endTime)) $operateLogQuery->whereBetween('created_at', [$beginTime, $endTime]);
-        if (!empty($userId)) $operateLogQuery->where('user_id', $userId);
-        if (!empty($operate)) $operateLogQuery->where('operate', $operate);
+        if (!empty($action)) $operateLogQuery->where('action', 'like', '%' . $action . '%');
+        if (!empty($operate)) $operateLogQuery->where('operate', 'like', '%' . $operator . '%');
+        if (strlen($status) > 0) {
+            if ($status == 0) $operateLogQuery->where('response_code', '!=', 200);
+            if ($status == 1) $operateLogQuery->where('response_code', 200);
+        }
         $operateLogQuery->orderBy('created_at', 'desc');
 
         $total = $operateLogQuery->count();
