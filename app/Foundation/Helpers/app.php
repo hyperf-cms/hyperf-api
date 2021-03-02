@@ -20,7 +20,7 @@ if (! function_exists('isStdoutLog')) {
     }
 }
 
-if(! function_exists('ConSet')) {
+if(! function_exists('conSet')) {
     /**
      * 设置协程上下文
      * @param string $id
@@ -32,14 +32,14 @@ if(! function_exists('ConSet')) {
     }
 }
 
-if(! function_exists('ConGet')) {
+if(! function_exists('conGet')) {
     /**
      * 获取协程上下文
      * @param string $id
      * @param $default
      * @return mixed
      */
-    function ConGet(string $id, $default = null) {
+    function conGet(string $id, $default = null) {
         return \Hyperf\Utils\Context::get($id, $default);
     }
 }
