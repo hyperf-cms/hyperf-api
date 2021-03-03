@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Common;
 
+use App\Middleware\RequestMiddleware;
 use App\Controller\AbstractController;
 use App\Http\Service\Common\UploadService;
 use Hyperf\HttpServer\Annotation\Controller;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
@@ -18,6 +21,9 @@ class UploadController extends AbstractController
     /**
      * 上传单张图片接口
      * @RequestMapping(path="single_pic", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \League\Flysystem\FileExistsException
      */

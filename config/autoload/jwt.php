@@ -23,6 +23,8 @@ return [
 
     'ttl' => env('JWT_TTL', 7200), // token过期时间，单位为秒
 
+    'ttl_cache' => env('JWT_TTL_CACHE', 7200), //token 缓存时间 单位为秒
+
     'alg' => env('JWT_ALG', 'HS256'), // jwt的hearder加密算法
 
     /**
@@ -69,7 +71,7 @@ return [
     /**
      * 黑名单的宽限时间 单位为：秒，注意：如果使用单点登录，该宽限时间无效
      */
-    'blacklist_grace_period' => env('JWT_BLACKLIST_GRACE_PERIOD', 0),
+    'blacklist_grace_period' => env('JWT_TTL', 0),
 
     /**
      * 黑名单缓存token时间，注意：该时间一定要设置比token过期时间要大一点，默认为1天,最好设置跟过期时间一样

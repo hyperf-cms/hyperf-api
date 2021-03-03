@@ -20,6 +20,8 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\Exception\InvalidConfigException;
 use Phper666\JWTAuth\Exception\JWTException;
 use Phper666\JWTAuth\Exception\TokenValidException;
+use Phper666\JWTAuth\JWT;
+use Phper666\JWTAuth\Util\JWTUtil;
 use Psr\Http\Message\ResponseInterface;
 use Hyperf\Di\Annotation\Inject;
 use Throwable;
