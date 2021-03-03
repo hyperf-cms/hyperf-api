@@ -89,7 +89,7 @@ class AdviceController extends AbstractController
         ];
         $this->verifyParams($params, $rules, $message);
 
-        $adviceQuery = new advice();
+        $adviceQuery = new Advice();
         $adviceQuery->title = $params['title'];
         $adviceQuery->type = $params['type'];
         $adviceQuery->content = $params['content'];
@@ -114,7 +114,7 @@ class AdviceController extends AbstractController
      */
     public function edit(int $id)
     {
-        $adviceInfo = advice::findById($id);
+        $adviceInfo = Advice::findById($id);
         if (empty($adviceInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取字典信息失败');
 
         return $this->success([
@@ -156,7 +156,7 @@ class AdviceController extends AbstractController
         ];
         $this->verifyParams($params, $rules, $message);
 
-        $adviceQuery = advice::findById($id);
+        $adviceQuery = Advice::findById($id);
         $adviceQuery->title = $params['title'];
         $adviceQuery->type = $params['type'];
         $adviceQuery->content = $params['content'];
@@ -164,6 +164,46 @@ class AdviceController extends AbstractController
         if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '修改系统建议错误');
 
         return $this->successByMessage('修改系统建议成功');
+    }
+
+    /**
+     * @Explanation(content="回复建议")
+     * @param int $id
+     * @RequestMapping(path="reply/{id}", methods="put")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function reply(int $id)
+    {
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        $postData = $this->request->all();
+        $params = [
+            'reply' => $postData['reply'] ?? '',
+            'status' => $postData['status'] ?? '',
+        ];
+        //配置验证
+        $rules = [
+            'reply' => 'required',
+            'status' => 'required|integer',
+        ];
+        //错误信息
+        $message = [
+            'reply.required' => '[reply]缺失',
+            'status.required' => '[status]缺失',
+            'status.integer' => '[status]类型不正确',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $adviceQuery = Advice::findById($id);
+        $adviceQuery->reply = $params['reply'];
+        $adviceQuery->status = $params['status'];
+
+        if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '回复系统建议错误');
+
+        return $this->successByMessage('回复系统建议成功');
     }
 
     /**
@@ -179,7 +219,7 @@ class AdviceController extends AbstractController
     public function destroy(int $id)
     {
         if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-        if (!advice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        if (!Advice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
 
         return $this->successByMessage('删除系统建议成功');
     }
