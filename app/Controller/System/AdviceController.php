@@ -99,7 +99,6 @@ class AdviceController extends AbstractController
 
         if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统建议错误');
 
-        var_dump($adviceQuery->created_at);
         return $this->successByMessage('添加系统建议成功');
     }
 
