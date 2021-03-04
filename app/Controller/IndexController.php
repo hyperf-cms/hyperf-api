@@ -26,6 +26,6 @@ class IndexController extends AbstractController
      */
     public function index()
     {
-
+        echo config('log_path');
     }
 }
