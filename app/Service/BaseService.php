@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Service;
+namespace App\Service;
 
 use App\Exception\Handler\BusinessException;
 use Hyperf\Di\Annotation\Inject;
@@ -8,7 +8,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 
 /**
  * Class BaseService
- * @package App\Http\Services
+ * @package App\Services
  * @Author YiYuan-LIn
  * @Date: 2019/4/25
  * 服务基础类

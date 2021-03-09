@@ -1,15 +1,15 @@
 <?php
-namespace App\Http\Service\System;
+namespace App\Service\System;
 
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Filesystem\Filesystem;
 
 /**
  * 系统日志服务类
  * Class SystemLogService
- * @package App\Http\Service\System
+ * @package App\Service\System
  * @Author YiYuan-Lin
  * @Date: 2021/03/04
  */

@@ -6,7 +6,7 @@ namespace App\Middleware;
 
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
-use App\Http\Service\Auth\UserService;
+use App\Service\Auth\UserService;
 use App\Model\Auth\Role;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Setting;
 
 use App\Controller\AbstractController;
-use App\Http\Service\Setting\ServeMonitorService;
+use App\Service\Setting\ServeMonitorService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;

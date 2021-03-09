@@ -1,8 +1,8 @@
 <?php
-namespace App\Http\Service\Setting;
+namespace App\Service\Setting;
 
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Swoole\Http\Request;
 
@@ -10,7 +10,7 @@ use Swoole\Http\Request;
 /**
  * 服务监控服务类
  * Class ServeMonitorService
- * @package App\Http\Service\Setting
+ * @package App\Service\Setting
  * @Author YiYuan-Lin
  * @Date: 2021/2/4
  */

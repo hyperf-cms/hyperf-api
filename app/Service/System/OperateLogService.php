@@ -1,16 +1,16 @@
 <?php
-namespace App\Http\Service\System;
+namespace App\Service\System;
 
 use App\Foundation\Annotation\Explanation;
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\HttpServer\Router\Dispatched;
 
 /**
  * 操作日志服务类
  * Class OperateLogService
- * @package App\Http\Service\System
+ * @package App\Service\System
  * @Author YiYuan-Lin
  * @Date: 2020/12/16
  */

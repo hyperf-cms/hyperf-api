@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\Context;
 

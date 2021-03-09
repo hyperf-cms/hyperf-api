@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\System;
+namespace App\Controller\System;
 
 use App\Controller\AbstractController;
 use App\Model\System\LoginLog;
@@ -17,7 +17,7 @@ use App\Middleware\PermissionMiddleware;
  * 登陆日志
  * Class LoginLogController
  * @Controller(prefix="setting/log_module/login_log")
- * @package App\Http\Controllers\System
+ * @package App\Controller\System
  * @Author YiYuan-Lin
  * @Date: 2021/3/1
  */

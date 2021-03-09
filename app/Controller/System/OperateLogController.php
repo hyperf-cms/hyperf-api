@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\System;
+namespace App\Controller\System;
 
 use App\Controller\AbstractController;
 use App\Model\System\OperateLog;

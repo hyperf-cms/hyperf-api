@@ -1,10 +1,10 @@
 <?php
-namespace App\Http\Service\Auth;
+namespace App\Service\Auth;
 
 use App\Constants\StatusCode;
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
-use App\Http\Service\System\LoginLogService;
+use App\Service\BaseService;
+use App\Service\System\LoginLogService;
 use App\Model\Auth\Permission;
 use App\Model\Auth\User;
 use App\Model\System\LoginLog;
@@ -15,7 +15,7 @@ use Phper666\JWTAuth\JWT;
 /**
  * 登陆服务基础类
  * Class LoginService
- * @package App\Http\Service\Auth
+ * @package App\Service\Auth
  * @Author YiYuan-Lin
  * @Date: 2020/10/29
  */

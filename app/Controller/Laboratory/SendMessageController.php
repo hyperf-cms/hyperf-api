@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Laboratory;
 
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
@@ -11,10 +11,11 @@ use Swoole\Server;
 use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
-class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
+class SendMessageController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     public function onMessage($server, Frame $frame): void
     {
+        var_dump($frame->data);
         $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
 
@@ -25,6 +26,6 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 
     public function onOpen($server, Request $request): void
     {
-        $server->push($request->fd, 'Opened');
+        $server->push($request->fd, 'Opened' . $request->fd);
     }
 }

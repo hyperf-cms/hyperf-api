@@ -7,8 +7,9 @@ namespace App\Middleware;
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
-use App\Http\Service\Auth\UserService;
+use App\Service\Auth\UserService;
 use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Utils\Context;
 use Phper666\JWTAuth\Exception\TokenValidException;
 use Phper666\JWTAuth\Exception\JWTException;
 use Phper666\JWTAuth\JWT;
@@ -30,7 +31,6 @@ class RequestMiddleware implements MiddlewareInterface
      * @var RequestInterface
      */
     protected $request;
-
 
     /**
      * @var JWT
@@ -57,7 +57,6 @@ class RequestMiddleware implements MiddlewareInterface
         $requireParams = $this->request->all();
         //记录请求参数日志记录
         if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
-
         try {
             $isValidToken = false;
             // 根据具体业务判断逻辑走向，这里假设用户携带的token有效

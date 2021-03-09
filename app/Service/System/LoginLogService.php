@@ -1,14 +1,14 @@
 <?php
-namespace App\Http\Service\System;
+namespace App\Service\System;
 
 use App\Foundation\Traits\Singleton;
 use App\Foundation\Utils\FreeApi;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 
 /**
  * 登陆日志服务类
  * Class LoginLogService
- * @package App\Http\Service\System
+ * @package App\Service\System
  * @Author YiYuan-Lin
  * @Date: 2020/12/16
  */

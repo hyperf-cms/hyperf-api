@@ -6,7 +6,7 @@ namespace App\Controller\Auth;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
-use App\Http\Service\Auth\LoginService;
+use App\Service\Auth\LoginService;
 use App\Middleware\RequestMiddleware;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;

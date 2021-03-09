@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\System;
+namespace App\Controller\System;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
-use App\Http\Service\System\SystemLogService;
+use App\Service\System\SystemLogService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;

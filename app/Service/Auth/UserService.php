@@ -1,9 +1,9 @@
 <?php
-namespace App\Http\Service\Auth;
+namespace App\Service\Auth;
 
 use App\Constants\StatusCode;
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
@@ -13,7 +13,7 @@ use Phper666\JWTAuth\JWT;
 /**
  * 用户服务基础类
  * Class UserService
- * @package App\Http\Service\Auth
+ * @package App\Service\Auth
  * @Author YiYuan-Lin
  * @Date: 2020/10/29
  */

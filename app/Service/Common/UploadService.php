@@ -1,10 +1,10 @@
 <?php
-namespace App\Http\Service\Common;
+namespace App\Service\Common;
 
 use App\Constants\StatusCode;
 use App\Constants\UploadCode;
 use App\Foundation\Traits\Singleton;
-use App\Http\Service\BaseService;
+use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Filesystem;

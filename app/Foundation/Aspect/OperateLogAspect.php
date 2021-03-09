@@ -2,7 +2,7 @@
 namespace App\Foundation\Aspect;
 
 use App\Foundation\Annotation\Explanation;
-use App\Http\Service\System\OperateLogService;
+use App\Service\System\OperateLogService;
 use App\Model\System\OperateLog;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Annotation\Inject;

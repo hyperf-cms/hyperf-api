@@ -8,7 +8,7 @@ use App\Constants\StatusCode;
 use App\Constants\UploadCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
-use App\Http\Service\Auth\UserService;
+use App\Service\Auth\UserService;
 use App\Model\Auth\User;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;

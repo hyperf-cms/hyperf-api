@@ -6,7 +6,7 @@ namespace App\Controller\Common;
 
 use App\Middleware\RequestMiddleware;
 use App\Controller\AbstractController;
-use App\Http\Service\Common\UploadService;
+use App\Service\Common\UploadService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
