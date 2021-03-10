@@ -24,4 +24,19 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
+
+    'foo' => [
+        'host' => '192.168.6.107',
+        'auth' => '',
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+    ]
 ];

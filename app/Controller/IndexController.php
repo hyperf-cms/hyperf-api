@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Foundation\Annotation\Explanation;
 use App\Foundation\Utils\FreeApi;
+use App\Pool\FooRedis;
+use App\Pool\Redis;
 use Carbon\Carbon;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -26,6 +28,9 @@ class IndexController extends AbstractController
      */
     public function index()
     {
-        echo config('log_path');
+        FooRedis::getInstance()->set('123', '1230');
+        return $this->success([
+            'list' => 123
+        ]);
     }
 }

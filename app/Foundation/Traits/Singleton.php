@@ -8,6 +8,8 @@
 
 namespace App\Foundation\Traits;
 
+use Hyperf\Utils\Context;
+
 /**
  * 构建单例基类
  * Trait Singleton
@@ -15,13 +17,27 @@ namespace App\Foundation\Traits;
  */
 trait Singleton
 {
-    private static $instance;
+    protected $instanceKey;
 
-    static function getInstance(...$args)
+    /**
+     * 返回一个单例
+     * @param array $params
+     * @param bool $refresh
+     * @return Singleton|mixed|null
+     */
+    public static function getInstance($params = [], $refresh = false)
     {
-        if(!isset(self::$instance)){
-            self::$instance = new static(...$args);
+        $key = get_called_class();
+        $instance = null;
+        if (Context::has($key)) {
+            $instance = Context::get($key);
         }
-        return self::$instance;
+
+        if ($refresh || is_null($instance) || ! $instance instanceof static) {
+            $instance = new static(...$params);
+            Context::set($key, $instance);
+        }
+
+        return $instance;
     }
 }
