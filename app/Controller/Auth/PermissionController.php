@@ -165,7 +165,7 @@ class PermissionController extends AbstractController
         $permission->created_at = date('Y-m-d H:i:s');
         $permission->updated_at = date('Y-m-d H:i:s');
 
-        if (!$permission->save()) $this->throwExp(400, '添加权限失败');
+        if (!$permission->save()) $this->throwExp(StatusCode::ERR_VALIDATION, '添加权限失败');
         //清楚缓存操作
         $permission->forgetCachedPermissions();
 
@@ -241,7 +241,7 @@ class PermissionController extends AbstractController
         $permission->status = $postData['status'] ?? 1;
         $permission->sort = $postData['sort'] ?? 99;
         $permission->updated_at = date('Y-m-d H:i:s');
-        if (!$permission->save()) $this->throwExp(400, '修改权限信息失败');
+        if (!$permission->save()) $this->throwExp(StatusCode::ERR_VALIDATION, '修改权限信息失败');
 
         $permission->forgetCachedPermissions();
         return $this->successByMessage('修改权限信息成功');
@@ -272,8 +272,9 @@ class PermissionController extends AbstractController
 
         $this->verifyParams($params, $rules, $message);
 
-        if (!Permission::query()->where('id', $id)->delete()) $this->throwExp(400, '删除权限信息失败');
-
+        if (!Permission::query()->where('parent_id', $id)->get()->isEmpty()) $this->throwExp(StatusCode::ERR_VALIDATION, '该权限下还有子权限，删除失败');
+            
+        if (!Permission::query()->where('id', $id)->delete()) $this->throwExp(StatusCode::ERR_VALIDATION, '删除权限信息失败');
         return $this->successByMessage('删除权限信息成功');
     }
 
