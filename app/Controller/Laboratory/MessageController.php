@@ -33,7 +33,12 @@ class MessageController extends AbstractController
     {
        $id = $this->request->query('id');
        $userInfo = conGet('user_info');
-       $messageList = FriendChatHistory::query()->whereIn('from_uid', [$userInfo['id'], $id])->get()->toArray();
+       $messageList = FriendChatHistory::query()
+           ->where(function ($query) use ($userInfo, $id) {
+               $query->where('from_uid', $userInfo['id'])->where('to_uid', $id);
+           })->orWhere(function ($query) use ($userInfo, $id) {
+               $query->where('from_uid', $id)->where('to_uid', $userInfo['id']);
+           })->get()->toArray();
 
         $list = [];
         foreach ($messageList as $key => $value) {
