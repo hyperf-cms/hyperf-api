@@ -10,7 +10,6 @@ use Hyperf\Utils\ApplicationContext;
 /**
  * 日志工具类
  * Class Log
- * @package App\Utils
  * @Author YiYuan-Lin
  * @Date: 2020/9/19
  */

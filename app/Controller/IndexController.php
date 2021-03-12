@@ -14,8 +14,9 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use App\Middleware\RequestMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\HttpServer\Request;
 
- /**
+/**
  * 测试控制器，一般用来测试一些代码
  * Class IndexController
  * @Controller
@@ -28,9 +29,8 @@ class IndexController extends AbstractController
      */
     public function index()
     {
-        FooRedis::getInstance()->set('123', '1230');
         return $this->success([
-            'list' => 123
+            'list' => $this->request->all()
         ]);
     }
 }

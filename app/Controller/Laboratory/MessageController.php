@@ -6,6 +6,7 @@ namespace App\Controller\Laboratory;
 
 use App\Controller\AbstractController;
 use App\Model\Auth\User;
+use App\Model\Laboratory\FriendChatHistory;
 use App\Pool\Redis;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -30,20 +31,24 @@ class MessageController extends AbstractController
      */
     public function pullMessage()
     {
+       $id = $this->request->query('id');
        $userInfo = conGet('user_info');
-       $messageList = Redis::getInstance()->hGetALl('CHAT_MESSAGE_LIST_BY_' . $userInfo['id']);
+       $messageList = FriendChatHistory::query()->whereIn('from_uid', [$userInfo['id'], $id])->get()->toArray();
 
         $list = [];
         foreach ($messageList as $key => $value) {
-            $value = json_decode($value, true);
             $list[] = [
-                'id' => $value['id'],
+                'id' => $value['message_id'],
                 'status' => $value['status'],
                 'type' => $value['type'],
-                'sendTime' => $value['sendTime'],
+                'sendTime' => intval($value['send_time']),
                 'content' => $value['content'],
-                'toContactId' => $value['toContactId'],
-                'fromUser' => $value['fromUser'],
+                'toContactId' => $value['to_uid'],
+                'fromUser' => [
+                    'id' => $value['from_uid'],
+                    'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
+                    'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
+                ],
             ];
         }
 

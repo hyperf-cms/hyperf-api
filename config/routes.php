@@ -8,7 +8,7 @@ use Hyperf\HttpServer\Router\Router;
 use App\Middleware\WsMiddleware;
 
 Router::addServer('ws', function () {
-    Router::get('/', 'App\Controller\Laboratory\Ws\ChatController', [
+    Router::get('/', 'App\Controller\Laboratory\Ws\WebsocketController', [
         'middleware' => [WsMiddleware::class]
     ]);
 });

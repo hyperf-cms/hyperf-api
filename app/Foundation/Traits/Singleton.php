@@ -19,12 +19,6 @@ trait Singleton
 {
     protected $instanceKey;
 
-    /**
-     * 返回一个单例
-     * @param array $params
-     * @param bool $refresh
-     * @return Singleton|mixed|null
-     */
     public static function getInstance($params = [], $refresh = false)
     {
         $key = get_called_class();
