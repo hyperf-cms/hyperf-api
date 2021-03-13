@@ -79,7 +79,6 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
     public function onClose($server, int $fd, int $reactorId): void
     {
         $userInfo = conGet('user_info');
-
         //删除在线列表中的用户
         Redis::getInstance()->hDel(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $userInfo['id']);
     }

@@ -109,7 +109,6 @@ if (!function_exists('getClientIp')) {
 if (!function_exists('objToArray')) {
     /**
      * 对象转数组
-     *
      * @param string $data
      * @return array|mixed
      */
@@ -121,7 +120,10 @@ if (!function_exists('objToArray')) {
 
 
 if (!function_exists('p')) {
-    // 传递数据以易于阅读的样式格式化后输出
+    /**
+     * 传递数据以易于阅读的样式格式化后输出
+     * @param $data
+     */
     function p($data)
     {
         $array = [];

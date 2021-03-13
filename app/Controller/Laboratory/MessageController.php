@@ -40,6 +40,12 @@ class MessageController extends AbstractController
                $query->where('from_uid', $id)->where('to_uid', $userInfo['id']);
            })->get()->toArray();
 
+       //将消息置为已读
+       FriendChatHistory::query()
+           ->where('to_uid', $userInfo['id'])
+           ->where('from_uid', $id)
+           ->update(['reception_state' => FriendChatHistory::RECEPTION_STATE_YES]);
+
         $list = [];
         foreach ($messageList as $key => $value) {
             $list[] = [

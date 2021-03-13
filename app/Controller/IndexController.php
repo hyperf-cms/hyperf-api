@@ -30,7 +30,7 @@ class IndexController extends AbstractController
     public function index()
     {
         return $this->success([
-            'list' => $this->request->all()
+            'list' => getMillisecond()
         ]);
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types = 1);
 namespace App\Controller\Laboratory\Ws;
 
 use App\Constants\Laboratory\ChatRedisKey;
+use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
+use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Pool\Redis;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -23,33 +25,85 @@ class FriendController extends AbstractController
      */
     public function sendMessage()
     {
-            $chatMessage = MessageParser::decode(conGet('chat_message'));
-            $contactData = $chatMessage['message'];
-            $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['toContactId']);
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
 
-            $receptionState = empty($contactId) ? 0 : 1;
-            //添加聊天记录
-            FriendChatHistory::addMessage($contactData, $receptionState);
+        var_dump($contactData);
+        $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
 
-            $contactData['status'] = 'succeed';
-            $contactData['toContactId'] = $contactData['fromUser']['id'];
+        $receptionState = empty($contactId) ? 0 : 1;
+        //添加聊天记录
+        FriendChatHistory::addMessage($contactData, $receptionState);
 
-            unset($contactData['fromUser']['unread']);
-            unset($contactData['fromUser']['lastSendTime']);
-            unset($contactData['fromUser']['lastContent']);
+        $contactData['status'] = 'succeed';
+        $contactData['toContactId'] = $contactData['fromUser']['id'];
 
-            return [
-                'message' => [
-                    'id' => $contactData['id'],
-                    'status' => 'succeed',
-                    'type' => $contactData['type'],
-                    'sendTime' => $contactData['sendTime'],
-                    'content' => $contactData['content'],
-                    'toContactId' => $contactData['fromUser']['id'],
-                    'fromUser' => $contactData['fromUser'],
+        unset($contactData['fromUser']['unread']);
+        unset($contactData['fromUser']['lastSendTime']);
+        unset($contactData['fromUser']['lastContent']);
+
+        return [
+            'message' => [
+                'id' => $contactData['id'],
+                'status' => 'succeed',
+                'type' => $contactData['type'],
+                'sendTime' => $contactData['sendTime'],
+                'content' => $contactData['content'],
+                'toContactId' => $contactData['fromUser']['id'],
+                'fromUser' => $contactData['fromUser'],
+            ],
+            'fd' => $contactId
+        ];
+    }
+
+    /**
+     * @RequestMapping(path="pull_message",methods="GET")
+     */
+    public function pullMessage()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+        $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['user_id']);
+
+        $messageList = FriendChatHistory::query()
+            ->where(function ($query) use ($contactData) {
+                $query->where('from_uid', $contactData['user_id'])->where('to_uid', $contactData['contact_id']);
+            })->orWhere(function ($query) use ($contactData) {
+                $query->where('from_uid', $contactData['contact_id'])->where('to_uid', $contactData['user_id']);
+            })->orderBy('id', 'desc')->limit(30)->get()->toArray();
+
+        $messageList = array_reverse($messageList);
+
+        //将消息置为已读
+        FriendChatHistory::query()
+            ->where('to_uid', $contactData['user_id'])
+            ->where('from_uid', $contactData['contact_id'])
+            ->update(['reception_state' => FriendChatHistory::RECEPTION_STATE_YES]);
+
+        $list = [];
+        foreach ($messageList as $key => $value) {
+            $list[] = [
+                'id' => $value['message_id'],
+                'status' => $value['status'],
+                'type' => $value['type'],
+                'sendTime' => intval($value['send_time']),
+                'content' => $value['content'],
+                'toContactId' => $value['to_uid'],
+                'fromUser' => [
+                    'id' => $value['from_uid'],
+                    'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
+                    'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
                 ],
-                'fd' => $contactId
             ];
+        }
+
+        return [
+            'message' => [
+                'friend_history_message' => $list,
+                'type' => WsMessage::MESSAGE_TYPE_PULL_FRIEND_MESSAGE
+            ],
+            'fd' => $userFd,
+        ];
     }
 
     /**

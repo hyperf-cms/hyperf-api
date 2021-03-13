@@ -38,6 +38,12 @@ class FriendChatHistory extends Model
     protected $casts = [];
 
     /**
+     * 消息接受状态枚举
+     */
+    const RECEPTION_STATE_YES = 1;
+    const RECEPTION_STATE_NO = 0;
+
+    /**
      * 添加聊天记录
      * @param array $message
      * @param int $receptionState

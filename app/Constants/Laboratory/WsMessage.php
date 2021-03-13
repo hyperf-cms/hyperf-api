@@ -30,4 +30,9 @@ class WsMessage extends AbstractConstants
      */
     const MESSAGE_TYPE_INIT = 'init';
 
+    /**
+     * @Message("拉取好友信息")
+     */
+    const MESSAGE_TYPE_PULL_FRIEND_MESSAGE = 'friend_history_message';
+
 }

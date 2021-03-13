@@ -64,15 +64,6 @@ if (!function_exists('timeRoundBeforeFive')) {
     }
 }
 
-if (!function_exists('getRangeBetweenTime')) {
-    function getRangeBetweenTime($begin, $end) {
-        $beginDate = strtotime(date('Y-m-d', $begin));
-        $endDate = strtotime(date('Y-m-d', $end));
-
-        return ($endDate - $beginDate) / 86400;
-    }
-}
-
 if (!function_exists('periodConvert')) {
     /**
      * 将时间段转换成48位字符 1 0
@@ -100,3 +91,14 @@ if (!function_exists('periodConvert')) {
     }
 }
 
+if (!function_exists('getMillisecond')) {
+    /**
+     * 获取毫秒时间戳
+     * @return float
+     */
+    function getMillisecond()
+    {
+        list($t1, $t2) = explode(' ', microtime());
+        return (float) sprintf('%.0f', (floatval($t1)+floatval($t2)) * 1000);
+    }
+}

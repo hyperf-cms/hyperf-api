@@ -77,6 +77,7 @@ class WsMiddleware implements MiddlewareInterface
             if ($isValidToken) {
                 $jwtData = $this->jwt->getParserData($token);
                 $userInfo = User::query()->where(['id' => $jwtData['uid']])->first();
+                $userInfo = objToArray($userInfo);
                 conSet('user_info', $userInfo);
 
                 return $handler->handle($request);
