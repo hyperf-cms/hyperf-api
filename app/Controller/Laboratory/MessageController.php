@@ -31,40 +31,6 @@ class MessageController extends AbstractController
      */
     public function pullMessage()
     {
-       $id = $this->request->query('id');
-       $userInfo = conGet('user_info');
-       $messageList = FriendChatHistory::query()
-           ->where(function ($query) use ($userInfo, $id) {
-               $query->where('from_uid', $userInfo['id'])->where('to_uid', $id);
-           })->orWhere(function ($query) use ($userInfo, $id) {
-               $query->where('from_uid', $id)->where('to_uid', $userInfo['id']);
-           })->get()->toArray();
 
-       //将消息置为已读
-       FriendChatHistory::query()
-           ->where('to_uid', $userInfo['id'])
-           ->where('from_uid', $id)
-           ->update(['reception_state' => FriendChatHistory::RECEPTION_STATE_YES]);
-
-        $list = [];
-        foreach ($messageList as $key => $value) {
-            $list[] = [
-                'id' => $value['message_id'],
-                'status' => $value['status'],
-                'type' => $value['type'],
-                'sendTime' => intval($value['send_time']),
-                'content' => $value['content'],
-                'toContactId' => $value['to_uid'],
-                'fromUser' => [
-                    'id' => $value['from_uid'],
-                    'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
-                    'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
-                ],
-            ];
-        }
-
-       return $this->success([
-           'list' => $list
-       ]);
     }
 }

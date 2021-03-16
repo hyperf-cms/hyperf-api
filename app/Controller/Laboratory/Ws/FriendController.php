@@ -28,9 +28,7 @@ class FriendController extends AbstractController
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
 
-        var_dump($contactData);
         $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
-
         $receptionState = empty($contactId) ? 0 : 1;
         //添加聊天记录
         FriendChatHistory::addMessage($contactData, $receptionState);
