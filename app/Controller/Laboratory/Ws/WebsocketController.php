@@ -3,14 +3,16 @@ declare(strict_types=1);
 
 namespace App\Controller\Laboratory\Ws;
 
-use App\Component\WsProtocol;
 use App\Controller\AbstractController;
 use App\Pool\Redis;
+
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
+use Hyperf\WebSocketServer\Sender;
 use Swoole\Http\Request;
 use Swoole\Websocket\Frame;
 use App\Constants\Laboratory\ChatRedisKey;
@@ -23,6 +25,12 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebsocketController extends AbstractController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
+    /**
+     * @Inject()
+     * @var Sender
+     */
+    private $sender;
+
     /**
      * 用户发送信息
      * @param \Swoole\Http\Response|WebSocketServer $server
@@ -49,7 +57,7 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
                     $dispatched->handler->callback[1],
                 ]);
                 if ($result !== NULL) {
-                    $server->push((int) $result['fd'], json_encode($result['message']));
+                    if (!empty($result['fd'])) $server->push((int) $result['fd'], json_encode($result['message']));
                 }
             }
     }

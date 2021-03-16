@@ -61,7 +61,7 @@ class FriendController extends AbstractController
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
-        $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['user_id']);
+        $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['user_id']);
 
         $messageList = FriendChatHistory::query()
             ->where(function ($query) use ($contactData) {
