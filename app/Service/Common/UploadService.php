@@ -47,7 +47,39 @@ class UploadService extends BaseService
         );
         if (is_resource($stream)) {
             fclose($stream);
+         }
+        return [
+            'fileName' => $fileName,
+            'url' => $fileUrl
+        ];
     }
+
+    /**
+     * 上传图片
+     * @param string $file
+     * @param string $savePath
+     * @return array
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadSinglePicByBase64(string $file, string $savePath = '') : array
+    {
+        //拼接得到文件名以及对应路径
+        $fileName =  md5(uniqid());
+        $dir = './runtime/temp/';
+        $imageInfo = base64DecImg($file, $dir, $fileName);
+        $uploadPath = $savePath . '/' . $fileName . '.' .$imageInfo['ext'];
+
+        //外网访问的路径
+        $fileUrl = env('OSS_URL') . $uploadPath;
+        $stream = fopen($imageInfo['storage_dir'], 'r+');
+        $this->filesystem->writeStream(
+            $uploadPath,
+            $stream
+        );
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+        unlink($imageInfo['storage_dir']);
         return [
             'fileName' => $fileName,
             'url' => $fileUrl

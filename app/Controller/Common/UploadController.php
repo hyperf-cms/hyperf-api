@@ -40,7 +40,7 @@ class UploadController extends AbstractController
         ];
         $message = [
             'savePath.required' => '[savePath]缺失',
-            'file.required' => '[name]缺失',
+            'file.required' => '[file]缺失',
             'file.file' => '[file] 参数必须为文件类型',
             'file.image' => '[file] 文件必须是图片（jpeg、png、bmp、gif 或者 svg）',
         ];
@@ -49,5 +49,36 @@ class UploadController extends AbstractController
         $uploadResult = UploadService::getInstance()->uploadSinglePic($this->request->file('file'), $params['savePath']);
 
         return $this->success($uploadResult, '上传图片成功');
+    }
+
+    /**
+     * 上传单张图片接口
+     * @RequestMapping(path="single_pic_by_base64", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadSinglePicByBase64()
+    {
+        $params = [
+            'savePath' => $this->request->input('savePath'),
+            'file' => $this->request->input('file'),
+        ];
+        //配置验证
+        $rules = [
+            'savePath' => 'required',
+            'file' => 'required ',
+        ];
+        $message = [
+            'savePath.required' => '[savePath]缺失',
+            'file.required' => '[file]缺失',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        base64DecImg($params['file']);
+        $uploadResult = UploadService::getInstance()->uploadSinglePicByBase64($params['file'], $params['savePath']);
+        return $this->success($uploadResult);
     }
 }

@@ -42,6 +42,7 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
 
             conSet('chat_message', MessageParser::encode([
                 'message' => $message['message'],
+                'file' => $message['file'] ?? '',
             ]));
             $targetUri = $message['uri'] ?? '';
             $dispatcher = $this->container
