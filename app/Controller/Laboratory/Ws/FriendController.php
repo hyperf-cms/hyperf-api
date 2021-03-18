@@ -21,6 +21,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 class FriendController extends AbstractController
 {
     /**
+     * 发送信息
      * @RequestMapping(path="send_message",methods="GET")
      */
     public function sendMessage()
@@ -55,6 +56,7 @@ class FriendController extends AbstractController
     }
 
     /**
+     * 拉取信息
      * @RequestMapping(path="pull_message",methods="GET")
      */
     public function pullMessage()
@@ -87,6 +89,8 @@ class FriendController extends AbstractController
                 'sendTime' => intval($value['send_time']),
                 'content' => $value['content'],
                 'toContactId' => $value['to_uid'],
+                'fileSize' => $value['file_size'],
+                'fileName' => $value['file_name'],
                 'fromUser' => [
                     'id' => $value['from_uid'],
                     'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
@@ -103,6 +107,30 @@ class FriendController extends AbstractController
             'fd' => $userFd,
         ];
     }
+
+    /**
+     * 撤回信息
+     * @RequestMapping(path="withdraw_message",methods="GET")
+     */
+    public function withDrawMessage()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+        $contactFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
+
+        FriendChatHistory::query()
+            ->where('message_id',  $contactData['id'])
+            ->delete();
+
+        return [
+            'message' => [
+                'message' => $contactData,
+                'type' => WsMessage::MESSAGE_TYPE_WITHDRAW_MESSAGE
+            ],
+            'fd' => $contactFd,
+        ];
+    }
+
 
     /**
      * @RequestMapping(path="unread_message",methods="GET")

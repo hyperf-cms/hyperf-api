@@ -26,7 +26,6 @@ class FriendController extends AbstractController
      * @RequestMapping(path="history_message", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class),
      * })
      */
     public function historyMessage()
@@ -68,6 +67,8 @@ class FriendController extends AbstractController
                 'id' => $value['message_id'],
                 'status' => $value['status'],
                 'type' => $value['type'],
+                'fileSize' => $value['file_size'],
+                'fileName' => $value['file_name'],
                 'sendTime' => date('Y-m-d', $sendTime) == date('Y-m-d') ? date('H:i:s', $sendTime) : date('Y-m-d, H:i:s', $sendTime) ,
                 'content' => $value['content'],
                 'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
@@ -85,7 +86,6 @@ class FriendController extends AbstractController
      * @RequestMapping(path="list", methods="post")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class),
      * })
      */
     public function index()
@@ -98,7 +98,6 @@ class FriendController extends AbstractController
      * @RequestMapping(path="store", methods="post")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class),
      * })
      */
     public function store()

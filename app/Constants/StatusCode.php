@@ -35,9 +35,14 @@ class StatusCode extends AbstractConstants
     const SUCCESS = 200;
 
     /**
-     * @Message("无权限访问！")
+     * @Message("校验登陆不通过！")
      */
     const ERR_NOT_ACCESS = 401;
+
+    /**
+     * @Message("无权限访问！")
+     */
+    const ERR_NOT_PERMISSION = 403;
 
 
     /**

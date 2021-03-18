@@ -38,18 +38,14 @@ class InitService extends BaseService
         $userContactList = [];
         foreach ($userList as $key => $val) {
             $unreadMessageInfo = $this->getUnReadMessageByUser($val, $userInfo);
-            $lastContentType = [
-                'image' => '[图片]',
-                'file' => '[文件]',
-                'text' => $unreadMessageInfo['lastContent'],
-            ];
             $userContactList[] = [
                 'id' => $val['id'],
                 'displayName' => $val['desc'],
                 'avatar' => $val['avatar'],
                 'index' => $val['desc'],
                 'unread' => $unreadMessageInfo['unread'] ?? 0,
-                'lastContent' => $lastContentType[$unreadMessageInfo['lastContentType']] ?? '',
+                'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
+                'lastContentType' => $unreadMessageInfo['lastContentType'] ?? '',
                 'lastSendTime' => $unreadMessageInfo['lastSendTime'] ?? getMillisecond(),
             ];
         }

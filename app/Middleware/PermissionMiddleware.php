@@ -70,7 +70,7 @@ class PermissionMiddleware implements MiddlewareInterface
 
             //判断是否是超级管理员
             if ($user->hasRole(Role::SUPER_ADMIN)) return $handler->handle($request);
-            if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_ACCESS, '无权限访问');
+            if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_PERMISSION, '无权限访问');
 
             return $handler->handle($request);
     }
