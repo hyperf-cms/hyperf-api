@@ -51,6 +51,41 @@ class UploadController extends AbstractController
 
     /**
      * 上传图片
+     * @RequestMapping(path="upload_pic", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadPic()
+    {
+        $params = [
+            'savePath' => $this->request->input('savePath') ?? '',
+            'file' => $this->request->file('file'),
+            'messageId' => $this->request->input('messageId') ?? ''
+        ];
+        //配置验证
+        $rules = [
+            'savePath' => 'required',
+            'file' => 'required|file|image',
+            'messageId' => 'required ',
+        ];
+        $message = [
+            'savePath.required' => '[savePath]缺失',
+            'file.required' => '[file]缺失',
+            'file.file' => '[file] 参数必须为文件类型',
+            'file.image' => '[file] 文件必须是图片（jpeg、png、bmp、gif 或者 svg）',
+            'messageId.required' => '[messageId]缺失',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $uploadResult = UploadService::getInstance()->uploadPic($params['file'], $params['savePath'], $params['messageId']);
+        return $this->success($uploadResult);
+    }
+
+    /**
+     * 上传文件
      * @RequestMapping(path="upload_file", methods="post")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
@@ -68,12 +103,13 @@ class UploadController extends AbstractController
         //配置验证
         $rules = [
             'savePath' => 'required',
-            'file' => 'required ',
+            'file' => 'required|file',
             'messageId' => 'required ',
         ];
         $message = [
             'savePath.required' => '[savePath]缺失',
             'file.required' => '[file]缺失',
+            'file.file' => '[file] 参数必须为文件类型',
             'messageId.required' => '[messageId]缺失',
         ];
         $this->verifyParams($params, $rules, $message);
