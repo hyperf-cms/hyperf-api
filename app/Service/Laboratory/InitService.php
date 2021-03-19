@@ -1,10 +1,12 @@
 <?php
 namespace App\Service\Laboratory;
 
+use App\Constants\Laboratory\ChatRedisKey;
 use App\Constants\Laboratory\WsMessage;
 use App\Foundation\Traits\Singleton;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Pool\Redis;
 use App\Service\BaseService;
 use function PHPSTORM_META\type;
 
@@ -28,7 +30,6 @@ class InitService extends BaseService
         $returnUserInfo = [];
         $userInfo = conGet('user_info');
 
-        //修改用户ID为WS分配的唯一ID
         $returnUserInfo['id'] = $userInfo['id'];
         $returnUserInfo['displayName'] = $userInfo['desc'];
         $returnUserInfo['avatar'] = $userInfo['avatar'];
@@ -37,6 +38,7 @@ class InitService extends BaseService
         $userList = User::query()->where('id', '!=', $userInfo['id'])->get()->toArray();
         $userContactList = [];
         foreach ($userList as $key => $val) {
+            $fd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $val['id']);
             $unreadMessageInfo = $this->getUnReadMessageByUser($val, $userInfo);
             $userContactList[] = [
                 'id' => $val['id'],
@@ -44,6 +46,7 @@ class InitService extends BaseService
                 'avatar' => $val['avatar'],
                 'index' => $val['desc'],
                 'unread' => $unreadMessageInfo['unread'] ?? 0,
+                'status' => empty($fd) ? 0 : 1,
                 'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
                 'lastContentType' => $unreadMessageInfo['lastContentType'] ?? '',
                 'lastSendTime' => $unreadMessageInfo['lastSendTime'] ?? getMillisecond(),

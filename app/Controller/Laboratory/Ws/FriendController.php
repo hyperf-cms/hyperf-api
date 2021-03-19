@@ -14,6 +14,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
+ * 好友聊天控制器
  * Class FriendController
  * @package App\Controller\Laboratory\Ws
  * @Controller(prefix="friend",server="ws")
