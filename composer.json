@@ -23,6 +23,7 @@
         "hyperf/http-server": "^2.0",
         "hyperf/logger": "^2.0",
         "hyperf/memory": "^2.0",
+        "hyperf/task": "^2.0",
         "hyperf/process": "^2.0",
         "hyperf/redis": "^2.0",
         "hyperf/database": "^2.0",

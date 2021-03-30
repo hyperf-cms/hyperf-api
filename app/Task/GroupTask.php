@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Task;
 
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Task\Annotation\Task;
 
 /**
  * 组消息传递异步任务
@@ -61,7 +62,8 @@ class GroupTask
             'fromid'    => $fromId,
             'timestamp' => $timestamp,
         ];
-        $result = wsSuccess(WsMessage::WS_MESSAGE_CMD_EVENT, WsMessage::EVENT_GET_MESSAGE, $data);
+
+
         Server::sendToAll($result, $fds);
         return true;
     }
