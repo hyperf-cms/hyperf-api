@@ -42,7 +42,9 @@ class AlbumController extends AbstractController
     {
         $photoAlbumQuery = $this->photoAlbum->newQuery();
         $albumName = $this->request->input('album_name') ?? '';
+        $albumStatus = $this->request->input('album_status') ?? '';
         if (!empty($albumName)) $photoAlbumQuery->where('album_name', 'like', '%' . $albumName . '%');
+        if (strlen($albumStatus) > 0) $photoAlbumQuery->where('album_status', $albumStatus);
 
         $total = $photoAlbumQuery->count();
         $photoAlbumQuery = $this->pagingCondition($photoAlbumQuery, $this->request->all());
@@ -51,6 +53,25 @@ class AlbumController extends AbstractController
         return $this->success([
             'list' => $data,
             'total' => $total,
+        ]);
+    }
+
+    /**
+     * 获取相册列表
+     * @RequestMapping(path="album_option", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     */
+    public function albumOptionList()
+    {
+        $photoAlbumQuery = $this->photoAlbum->newQuery();
+        $photoAlbumQuery = $photoAlbumQuery->select('id', 'album_name');
+        $data = $photoAlbumQuery->get();
+
+        return $this->success([
+            'list' => $data,
         ]);
     }
 
