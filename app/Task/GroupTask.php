@@ -22,7 +22,7 @@ class GroupTask
     private $sender;
 
     /**
-     * @Tasks()
+     * @Task()
      * @param $fds
      * @param $username
      * @param $avatar
@@ -69,7 +69,7 @@ class GroupTask
     }
 
     /**
-     * @Tasks()
+     * @Task()
      * @param int   $fd
      * @param array $data
      */
