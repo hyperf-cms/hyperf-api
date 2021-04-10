@@ -55,6 +55,48 @@ class PhotoController extends AbstractController
     }
 
     /**
+     * @Explanation(content="添加图片")
+     * @RequestMapping(path="store", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     */
+    public function store()
+    {
+
+        $postData = $this->request->all();
+        $params = [
+            'photo_url'  => $postData['photo_url'] ?? '',
+            'photo_album'  => $postData['photo_album'] ?? '',
+        ];
+        //配置验证
+        $rules = [
+            'photo_url'  => 'required|array',
+            'photo_album'  => 'required',
+        ];
+        //错误信息
+        $message = [
+            'photo_url.required' => '[photo_url]缺失',
+            'photo_url.array' => '[photo_url] 类型必须为数组',
+            'photo_album.required' => '[photo_album]缺失',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        if (is_array($params['photo_url'])) {
+            foreach ($params['photo_url'] as $key) {
+                Photo::query()->insert([
+                    'photo_url' => $key,
+                    'photo_album' => $params['photo_album'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+        }
+        return $this->successByMessage('添加照片成功');
+    }
+
+    /**
      * @Explanation(content="删除图片信息")
      * @param int $id
      * @RequestMapping(path="destroy/{id}", methods="delete")
