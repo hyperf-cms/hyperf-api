@@ -4,17 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Foundation\Annotation\Explanation;
-use App\Foundation\Utils\FreeApi;
-use App\Pool\FooRedis;
-use App\Pool\Redis;
-use Carbon\Carbon;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\Middleware;
-use App\Middleware\RequestMiddleware;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\HttpServer\Request;
 
 /**
  * 测试控制器，一般用来测试一些代码
@@ -29,8 +20,11 @@ class IndexController extends AbstractController
      */
     public function index()
     {
+        $time = new  \Cron\CronExpression('* * * * *');
+        $time = $time->getNextRunDate();
+
         return $this->success([
-            'list' => getMillisecond()
+            'list' => $time->format('Y-m-d H:i:s')
         ]);
     }
 }

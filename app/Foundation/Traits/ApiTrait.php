@@ -49,7 +49,7 @@ trait ApiTrait
      * @param string $message
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function successByMessage($message = '')
+    protected function successByMessage(string $message = '')
     {
         return $this->response->json($this->formatResponse([], $message));
     }

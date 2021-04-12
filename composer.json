@@ -24,6 +24,7 @@
         "hyperf/logger": "^2.0",
         "hyperf/memory": "^2.0",
         "hyperf/task": "^2.0",
+	"hyperf/crontab": "^2.0",
         "hyperf/process": "^2.0",
         "hyperf/redis": "^2.0",
         "hyperf/database": "^2.0",
@@ -33,7 +34,8 @@
         "phper666/jwt-auth": "~3.0.0",
         "easyswoole/verifycode": "3.x",
         "hyperf/filesystem": "2.0.*",
-        "xxtime/flysystem-aliyun-oss": "^1.5"
+        "xxtime/flysystem-aliyun-oss": "^1.5",
+        "dragonmantank/cron-expression": "^3.1"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",

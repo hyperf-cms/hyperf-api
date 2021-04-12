@@ -10,4 +10,6 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
+    //注册任务调度器进程
+    Hyperf\Crontab\Process\CrontabDispatcherProcess::class,
 ];
