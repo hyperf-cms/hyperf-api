@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Setting;
 
+use App\Foundation\Utils\Cron;
 use App\Model\Model;
 
 /**
@@ -58,10 +59,10 @@ class TimedTask extends Model
     public static function updateNextExecuteTime(int $id) : bool
     {
         $self = self::findById($id);
-        $nextExecuteTime = new  \Cron\CronExpression($self['execute_time']);
-        $nextExecuteTime = $nextExecuteTime->getNextRunDate();
+        $executeTime = $self['execute_time'] ?? '';
+        $nextExecuteTime = Cron::init($executeTime)->getNextRunDate()->format('Y-m-d H:i');
 
-        if (self::query()->where('id', $id)->update(['next_execute_time' => $nextExecuteTime->format('Y-m-d H:i'), 'times' => $self['times'] + 1])) return true;
+        if (self::query()->where('id', $id)->update(['next_execute_time' => $nextExecuteTime, 'times' => $self['times'] + 1])) return true;
 
         return false;
     }

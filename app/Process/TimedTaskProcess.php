@@ -30,7 +30,7 @@ class TimedTaskProcess extends AbstractProcess
             $nowTime = date('Y-m-d H:i:00');
             $timedTaskList = TimedTask::query()->get()->where('status', TimedTask::ON_STATUS)->toArray();
             foreach ($timedTaskList as $timeTask) {
-                if ($timeTask['next_execute_time'] == $nowTime) {
+                        if ($timeTask['next_execute_time'] == $nowTime) {
                     $params = json_decode($timeTask['params']);
                     foreach ($params as $key => $value) {
                         ${'$value[0]'} = $value[1];

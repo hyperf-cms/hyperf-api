@@ -7,6 +7,7 @@ namespace App\Controller\Setting;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
+use App\Foundation\Utils\Cron;
 use App\Model\Setting\TimedTask;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -65,6 +66,7 @@ class TimedTaskController extends AbstractController
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
      * })
+     * @throws \Exception
      */
     public function store()
     {
@@ -99,9 +101,9 @@ class TimedTaskController extends AbstractController
         $timedTaskQuery->status = $params['status'];
         $timedTaskQuery->desc = $params['desc'];
 
-        $nextExecuteTime = new  \Cron\CronExpression($params['execute_time']);
-        $nextExecuteTime = $nextExecuteTime->getNextRunDate();
-        $timedTaskQuery->next_execute_time = $nextExecuteTime->format('Y-m-d H:i');
+        $executeTime = $timedTaskInfo['execute_time'] ?? '';
+        $nextExecuteTime = Cron::init($executeTime)->getNextRunDate()->format('Y-m-d H:i');
+        $timedTaskQuery->next_execute_time = $nextExecuteTime;
 
         if (!$timedTaskQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加定时任务错误');
 
@@ -136,16 +138,22 @@ class TimedTaskController extends AbstractController
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
      * })
+     * @throws \Exception
      * @return \Psr\Http\Message\ResponseInterface
      */
+
     public function changeStatus(int $id)
     {
         $status = $this->request->input('status');
-        if (strlen($status) <= 0) $this->throwExp(StatusCode::ERR_VALIDATION, '状态参数为空');
+        if ($status != 0 && empty($status)) $this->throwExp(StatusCode::ERR_VALIDATION, '状态参数为空');
         $timedTaskInfo = TimedTask::findById($id);
         if (empty($timedTaskInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '查询不到该任务');
 
-        TimedTask::query()->where('id', $id)->update(['status' => $status]);
+        $executeTime = $timedTaskInfo['execute_time'] ?? '';
+        $nextExecuteTime = Cron::init($executeTime)->getNextRunDate()->format('Y-m-d H:i');
+
+        //修改状态以及下次执行时间
+        TimedTask::query()->where('id', $id)->update(['status' => $status, 'next_execute_time' => $nextExecuteTime]);
         return $this->successByMessage('修改状态成功');
     }
 
@@ -193,12 +201,11 @@ class TimedTaskController extends AbstractController
         $timedTaskQuery->task = $params['task'];
         $timedTaskQuery->execute_time = $params['execute_time'];
         $timedTaskQuery->desc = $params['desc'];
-        $nextExecuteTime = new  \Cron\CronExpression($params['execute_time']);
-        $nextExecuteTime = $nextExecuteTime->getNextRunDate();
-        $timedTaskQuery->next_execute_time = $nextExecuteTime->format('Y-m-d H:i');
+        $executeTime = $params['execute_time'] ?? '';
+        $nextExecuteTime = Cron::init($executeTime)->getNextRunDate()->format('Y-m-d H:i');
+        $timedTaskQuery->next_execute_time = $nextExecuteTime;
 
         if (!$timedTaskQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '修改定时任务错误');
-
         return $this->successByMessage('修改定时任务成功');
     }
 
