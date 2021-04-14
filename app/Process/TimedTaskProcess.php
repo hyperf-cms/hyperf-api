@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Process;
 
+use App\Foundation\Facades\Log;
 use App\Model\Setting\TimedTask;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
@@ -30,13 +31,17 @@ class TimedTaskProcess extends AbstractProcess
             $nowTime = date('Y-m-d H:i:00');
             $timedTaskList = TimedTask::query()->get()->where('status', TimedTask::ON_STATUS)->toArray();
             foreach ($timedTaskList as $timeTask) {
-                        if ($timeTask['next_execute_time'] == $nowTime) {
+                if ($timeTask['next_execute_time'] == $nowTime) {
                     $params = json_decode($timeTask['params']);
                     foreach ($params as $key => $value) {
                         ${'$value[0]'} = $value[1];
                     }
                     $class = '\App\Task\\' . $timeTask['task'];
-                    $this->container->get($class)->handle();
+                    try {
+                        $this->container->get($class)->handle();
+                    }catch (\Exception $e) {
+                        Log::codeDebug()->info('打印错误:' . $e->getMessage());
+                    }
                     TimedTask::updateNextExecuteTime($timeTask['id']);
                 }
                 continue;

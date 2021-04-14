@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace App\Task;
 
+use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
@@ -23,6 +24,8 @@ class TestTask
     public function handle()
     {
         Log::codeDebug()->info('测试成功');
+        Throw new BusinessException(599, '测试错误');
+
         return true;
     }
 
