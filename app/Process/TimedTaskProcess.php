@@ -5,6 +5,7 @@ namespace App\Process;
 
 use App\Foundation\Facades\Log;
 use App\Model\Setting\TimedTask;
+use App\Model\Setting\TimedTaskLog;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Task\Task;
@@ -38,15 +39,49 @@ class TimedTaskProcess extends AbstractProcess
                     }
                     $class = '\App\Task\\' . $timeTask['task'];
                     try {
-                        $this->container->get($class)->handle();
-                    }catch (\Exception $e) {
-                        Log::codeDebug()->info('打印错误:' . $e->getMessage());
+                       $this->container->get($class)->handle();
+                        $this->recordTaskLog(true, $timeTask);
+                    } catch (\Exception $e) {
+                        $errorInfo = [];
+                        $errorInfo['code'] = $e->getCode();
+                        $errorInfo['message'] = $e->getMessage();
+                        $errorInfo['line'] = $e->getLine();
+                        $errorInfo['file'] = $e->getFile();
+                        $this->recordTaskLog(false, $timeTask, $errorInfo);
                     }
-                    TimedTask::updateNextExecuteTime($timeTask['id']);
                 }
                 continue;
             }
             sleep(1);
         }
+    }
+
+    /**
+     * 记录监控任务日志
+     * @param bool $result
+     * @param array $task
+     * @param string $errorInfo
+     * @return bool
+     * @throws \Exception
+     */
+    private function recordTaskLog(bool $result, array $task, $errorInfo = '')
+    {
+        $timedTaskLog = new TimedTaskLog();
+        if (empty($task)) return false;
+        $timedTaskLog->task_id = $task['id'];
+        $timedTaskLog->task_name = $task['name'];
+        $timedTaskLog->task = $task['task'];
+        $timedTaskLog->execute_time = strtotime($task['next_execute_time']);
+        $timedTaskLog->result = $result ? 1 : 0;
+
+        if (!$result) {
+            $timedTaskLog->error_log = json_encode($errorInfo);
+            TimedTask::where('id', $task['id'])->update(['status' => TimedTask::OFF_STATUS]);
+        }else {
+            TimedTask::updateNextExecuteTime($task['id']);
+        }
+        var_dump(1);
+        return $timedTaskLog->save();
+
     }
 }
