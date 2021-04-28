@@ -81,4 +81,35 @@ class UploadController extends AbstractController
         $uploadResult = UploadService::getInstance()->uploadSinglePicByBase64($params['file'], $params['savePath']);
         return $this->success($uploadResult);
     }
+
+    /**
+     * 上传单张图片根据Blob文件类型
+     * @RequestMapping(path="single_pic_by_blob", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadSinglePicByBlob()
+    {
+        $params = [
+            'savePath' => $this->request->input('save_path'),
+            'file' => $this->request->file('file'),
+        ];
+        //配置验证
+        $rules = [
+            'savePath' => 'required',
+            'file' => 'required|file',
+        ];
+        $message = [
+            'savePath.required' => '[savePath]缺失',
+            'file.required' => '[file]缺失',
+            'file.file' => '[file] 参数必须为文件类型',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $uploadResult = UploadService::getInstance()->uploadSinglePicByBlob($params['file'], $params['savePath']);
+        return $this->success($uploadResult);
+    }
 }

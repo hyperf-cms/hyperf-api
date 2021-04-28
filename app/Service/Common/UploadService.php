@@ -82,4 +82,36 @@ class UploadService extends BaseService
             'url' => $fileUrl
         ];
     }
+
+    /**
+     * 上传图片根据blob文件类型
+     * @param object $file
+     * @param string $savePath
+     * @return array
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadSinglePicByBlob(object $file, string $savePath = '') : array
+    {
+        if ($file->getSize() > 30000000) $this->throwExp(UploadCode::ERR_UPLOAD_SIZE, '上传图片尺寸过大');
+
+        //拼接得到文件名以及对应路径
+        $fileName =  md5(uniqid())  . '.' . 'jpg';
+        $uploadPath = $savePath . '/' . $fileName;
+
+        //外网访问的路径
+        $fileUrl = env('OSS_URL') . $uploadPath;
+
+        $stream = fopen($file->getRealPath(), 'r+');
+        $this->filesystem->writeStream(
+            $uploadPath,
+            $stream
+        );
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        return [
+            'url' => $fileUrl
+        ];
+    }
 }

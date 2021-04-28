@@ -23,6 +23,13 @@ use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
 use Swoole\WebSocket\Server as WebSocketServer;
 
+/**
+ * 聊天
+ * Class WebsocketController
+ * @package App\Controller\Laboratory\Ws
+ * @Author YiYuan-Lin
+ * @Date: 2021/4/25
+ */
 class WebsocketController extends AbstractController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     /**
