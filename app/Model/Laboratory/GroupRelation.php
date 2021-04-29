@@ -35,4 +35,18 @@ class GroupRelation extends Model
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * 建立组与用户联系
+     * @param int $uid
+     * @param int $groupId
+     * @return bool
+     */
+    public static function buildRelation(int $uid, int $groupId)
+    {
+        $model = new static;
+        $model->uid = $uid;
+        $model->group_id = $groupId;
+        return $model->save();
+    }
 }
