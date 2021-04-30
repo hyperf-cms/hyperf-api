@@ -1,19 +1,19 @@
 <?php
 declare(strict_types = 1);
 
-namespace App\Task;
+namespace App\Task\Laboratory;
 
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
 
 /**
  * 组消息传递异步任务
- * Class GroupTask
+ * Class GroupWsTask
  * @package App\Task
  * @Author YiYuan-Lin
  * @Date: 2021/3/23
  */
-class GroupTask
+class GroupWsTask
 {
     /**
      * @Inject()
