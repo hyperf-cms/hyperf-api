@@ -16,27 +16,23 @@ use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
 
 /**
- * Class WsMessage
- * 聊天系统相关枚举
+ * 组消息事件枚举
+ * Class GroupEvent
  * @Constants
- * @package App\Constants
+ * @package App\Constants\Laboratory
  * @Author YiYuan-Lin
- * @Date: 2021/3/12
+ * @Date: 2021/5/8
  */
-class WsMessage extends AbstractConstants
+class GroupEvent extends AbstractConstants
 {
     /**
-     * @Message("信息类型为初始化")
+     * 创建组事件
      */
-    const MESSAGE_TYPE_INIT = 'init';
+    const CREATE_GROUP_EVENT = 'create_group';
 
     /**
-     * @Message("拉取好友信息")
+     * 新加入组员事件
      */
-    const MESSAGE_TYPE_PULL_FRIEND_MESSAGE = 'friend_history_message';
+    const GROUP_NEW_MEMBER_EVENT = 'group_new_member';
 
-    /**
-     * @Message("撤回信息")
-     */
-    const MESSAGE_TYPE_WITHDRAW_MESSAGE = 'withdraw_message';
 }

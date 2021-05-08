@@ -39,10 +39,10 @@ class GroupRelation extends Model
     /**
      * 建立组与用户联系
      * @param int $uid
-     * @param int $groupId
+     * @param string $groupId
      * @return bool
      */
-    public static function buildRelation(int $uid, int $groupId)
+    public static function buildRelation(int $uid, string $groupId)
     {
         $model = new static;
         $model->uid = $uid;

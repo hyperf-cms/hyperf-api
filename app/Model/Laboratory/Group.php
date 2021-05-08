@@ -35,4 +35,10 @@ class Group extends Model
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * 声明主键
+     * @var
+     */
+    public $primaryKey = 'group_id';
 }

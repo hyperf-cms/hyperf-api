@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Controller\Laboratory\Ws;
 
 use App\Constants\Laboratory\ChatRedisKey;
+use App\Constants\Laboratory\GroupEvent;
 use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
@@ -12,6 +13,7 @@ use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
+use App\Task\Laboratory\GroupWsTask;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
@@ -24,7 +26,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 class GroupController extends AbstractController
 {
     /**
-     * 发送信息
+     * 创建组
      * @RequestMapping(path="create_group",methods="GET")
      */
     public function createGroup()
@@ -33,6 +35,7 @@ class GroupController extends AbstractController
         $contactData = $chatMessage['message'];
 
         $groupInsertData = [];
+        $groupInsertData['group_id'] = getRandStr(16);
         $groupInsertData['uid'] = $contactData['creator']['id'];
         $groupInsertData['group_name'] = $contactData['name'];
         $groupInsertData['avatar'] = $contactData['avatar'] ?? '';
@@ -41,17 +44,20 @@ class GroupController extends AbstractController
         $groupInsertData['validation'] = $contactData['validation'] ?? 0;
         $groupInsertData['created_at'] = date('Y-m-d H:i:s');
         $groupInsertData['updated_at'] = date('Y-m-d H:i:s');
-        $groupId = Group::query()->insertGetId($groupInsertData);
-        GroupRelation::buildRelation($groupInsertData['uid'], $groupId);
+        Group::query()->insert($groupInsertData);
+        GroupRelation::buildRelation($groupInsertData['uid'], $groupInsertData['group_id']);
 
         if (!empty($contactData['checkedContacts'])) {
             $contactIdList = array_column($contactData['checkedContacts'], 'id');
             if (!empty($contactIdList)) {
                 foreach ($contactIdList as $contactId) {
-                    GroupRelation::buildRelation($contactId, $groupId);
+                    GroupRelation::buildRelation($contactId, $groupInsertData['group_id']);
                 }
             }
         }
+
+        //推送创建组事件
+        $this->container->get(GroupWsTask::class)->pushEvent(GroupEvent::CREATE_GROUP_EVENT, $groupInsertData);
     }
 }
 

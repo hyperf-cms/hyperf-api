@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace App\Task\Laboratory;
 
+use App\Constants\Laboratory\GroupEvent;
+use App\Service\Laboratory\GroupService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
 
@@ -23,59 +25,30 @@ class GroupWsTask
 
     /**
      * @Task()
-     * @param $fds
-     * @param $username
-     * @param $avatar
-     * @param $groupId
-     * @param $type
-     * @param $content
-     * @param $cid
-     * @param $mine
-     * @param $fromId
-     * @param $timestamp
-     *
+     * 组事件推送
+     * @param string $event
+     * @param array $groupInfo
      * @return bool
      */
-    public function sendMessage(
-        $fds,
-        $username,
-        $avatar,
-        $groupId,
-        $type,
-        $content,
-        $cid,
-        $mine,
-        $fromId,
-        $timestamp
-    ) {
-        if (!$fds) {
-            return false;
-        }
-        $data   = [
-            'username'  => $username,
-            'avatar'    => $avatar,
-            'id'        => $groupId,
-            'type'      => $type,
-            'content'   => $content,
-            'cid'       => $cid,
-            'mine'      => $mine,
-            'fromid'    => $fromId,
-            'timestamp' => $timestamp,
-        ];
-
-
-        Server::sendToAll($result, $fds);
-        return true;
-    }
-
-    /**
-     * @Task()
-     * @param int   $fd
-     * @param array $data
-     */
-    public function agreeApply(int $fd, array $data)
+    public function pushEvent(string $event, array $groupInfo)
     {
-        $result = wsSuccess(WsMessage::WS_MESSAGE_CMD_EVENT, WsMessage::EVENT_GROUP_AGREE_APPLY, $data);
-        $this->sender->push($fd, $result);
+        if (empty($event || empty($groupInfo))) return false;
+
+        $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupInfo['group_id']);
+        $message = [];
+        $message['status'] = 'succeed';
+        $message['type'] = 'event';
+        $message['sendTime'] = time() * 1000;
+        $message['groupId'] = $groupInfo['group_id'];
+        $message['avatar'] = $groupInfo['avatar'];
+        $message['groupName'] = $groupInfo['group_name'] ?? '群聊__' . $groupInfo['group_id'];
+        $message['content'] = '';
+
+        foreach ($uidFdList as $key => $value) {
+            $sendMessage['type'] = $event;
+            $sendMessage['message'] = $message;
+            $this->sender->push((int) $value['fd'], json_encode($sendMessage));
+        }
+        return true;
     }
 }
