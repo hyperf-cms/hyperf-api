@@ -65,7 +65,15 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
                     $dispatched->handler->callback[1],
                 ]);
                 if ($result !== NULL) {
-                    if (!empty($result['fd'])) $server->push((int) $result['fd'], json_encode($result['message']));
+                    if (!empty($result['fd'])){
+                        if (is_array($result['fd'])) {
+                            foreach ($result['fd'] as $fd) {
+                                $server->push((int) $fd, json_encode($result['message']));
+                            }
+                        }else {
+                            $server->push((int) $result['fd'], json_encode($result['message']));
+                        }
+                    }
                 }
             }
     }

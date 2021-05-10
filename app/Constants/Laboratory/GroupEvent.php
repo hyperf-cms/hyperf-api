@@ -33,6 +33,6 @@ class GroupEvent extends AbstractConstants
     /**
      * 新加入组员事件
      */
-    const GROUP_NEW_MEMBER_EVENT = 'group_new_member';
+    const NEW_MEMBER_JOIN_GROUP_EVENT = 'new_member_join_group';
 
 }

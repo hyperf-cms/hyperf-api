@@ -36,6 +36,11 @@ class WsMessage extends AbstractConstants
     const MESSAGE_TYPE_PULL_FRIEND_MESSAGE = 'friend_history_message';
 
     /**
+     * @Message("拉取组信息")
+     */
+    const MESSAGE_TYPE_PULL_GROUP_MESSAGE = 'group_history_message';
+
+    /**
      * @Message("撤回信息")
      */
     const MESSAGE_TYPE_WITHDRAW_MESSAGE = 'withdraw_message';

@@ -6,9 +6,11 @@ use App\Constants\Laboratory\WsMessage;
 use App\Foundation\Traits\Singleton;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\FriendRelation;
+use App\Model\Laboratory\Group;
+use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\BaseService;
-use function PHPSTORM_META\type;
 
 /**
  * 消息服务类
@@ -46,17 +48,37 @@ class InitService extends BaseService
                 'avatar' => $val['avatar'],
                 'index' => $val['desc'],
                 'unread' => $unreadMessageInfo['unread'] ?? 0,
-                'status' => empty($fd) ? 0 : 1,
+                'status' => empty($fd) ? FriendRelation::FRIEND_ONLINE_STATUS_NO : FriendRelation::FRIEND_ONLINE_STATUS,
+                'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
+                'lastContentType' => $unreadMessageInfo['lastContentType'] ?? '',
+                'lastSendTime' => $unreadMessageInfo['lastSendTime'] ?? getMillisecond(),
+            ];
+        }
+        //获取用户组
+        $userHasGroupId = GroupRelation::query()->where('uid', $userInfo['id'])->pluck('group_id');
+        $groupList = Group::query()->whereIn('group_id', $userHasGroupId)->get()->toArray();
+        $userGroupList = [];
+        foreach ($groupList as $key => $val) {
+            $unreadMessageInfo = $this->getUnReadMessageByGroup($val, $userInfo);
+            $userGroupList[] = [
+                'id' => $val['group_id'],
+                'displayName' => $val['group_name'],
+                'avatar' => $val['avatar'],
+                'index' => "[0]群聊",
+                'unread' => $unreadMessageInfo['unread'] ?? 0,
+                'number_total' => GroupRelation::query()->where('group_id', $val['group_id'])->count(),
                 'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
                 'lastContentType' => $unreadMessageInfo['lastContentType'] ?? '',
                 'lastSendTime' => $unreadMessageInfo['lastSendTime'] ?? getMillisecond(),
             ];
         }
 
+
         return [
             'type' => WsMessage::MESSAGE_TYPE_INIT,
             'user_info' => $returnUserInfo,
-            'user_contact' => $userContactList
+            'user_contact' => $userContactList,
+            'user_group' => $userGroupList
         ];
     }
 
@@ -87,6 +109,27 @@ class InitService extends BaseService
             'lastContent' => $lastMessage['content'],
             'lastSendTime' => intval($lastMessage['send_time']),
             'lastContentType' => $lastMessage['type']
+        ];
+    }
+
+    /**
+     * 根据组获取最后一条信息以及未读信息
+     * @param array $groupInfo
+     * @param array $currentUserInfo
+     * @return array
+     */
+    private function getUnReadMessageByGroup(array $groupInfo, array $currentUserInfo) : array
+    {
+        if (empty($user)) return [];
+        $unread = [];
+
+        $lastMessage = [];
+
+        return [
+            'unread' => $unread,
+            'lastContent' => $lastMessage['content'] ?? '',
+            'lastSendTime' => intval($lastMessage['send_time']) ?? 0,
+            'lastContentType' => $lastMessage['type'] ?? ''
         ];
     }
 }

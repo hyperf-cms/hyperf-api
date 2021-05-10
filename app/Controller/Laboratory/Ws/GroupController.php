@@ -11,8 +11,10 @@ use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
+use App\Service\Laboratory\GroupService;
 use App\Task\Laboratory\GroupWsTask;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -26,6 +28,38 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 class GroupController extends AbstractController
 {
     /**
+     * 发送信息
+     * @RequestMapping(path="send_message",methods="GET")
+     */
+    public function sendMessage()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+        //添加聊天记录
+        GroupChatHistory::addMessage($contactData);
+        $fdList = GroupService::getInstance()->getOnlineGroupMemberFd($contactData['toContactId'], true);
+        $fdList = array_column($fdList, 'fd');
+
+        $contactData['status'] = 'succeed';
+        unset($contactData['fromUser']['unread']);
+        unset($contactData['fromUser']['lastSendTime']);
+        unset($contactData['fromUser']['lastContent']);
+
+        return [
+            'message' => [
+                'id' => $contactData['id'],
+                'status' => 'succeed',
+                'type' => $contactData['type'],
+                'sendTime' => $contactData['sendTime'],
+                'content' => $contactData['content'],
+                'toContactId' =>$contactData['toContactId'],
+                'fromUser' => $contactData['fromUser'],
+            ],
+            'fd' => $fdList
+        ];
+    }
+
+    /**
      * 创建组
      * @RequestMapping(path="create_group",methods="GET")
      */
@@ -38,7 +72,7 @@ class GroupController extends AbstractController
         $groupInsertData['group_id'] = getRandStr(16);
         $groupInsertData['uid'] = $contactData['creator']['id'];
         $groupInsertData['group_name'] = $contactData['name'];
-        $groupInsertData['avatar'] = $contactData['avatar'] ?? '';
+        $groupInsertData['avatar'] = $contactData['avatar'] ?? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png';
         $groupInsertData['size'] = $contactData['size'] ?? 200;
         $groupInsertData['introduction'] = $contactData['introduction'] ?? '';
         $groupInsertData['validation'] = $contactData['validation'] ?? 0;
@@ -53,11 +87,67 @@ class GroupController extends AbstractController
                 foreach ($contactIdList as $contactId) {
                     GroupRelation::buildRelation($contactId, $groupInsertData['group_id']);
                 }
+
             }
         }
-
         //推送创建组事件
         $this->container->get(GroupWsTask::class)->pushEvent(GroupEvent::CREATE_GROUP_EVENT, $groupInsertData);
+        if (!empty($contactIdList)) {
+            //推送新成员进群通知
+            $newMemberJoinMessage = [];
+            $content = join(User::query()->whereIn('id', $contactIdList)->pluck('desc')->toArray(), ' , ') . ' 加入群聊';
+            $newMemberJoinMessage['id'] = generate_rand_id();
+            $newMemberJoinMessage['status'] = 'succeed';
+            $newMemberJoinMessage['type'] = 'event';
+            $newMemberJoinMessage['sendTime'] = time() * 1000;
+            $newMemberJoinMessage['toContactId'] = $groupInsertData['group_id'];
+            $newMemberJoinMessage['content'] = $content ?? '';
+            $this->container->get(GroupWsTask::class)->sendMessage($groupInsertData['group_id'], $newMemberJoinMessage, GroupEvent::NEW_MEMBER_JOIN_GROUP_EVENT);
+        }
+    }
+
+    /**
+     * 拉取信息
+     * @RequestMapping(path="pull_message",methods="GET")
+     */
+    public function pullMessage()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+
+        $contactData = $chatMessage['message'];
+        $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['user_id']);
+
+        $messageList = GroupChatHistory::query()->where('to_group_id', $contactData['contact_id'])->orderBy('id', 'desc')->limit(30)->get()->toArray();
+        $messageList = array_reverse($messageList);
+
+        $list = [];
+        foreach ($messageList as $key => $value) {
+            $temp = [
+                'id' => $value['message_id'],
+                'status' => $value['status'],
+                'type' => $value['type'],
+                'sendTime' => intval($value['send_time']),
+                'content' => $value['content'],
+                'toContactId' => $value['to_group_id'],
+                'fileSize' => $value['file_size'],
+                'fileName' => $value['file_name'],
+            ];
+            if ($value['from_uid'] != 0) $temp['fromUser'] = [
+                'id' => $value['from_uid'],
+                'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar') ?? '',
+                'displayName' => User::query()->where('id', $value['from_uid'])->value('desc') ?? '',
+            ];
+
+            $list[] = $temp;
+        }
+
+        return [
+            'message' => [
+                'group_history_message' => $list,
+                'type' => WsMessage::MESSAGE_TYPE_PULL_GROUP_MESSAGE
+            ],
+            'fd' => $userFd,
+        ];
     }
 }
 

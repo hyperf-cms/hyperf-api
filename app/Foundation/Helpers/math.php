@@ -153,3 +153,9 @@ if (!function_exists('calc_float')) {
     }
 }
 
+if (!function_exists('generate_rand_id')) {
+    function generate_rand_id() {
+        return getRandStr(8) . '-' . getRandStr(4) . '-' . getRandStr(4) . '-' . getRandStr(4) . '-' . getRandStr(12);
+    }
+}
+

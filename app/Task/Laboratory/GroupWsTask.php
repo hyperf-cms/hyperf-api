@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace App\Task\Laboratory;
 
-use App\Constants\Laboratory\GroupEvent;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Service\Laboratory\GroupService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
@@ -42,6 +42,7 @@ class GroupWsTask
         $message['groupId'] = $groupInfo['group_id'];
         $message['avatar'] = $groupInfo['avatar'];
         $message['groupName'] = $groupInfo['group_name'] ?? '群聊__' . $groupInfo['group_id'];
+        $message['index'] = "[0]群聊";
         $message['content'] = '';
 
         foreach ($uidFdList as $key => $value) {
@@ -49,6 +50,28 @@ class GroupWsTask
             $sendMessage['message'] = $message;
             $this->sender->push((int) $value['fd'], json_encode($sendMessage));
         }
+        return true;
+    }
+
+    /**
+     * 组消息发送
+     * @param string $groupId
+     * @param array $message
+     * @param string $event
+     * @return bool
+     */
+    public function sendMessage(string $groupId, array $message, $event = '')
+    {
+        if (empty($groupId || empty($message))) return false;
+        $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);
+
+        foreach ($uidFdList as $key => $value) {
+            $sendMessage['type'] = $event;
+            $sendMessage['message'] = $message;
+            $this->sender->push((int) $value['fd'], json_encode($sendMessage));
+        }
+        //添加聊天记录
+        GroupChatHistory::addMessage($message, 1);
         return true;
     }
 }

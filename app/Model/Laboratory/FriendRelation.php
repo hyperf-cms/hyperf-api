@@ -35,4 +35,12 @@ class FriendRelation extends Model
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * 用户在线状态
+     * 1： 在线
+     * 0： 不在线
+     */
+    const FRIEND_ONLINE_STATUS = 1;
+    const FRIEND_ONLINE_STATUS_NO = 0;
 }

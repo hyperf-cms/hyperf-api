@@ -41,4 +41,6 @@ class Group extends Model
      * @var
      */
     public $primaryKey = 'group_id';
+
+    protected $keyType = 'string';
 }
