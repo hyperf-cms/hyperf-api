@@ -17,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * HTTP请求控制（跨域中间件）
- * Class CorsMiddleware
+ * Class WsMiddleware
  * @package App\Middleware
  * @Author YiYuan-Lin
  * @Date: 2020/9/21

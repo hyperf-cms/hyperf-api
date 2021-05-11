@@ -14,6 +14,7 @@ namespace App\Model;
 use Hyperf\DbConnection\Model\Model as BaseModel;
 use Hyperf\DbConnection\Traits\HasContainer;
 use Hyperf\DbConnection\Traits\HasRepository;
+use phpDocumentor\Reflection\Types\Void_;
 
 /**
  * Class Model
@@ -31,7 +32,7 @@ abstract class Model extends BaseModel
      * @param int $id
      * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
      */
-    static function findById(int $id)
+    static function findById($id)
     {
         if (empty($id)) return [];
 

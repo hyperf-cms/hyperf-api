@@ -8,12 +8,13 @@ use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
 use App\Model\Laboratory\Group;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\BaseService;
 
 /**
- * 消息服务类
+ * 聊天初始化服务类
  * Class MessageService
  * @package App\Service\Setting
  * @Author YiYuan-Lin
@@ -120,11 +121,11 @@ class InitService extends BaseService
      */
     private function getUnReadMessageByGroup(array $groupInfo, array $currentUserInfo) : array
     {
-        if (empty($user)) return [];
-        $unread = [];
+        if (empty($currentUserInfo)) return [];
+        $unread = Redis::getInstance()->sCard(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $currentUserInfo['id']);
+        Redis::getInstance()->del(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $currentUserInfo['id']);
 
-        $lastMessage = [];
-
+        $lastMessage = GroupChatHistory::query()->where('to_group_id', $groupInfo['group_id'])->orderBy('send_time', 'desc')->first();
         return [
             'unread' => $unread,
             'lastContent' => $lastMessage['content'] ?? '',

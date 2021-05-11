@@ -30,4 +30,9 @@ class ChatRedisKey extends AbstractConstants
      */
     const ONLINE_USER_FD_KEY = 'online_user_fd_list';
 
+    /**
+     * @Message("用户未读的聊天记录")
+     */
+    const GROUP_CHAT_UNREAD_MESSAGE_BY_USER = 'group_chat_unread_message_user_';
+
 }

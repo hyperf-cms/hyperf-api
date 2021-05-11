@@ -37,8 +37,14 @@ class GroupController extends AbstractController
         $contactData = $chatMessage['message'];
         //添加聊天记录
         GroupChatHistory::addMessage($contactData);
-        $fdList = GroupService::getInstance()->getOnlineGroupMemberFd($contactData['toContactId'], true);
+        $fdList = GroupService::getInstance()->getOnlineGroupMemberFd($contactData['toContactId'], $contactData, true);
         $fdList = array_column($fdList, 'fd');
+
+        //获取不在线用户，并添加到未读历史消息中
+        $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($contactData['toContactId']);
+        foreach ($unOnlineUidList as $uid) {
+            Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $contactData['id']);
+        }
 
         $contactData['status'] = 'succeed';
         unset($contactData['fromUser']['unread']);
@@ -72,7 +78,7 @@ class GroupController extends AbstractController
         $groupInsertData['group_id'] = getRandStr(16);
         $groupInsertData['uid'] = $contactData['creator']['id'];
         $groupInsertData['group_name'] = $contactData['name'];
-        $groupInsertData['avatar'] = $contactData['avatar'] ?? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png';
+        $groupInsertData['avatar'] = empty($contactData['avatar']) ? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png' : $contactData['avatar'];
         $groupInsertData['size'] = $contactData['size'] ?? 200;
         $groupInsertData['introduction'] = $contactData['introduction'] ?? '';
         $groupInsertData['validation'] = $contactData['validation'] ?? 0;
@@ -107,7 +113,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 拉取信息
+     * 拉取消息
      * @RequestMapping(path="pull_message",methods="GET")
      */
     public function pullMessage()
@@ -117,7 +123,7 @@ class GroupController extends AbstractController
         $contactData = $chatMessage['message'];
         $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['user_id']);
 
-        $messageList = GroupChatHistory::query()->where('to_group_id', $contactData['contact_id'])->orderBy('id', 'desc')->limit(30)->get()->toArray();
+        $messageList = GroupChatHistory::query()->where('to_group_id', $contactData['contact_id'])->orderBy('id', 'desc')->limit(300)->get()->toArray();
         $messageList = array_reverse($messageList);
 
         $list = [];

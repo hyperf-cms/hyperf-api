@@ -3,26 +3,24 @@ declare(strict_types=1);
 
 namespace App\Pool;
 
-use App\Foundation\Traits\Singleton;
-use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Redis as BaseRedis;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\ApplicationContext;
 
 /**
  * 默认Redis库连接池
- * Class Redis
+ * Class LogRedis
  * @package App\Pool
  * @Author YiYuan-Lin
  * @Date: 2021/3/10
  */
-class FooRedis
+class LogRedis
 {
     /**
      * 定义连接池名称
      * @var
      */
-    private static $connection = 'foo';
+    private static $connection = 'log';
 
     /**
      * 定义单例模式

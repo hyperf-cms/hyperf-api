@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Task\Laboratory;
 
 use App\Model\Laboratory\GroupChatHistory;
+use App\Model\Laboratory\GroupRelation;
 use App\Service\Laboratory\GroupService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
@@ -40,6 +41,7 @@ class GroupWsTask
         $message['type'] = 'event';
         $message['sendTime'] = time() * 1000;
         $message['groupId'] = $groupInfo['group_id'];
+        $message['number_total'] = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->count();
         $message['avatar'] = $groupInfo['avatar'];
         $message['groupName'] = $groupInfo['group_name'] ?? '群聊__' . $groupInfo['group_id'];
         $message['index'] = "[0]群聊";

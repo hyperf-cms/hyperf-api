@@ -71,7 +71,7 @@ class FriendController extends AbstractController
                 $query->where('from_uid', $contactData['user_id'])->where('to_uid', $contactData['contact_id']);
             })->orWhere(function ($query) use ($contactData) {
                 $query->where('from_uid', $contactData['contact_id'])->where('to_uid', $contactData['user_id']);
-            })->orderBy('id', 'desc')->limit(30)->get()->toArray();
+            })->orderBy('id', 'desc')->limit(300)->get()->toArray();
 
         $messageList = array_reverse($messageList);
 
