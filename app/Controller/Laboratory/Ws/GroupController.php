@@ -85,7 +85,7 @@ class GroupController extends AbstractController
         $groupInsertData['created_at'] = date('Y-m-d H:i:s');
         $groupInsertData['updated_at'] = date('Y-m-d H:i:s');
         Group::query()->insert($groupInsertData);
-        GroupRelation::buildRelation($groupInsertData['uid'], $groupInsertData['group_id']);
+        GroupRelation::buildRelation($groupInsertData['uid'], $groupInsertData['group_id'], GroupRelation::GROUP_MEMBER_LEVEL_LORD);
 
         if (!empty($contactData['checkedContacts'])) {
             $contactIdList = array_column($contactData['checkedContacts'], 'id');
@@ -93,11 +93,10 @@ class GroupController extends AbstractController
                 foreach ($contactIdList as $contactId) {
                     GroupRelation::buildRelation($contactId, $groupInsertData['group_id']);
                 }
-
             }
         }
         //推送创建组事件
-        $this->container->get(GroupWsTask::class)->pushEvent(GroupEvent::CREATE_GROUP_EVENT, $groupInsertData);
+        $this->container->get(GroupWsTask::class)->createGroupEvent($groupInsertData);
         if (!empty($contactIdList)) {
             //推送新成员进群通知
             $newMemberJoinMessage = [];

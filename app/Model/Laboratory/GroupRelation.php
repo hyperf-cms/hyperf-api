@@ -37,16 +37,26 @@ class GroupRelation extends Model
     protected $casts = [];
 
     /**
+     * 群成员级别
+     * 0：群主 1：管理员 2：普通成员
+     */
+    const GROUP_MEMBER_LEVEL_LORD = 0;
+    const GROUP_MEMBER_LEVEL_MANAGER= 1;
+    const GROUP_MEMBER_LEVEL_MEMBER = 2;
+
+    /**
      * 建立组与用户联系
      * @param int $uid
      * @param string $groupId
+     * @param int $level
      * @return bool
      */
-    public static function buildRelation(int $uid, string $groupId)
+    public static function buildRelation(int $uid, string $groupId, int $level = self::GROUP_MEMBER_LEVEL_MEMBER)
     {
         $model = new static;
         $model->uid = $uid;
         $model->group_id = $groupId;
+        $model->level = $level;
         return $model->save();
     }
 }

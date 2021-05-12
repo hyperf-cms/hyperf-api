@@ -43,4 +43,11 @@ class Group extends Model
     public $primaryKey = 'group_id';
 
     protected $keyType = 'string';
+
+    /**
+     * 声明是否群组标识
+     * 1：是 0：否
+     */
+    const IS_GROUP_TYPE = 1;
+    const IS_NOT_GROUP_TYPE = 0;
 }

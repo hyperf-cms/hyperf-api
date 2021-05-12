@@ -3,9 +3,13 @@ declare(strict_types = 1);
 
 namespace App\Task\Laboratory;
 
+use App\Constants\Laboratory\GroupEvent;
+use App\Model\Auth\User;
+use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Service\Laboratory\GroupService;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
 
@@ -26,29 +30,48 @@ class GroupWsTask
 
     /**
      * @Task()
-     * 组事件推送
-     * @param string $event
+     * 创建组事件
      * @param array $groupInfo
      * @return bool
      */
-    public function pushEvent(string $event, array $groupInfo)
+    public function createGroupEvent(array $groupInfo)
     {
-        if (empty($event || empty($groupInfo))) return false;
+        if (empty($groupInfo)) return false;
 
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupInfo['group_id']);
         $message = [];
         $message['status'] = 'succeed';
         $message['type'] = 'event';
         $message['sendTime'] = time() * 1000;
-        $message['groupId'] = $groupInfo['group_id'];
-        $message['number_total'] = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->count();
-        $message['avatar'] = $groupInfo['avatar'];
-        $message['groupName'] = $groupInfo['group_name'] ?? '群聊__' . $groupInfo['group_id'];
-        $message['index'] = "[0]群聊";
-        $message['content'] = '';
+
+        $groupInfoTemp = [];
+        $groupInfoTemp['id'] = $groupInfo['group_id'];
+        $groupInfoTemp['displayName'] = $groupInfo['group_name'];
+        $groupInfoTemp['avatar'] = $groupInfo['avatar'];
+        $groupInfoTemp['size'] = $groupInfo['size'];
+        $groupInfoTemp['content'] = '';
+        $groupInfoTemp['index'] = "[0]群聊";
+        $groupInfoTemp['introduction'] = $groupInfo['introduction'];
+        $groupInfoTemp['is_group'] = Group::IS_GROUP_TYPE;
+        $groupInfoTemp['member_total'] = 0;
+
+        //获取组成员信息
+        $groupMembersUidList = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->orderBy('level', 'asc')->pluck('uid')->toArray();
+        if (!empty($groupMembersUidList)) {
+            $groupMembersList = User::query()->select('a.id', 'a.desc', 'a.avatar', 'b.level')
+                ->from('users as a')
+                ->whereIn('a.id', $groupMembersUidList)
+                ->leftJoin('ct_group_relation as b', 'a.id', 'b.uid')
+                ->where('b.group_id', $groupInfo['group_id'])
+                ->orderBy(Db::raw('FIND_IN_SET(a.id, "' . implode(",", $groupMembersUidList) . '"' . ")"))
+                ->get()->toArray();
+            $groupInfoTemp['group_member'] = $groupMembersList;
+            $groupInfoTemp['member_total'] = count($groupMembersList);
+        }
+        $message['group_info'] = $groupInfoTemp;
 
         foreach ($uidFdList as $key => $value) {
-            $sendMessage['type'] = $event;
+            $sendMessage['type'] = GroupEvent::CREATE_GROUP_EVENT;
             $sendMessage['message'] = $message;
             $this->sender->push((int) $value['fd'], json_encode($sendMessage));
         }

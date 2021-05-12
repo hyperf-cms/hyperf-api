@@ -2,9 +2,7 @@
 namespace App\Service\Laboratory;
 
 use App\Constants\Laboratory\ChatRedisKey;
-use App\Foundation\Facades\MessageParser;
 use App\Foundation\Traits\Singleton;
-use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\BaseService;
