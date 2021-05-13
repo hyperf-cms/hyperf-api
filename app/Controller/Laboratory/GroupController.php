@@ -118,7 +118,7 @@ class GroupController extends AbstractController
         if(!empty($this->request->query('file_name'))) {
             $groupFileQuery->where('file_name', 'like', '%' . $this->request->query('file_name') . '%');
         }
-        $groupFileQuery = $groupFileQuery->with("getFromUser:id,desc");
+        $groupFileQuery = $groupFileQuery->with("getFromUser:id,desc,avatar");
         $total = $groupFileQuery->count();
         $groupFileQuery = $this->pagingCondition($groupFileQuery, $this->request->all());
         $groupFileList = $groupFileQuery->orderBy('send_time', 'desc')->get()->toArray();
