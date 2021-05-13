@@ -45,8 +45,7 @@ class GroupController extends AbstractController
         foreach ($unOnlineUidList as $uid) {
             Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $contactData['id']);
         }
-
-        $contactData['status'] = 'succeed';
+        $contactData['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
         unset($contactData['fromUser']['unread']);
         unset($contactData['fromUser']['lastSendTime']);
         unset($contactData['fromUser']['lastContent']);
@@ -54,7 +53,7 @@ class GroupController extends AbstractController
         return [
             'message' => [
                 'id' => $contactData['id'],
-                'status' => 'succeed',
+                'status' => GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED,
                 'type' => $contactData['type'],
                 'sendTime' => $contactData['sendTime'],
                 'content' => $contactData['content'],
@@ -102,8 +101,8 @@ class GroupController extends AbstractController
             $newMemberJoinMessage = [];
             $content = join(User::query()->whereIn('id', $contactIdList)->pluck('desc')->toArray(), ' , ') . ' 加入群聊';
             $newMemberJoinMessage['id'] = generate_rand_id();
-            $newMemberJoinMessage['status'] = 'succeed';
-            $newMemberJoinMessage['type'] = 'event';
+            $newMemberJoinMessage['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+            $newMemberJoinMessage['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
             $newMemberJoinMessage['sendTime'] = time() * 1000;
             $newMemberJoinMessage['toContactId'] = $groupInsertData['group_id'];
             $newMemberJoinMessage['content'] = $content ?? '';
@@ -118,7 +117,6 @@ class GroupController extends AbstractController
     public function pullMessage()
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
-
         $contactData = $chatMessage['message'];
         $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['user_id']);
 
@@ -142,10 +140,8 @@ class GroupController extends AbstractController
                 'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar') ?? '',
                 'displayName' => User::query()->where('id', $value['from_uid'])->value('desc') ?? '',
             ];
-
             $list[] = $temp;
         }
-
         return [
             'message' => [
                 'group_history_message' => $list,

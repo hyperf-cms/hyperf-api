@@ -40,8 +40,8 @@ class GroupWsTask
 
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupInfo['group_id']);
         $message = [];
-        $message['status'] = 'succeed';
-        $message['type'] = 'event';
+        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
         $message['sendTime'] = time() * 1000;
 
         $groupInfoTemp = [];

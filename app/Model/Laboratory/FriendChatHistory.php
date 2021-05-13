@@ -44,6 +44,22 @@ class FriendChatHistory extends Model
     const RECEPTION_STATE_NO = 0;
 
     /**
+     * 群消息类型枚举
+     */
+    const FRIEND_CHAT_MESSAGE_TYPE_TEXT = 'text';
+    const FRIEND_CHAT_MESSAGE_TYPE_IMAGE = 'image';
+    const FRIEND_CHAT_MESSAGE_TYPE_FILE = 'file';
+    const FRIEND_CHAT_MESSAGE_TYPE_EVENT = 'event';
+
+    /**
+     * 群消息状态枚举
+     */
+    const FRIEND_CHAT_MESSAGE_STATUS_GOING = 'going';
+    const FRIEND_CHAT_MESSAGE_STATUS_SUCCEED = 'succeed';
+    const FRIEND_CHAT_MESSAGE_STATUS_FAILED = 'failed';
+
+
+    /**
      * 添加聊天记录
      * @param array $message
      * @param int $receptionState

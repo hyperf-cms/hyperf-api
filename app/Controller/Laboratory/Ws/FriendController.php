@@ -31,11 +31,11 @@ class FriendController extends AbstractController
         $contactData = $chatMessage['message'];
 
         $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
-        $receptionState = empty($contactId) ? 0 : 1;
+        $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_NO;
         //添加聊天记录
         FriendChatHistory::addMessage($contactData, $receptionState);
 
-        $contactData['status'] = 'succeed';
+        $contactData['status'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_STATUS_SUCCEED;
         $contactData['toContactId'] = $contactData['fromUser']['id'];
 
         unset($contactData['fromUser']['unread']);
@@ -45,7 +45,7 @@ class FriendController extends AbstractController
         return [
             'message' => [
                 'id' => $contactData['id'],
-                'status' => 'succeed',
+                'status' => $contactData['status'],
                 'type' => $contactData['type'],
                 'sendTime' => $contactData['sendTime'],
                 'content' => $contactData['content'],
@@ -99,7 +99,6 @@ class FriendController extends AbstractController
                 ],
             ];
         }
-
         return [
             'message' => [
                 'friend_history_message' => $list,
@@ -122,7 +121,6 @@ class FriendController extends AbstractController
         FriendChatHistory::query()
             ->where('message_id',  $contactData['id'])
             ->delete();
-
         return [
             'message' => [
                 'message' => $contactData,
@@ -130,23 +128,6 @@ class FriendController extends AbstractController
             ],
             'fd' => $contactFd,
         ];
-    }
-
-
-    /**
-     * @RequestMapping(path="unread_message",methods="GET")
-     */
-    public function getUnreadMessage()
-    {
-
-    }
-
-    /**
-     * @RequestMapping(path="read",methods="GET")
-     */
-    public function read()
-    {
-
     }
 }
 

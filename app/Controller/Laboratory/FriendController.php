@@ -80,28 +80,4 @@ class FriendController extends AbstractController
             'total' => $total
         ]);
     }
-
-    /**
-     * 好友列表
-     * @RequestMapping(path="list", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     * })
-     */
-    public function index()
-    {
-
-    }
-
-    /**
-     * 添加好友
-     * @RequestMapping(path="store", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     * })
-     */
-    public function store()
-    {
-
-    }
 }

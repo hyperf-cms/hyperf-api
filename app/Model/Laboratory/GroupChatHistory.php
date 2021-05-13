@@ -37,6 +37,21 @@ class GroupChatHistory extends Model
     protected $casts = [];
 
     /**
+     * 群消息类型枚举
+     */
+    const GROUP_CHAT_MESSAGE_TYPE_TEXT = 'text';
+    const GROUP_CHAT_MESSAGE_TYPE_IMAGE = 'image';
+    const GROUP_CHAT_MESSAGE_TYPE_FILE = 'file';
+    const GROUP_CHAT_MESSAGE_TYPE_EVENT = 'event';
+
+    /**
+     * 群消息状态枚举
+     */
+    const GROUP_CHAT_MESSAGE_STATUS_GOING = 'going';
+    const GROUP_CHAT_MESSAGE_STATUS_SUCCEED = 'succeed';
+    const GROUP_CHAT_MESSAGE_STATUS_FAILED = 'failed';
+
+    /**
      * 添加组聊天记录
      * @param array $message
      * @param int $receptionState
@@ -49,7 +64,7 @@ class GroupChatHistory extends Model
         $model = new self();
         $model->message_id = $message['id'];
         $model->type = $message['type'];
-        $model->status = 'succeed';
+        $model->status = self::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
         $model->send_time = $message['sendTime'];
         $model->content = $message['content'];
         $model->file_size = $message['fileSize'] ?? 0;

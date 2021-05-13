@@ -122,9 +122,6 @@ class InitService extends BaseService
 
         $unread = FriendChatHistory::query()
             ->where(function ($query) use ($currentUserInfo, $user) {
-                $query->where('from_uid', $currentUserInfo['id'])->where('to_uid', $user['id'])
-                    ->where('reception_state', FriendChatHistory::RECEPTION_STATE_NO);
-            })->orWhere(function ($query) use ($currentUserInfo, $user) {
                 $query->where('from_uid', $user['id'])->where('to_uid', $currentUserInfo['id'])
                     ->where('reception_state', FriendChatHistory::RECEPTION_STATE_NO);
             })
