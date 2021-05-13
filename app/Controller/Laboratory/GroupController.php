@@ -65,4 +65,36 @@ class GroupController extends AbstractController
             'total' => $total
         ]);
     }
+
+    /**
+     * 获取群文件
+     * @RequestMapping(path="group_file", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     */
+    public function groupFile()
+    {
+        $contactId = $this->request->query('contact_id') ?? '';
+        if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, '群ID参数不允许为空');
+        $groupFileQuery = GroupChatHistory::query()->where('to_group_id', $contactId)->where('type', 'file');
+        if (!empty($this->request->query('date'))) {
+            $beginTime = $this->request->query('date');
+            $endTime = $this->request->query('date') + 86400000;
+            $groupFileQuery->whereBetween('send_time', [$beginTime, $endTime]);
+        }
+        if(!empty($this->request->query('file_name'))) {
+            $groupFileQuery->where('file_name', 'like', '%' . $this->request->query('file_name') . '%');
+        }
+
+        $groupFileQuery = $groupFileQuery->with("getFromUser:id,desc");
+        $total = $groupFileQuery->count();
+        $groupFileQuery = $this->pagingCondition($groupFileQuery, $this->request->all());
+        $groupFileList = $groupFileQuery->orderBy('send_time', 'desc')->get()->toArray();
+
+        return $this->success([
+            'list' => $groupFileList,
+            'total' => $total
+        ]);
+    }
 }

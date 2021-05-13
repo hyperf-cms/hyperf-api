@@ -53,11 +53,21 @@ class GroupChatHistory extends Model
         $model->send_time = $message['sendTime'];
         $model->content = $message['content'];
         $model->file_size = $message['fileSize'] ?? 0;
+        $model->file_ext = $message['fileExt'] ?? '';
         $model->file_name = $message['fileName'] ?? '';
         $model->to_group_id = $message['toContactId'];
         $model->from_uid = $message['fromUser']['id'] ?? 0;
         $model->reception_state = $receptionState;
 
         return $model->save();
+    }
+
+    /**
+     * 获取相册名
+     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     */
+    public function getFromUser()
+    {
+        return $this->belongsTo("App\Model\Auth\User", 'from_uid', 'id');
     }
 }

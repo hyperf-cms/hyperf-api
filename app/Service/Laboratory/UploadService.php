@@ -124,6 +124,7 @@ class UploadService extends BaseService
         }
         return [
             'fileName' => $fileName,
+            'fileExt' => $fileExt,
             'url' => $fileUrl,
             'messageId' => $messageId,
         ];
