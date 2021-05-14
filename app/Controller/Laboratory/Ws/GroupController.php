@@ -111,6 +111,40 @@ class GroupController extends AbstractController
     }
 
     /**
+     * 创建组
+     * @RequestMapping(path="invite_group_member",methods="POST")
+     */
+    public function inviteGroupMember()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+        if (!empty($contactData['newJoinGroupMember'])) {
+            $contactIdList = array_column($contactData['newJoinGroupMember'], 'id');
+            if (!empty($contactIdList)) {
+                foreach ($contactIdList as $contactId) {
+                    GroupRelation::buildRelation($contactId, $contactData['id']);
+                }
+            }
+        }
+        if (!empty($contactIdList)) {
+            //推送新成员进群通知
+            $newMemberJoinMessage = [];
+            $content = join(User::query()->whereIn('id', $contactIdList)->pluck('desc')->toArray(), ' , ') . ' 加入群聊';
+            $newMemberJoinMessage['id'] = generate_rand_id();
+            $newMemberJoinMessage['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+            $newMemberJoinMessage['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
+            $newMemberJoinMessage['sendTime'] = time() * 1000;
+            $newMemberJoinMessage['toContactId'] = $contactData['id'];
+            $newMemberJoinMessage['content'] = $content ?? '';
+            //TODO 需要先通知用户加入群操作 才发送信息
+
+
+            $this->container->get(GroupWsTask::class)->sendMessage($contactData['id'], $newMemberJoinMessage, GroupEvent::NEW_MEMBER_JOIN_GROUP_EVENT);
+        }
+    }
+
+    /**
      * 拉取消息
      * @RequestMapping(path="pull_message",methods="GET")
      */

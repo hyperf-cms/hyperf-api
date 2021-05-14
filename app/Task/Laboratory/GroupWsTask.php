@@ -89,7 +89,6 @@ class GroupWsTask
     {
         if (empty($groupId || empty($message))) return false;
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);
-
         foreach ($uidFdList as $key => $value) {
             $sendMessage['type'] = $event;
             $sendMessage['message'] = $message;

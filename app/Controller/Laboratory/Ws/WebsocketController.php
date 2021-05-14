@@ -52,11 +52,12 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
                 'file' => $message['file'] ?? '',
             ]));
             $targetUri = $message['uri'] ?? '';
+            $requestMethod = $message['method'] ?? 'GET';
             $dispatcher = $this->container
                 ->get(DispatcherFactory::class)
                 ->getDispatcher('ws');
             $dispatched = make(Dispatched::class, [
-                $dispatcher->dispatch('GET', $targetUri)
+                $dispatcher->dispatch($requestMethod, $targetUri)
             ]);
             if ($dispatched->isFound()) {
                 //路由处理

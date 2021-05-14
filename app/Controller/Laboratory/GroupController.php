@@ -6,7 +6,9 @@ namespace App\Controller\Laboratory;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Model\Auth\User;
+use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
+use App\Model\Laboratory\GroupRelation;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
@@ -125,7 +127,31 @@ class GroupController extends AbstractController
 
         return $this->success([
             'list' => $groupFileList,
+            'srcList' => array_column($groupFileList, 'content'),
             'total' => $total
+        ]);
+    }
+
+    /**
+     * 获取群邀请
+     * @RequestMapping(path="group_invite", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     */
+    public function groupInvite()
+    {
+        $contactId = $this->request->query('contact_id') ?? '';
+        if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, '群ID参数不允许为空');
+        if (empty($groupInfo = Group::findById($contactId))) $this->throwExp(StatusCode::ERR_EXCEPTION, '该组不存在');
+
+        $groupMemberUidList = GroupRelation::query()->where('group_id', $contactId)->pluck('uid');
+        $groupMemberList = User::query()->select('id', 'desc', 'avatar')->whereIn('id', $groupMemberUidList)->get()->toArray();
+        $contactsSource = User::query()->select('id', 'desc', 'avatar')->whereNotIn('id', $groupMemberUidList)->get()->toArray();
+
+        return $this->success([
+            'group_member_list' => $groupMemberList,
+            'contacts_source' => $contactsSource,
         ]);
     }
 }
