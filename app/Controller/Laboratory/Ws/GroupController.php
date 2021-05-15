@@ -111,13 +111,17 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 创建组
+     * 邀请组员
      * @RequestMapping(path="invite_group_member",methods="POST")
      */
     public function inviteGroupMember()
     {
+        //TODO 需要验证群是否存在，存在可能群员邀请用户时 群主删群操作
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
+
+        $groupInfo = Group::findById($contactData['id'])->toArray();
+        if (empty($groupInfo)) return false;
 
         if (!empty($contactData['newJoinGroupMember'])) {
             $contactIdList = array_column($contactData['newJoinGroupMember'], 'id');
@@ -137,9 +141,8 @@ class GroupController extends AbstractController
             $newMemberJoinMessage['sendTime'] = time() * 1000;
             $newMemberJoinMessage['toContactId'] = $contactData['id'];
             $newMemberJoinMessage['content'] = $content ?? '';
-            //TODO 需要先通知用户加入群操作 才发送信息
-
-
+            //先通知用户加入群操作 然后发送加入群消息事件
+            $this->container->get(GroupWsTask::class)->groupMemberJoinEvent($groupInfo, $contactIdList);
             $this->container->get(GroupWsTask::class)->sendMessage($contactData['id'], $newMemberJoinMessage, GroupEvent::NEW_MEMBER_JOIN_GROUP_EVENT);
         }
     }

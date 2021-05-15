@@ -154,4 +154,28 @@ class GroupController extends AbstractController
             'contacts_source' => $contactsSource,
         ]);
     }
+
+    /**
+     * 获取群邀请
+     * @RequestMapping(path="group_member_manage", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     */
+    public function groupMemberManage()
+    {
+        $contactId = $this->request->query('contact_id') ?? '';
+        if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, '群ID参数不允许为空');
+        if (empty($groupInfo = Group::findById($contactId))) $this->throwExp(StatusCode::ERR_EXCEPTION, '该组不存在');
+
+        $groupMemberQuery = GroupRelation::query()->where('group_id', $contactId);
+        $total = $groupMemberQuery->count();
+        $groupMemberQuery = $this->pagingCondition($groupMemberQuery, $this->request->all());
+        $groupMemberList = $groupMemberQuery->with('getUserInfo:id,desc,avatar')->orderBy('level', 'asc')->get()->toArray();
+
+        return $this->success([
+            'list' => $groupMemberList,
+            'total' => $total,
+        ]);
+    }
 }

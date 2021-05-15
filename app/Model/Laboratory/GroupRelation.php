@@ -59,4 +59,13 @@ class GroupRelation extends Model
         $model->level = $level;
         return $model->save();
     }
+
+    /**
+     * 获取用户信息
+     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     */
+    public function getUserInfo()
+    {
+        return $this->belongsTo("App\Model\Auth\User", 'uid', 'id');
+    }
 }
