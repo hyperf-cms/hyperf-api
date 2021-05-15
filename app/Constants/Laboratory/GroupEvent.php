@@ -35,4 +35,9 @@ class GroupEvent extends AbstractConstants
      */
     const NEW_MEMBER_JOIN_GROUP_EVENT = 'new_member_join_group';
 
+    /**
+     * 组员退群事件
+     */
+    const GROUP_MEMBER_EXIT = 'group_member_exit';
+
 }

@@ -148,6 +148,40 @@ class GroupController extends AbstractController
     }
 
     /**
+     * 邀请组员
+     * @RequestMapping(path="exit_group",methods="POST")
+     */
+    public function exitGroup()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+        if (empty($contactData['group_id'])) return false;
+        if (empty($contactData['uid'])) return false;
+        $groupInfo = Group::findById($contactData['group_id'])->toArray();
+        $userInfo = User::findById($contactData['uid'])->toArray();
+        if (empty($groupInfo)) return false;
+        if (empty($userInfo)) return false;
+
+        //删除组跟用户板绑定关系
+        GroupRelation::query()->where('group_id', $groupInfo['id'])->where('uid', $contactData['uid'])->delete();
+
+        //推送新成员进群通知
+        $message = [];
+        $content = $userInfo['desc'] . ' 已退出群聊';
+        $message['id'] = generate_rand_id();
+        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
+        $message['uid'] = $contactData['uid'];
+        $message['sendTime'] = time() * 1000;
+        $message['toContactId'] = $contactData['group_id'];
+        $message['content'] = $content ?? '';
+        var_dump($message);
+        //通知用户退群事件
+        $this->container->get(GroupWsTask::class)->sendMessage($contactData['group_id'], $message, GroupEvent::GROUP_MEMBER_EXIT);
+    }
+
+    /**
      * 拉取消息
      * @RequestMapping(path="pull_message",methods="GET")
      */
