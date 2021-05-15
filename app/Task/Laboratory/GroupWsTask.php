@@ -52,6 +52,7 @@ class GroupWsTask
         $groupInfoTemp['content'] = '';
         $groupInfoTemp['index'] = "[0]群聊";
         $groupInfoTemp['introduction'] = $groupInfo['introduction'];
+        $groupInfoTemp['validation'] = $groupInfo['validation'];
         $groupInfoTemp['is_group'] = Group::IS_GROUP_TYPE;
         $groupInfoTemp['member_total'] = 0;
 
@@ -109,6 +110,7 @@ class GroupWsTask
         $groupInfoTemp['content'] = '';
         $groupInfoTemp['index'] = "[0]群聊";
         $groupInfoTemp['introduction'] = $groupInfo['introduction'];
+        $groupInfoTemp['validation'] = $groupInfo['validation'];
         $groupInfoTemp['is_group'] = Group::IS_GROUP_TYPE;
         $groupInfoTemp['member_total'] = 0;
 

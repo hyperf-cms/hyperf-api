@@ -70,6 +70,7 @@ class InitService extends BaseService
                 'displayName' => $val['group_name'],
                 'avatar' => $val['avatar'],
                 'introduction' => $val['introduction'],
+                'validation' => $val['validation'],
                 'size' => $val['size'],
                 'uid' => $val['uid'],
                 'index' => "[0]群聊",
