@@ -66,7 +66,7 @@ class GroupController extends AbstractController
 
     /**
      * 创建组
-     * @RequestMapping(path="create_group",methods="GET")
+     * @RequestMapping(path="create_group",methods="POST")
      */
     public function createGroup()
     {
@@ -111,6 +111,37 @@ class GroupController extends AbstractController
     }
 
     /**
+     * 组员退群操作
+     * @RequestMapping(path="edit_group",methods="POST")
+     */
+    public function editGroup()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+        if (empty($contactData['group_id'])) return false;
+        $groupInfo = Group::findById($contactData['group_id']);
+        if (empty($groupInfo)) return false;
+        $groupInfo->avatar = $contactData['avatar'] ?? '';
+        $groupInfo->group_name = $contactData['group_name'] ?? '';
+        $groupInfo->introduction = $contactData['introduction'] ?? '';
+        $groupInfo->size = $contactData['size'] ?? 200;
+        $groupInfo->validation = $contactData['validation'] ?? 0;
+        $groupInfo->save();
+
+        $message['id'] = generate_rand_id();
+        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
+        $message['sendTime'] = time() * 1000;
+        $message['toContactId'] = $groupInfo['group_id'];
+        $message['content'] = $content ?? '';
+        $message['group_info'] = $groupInfo;
+
+        //通知群里所有群员修改群资料操作
+        $this->container->get(GroupWsTask::class)->sendMessage($contactData['group_id'], $message, GroupEvent::EDIT_GROUP_EVENT);
+    }
+
+    /**
      * 邀请组员
      * @RequestMapping(path="invite_group_member",methods="POST")
      */
@@ -148,7 +179,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 邀请组员
+     * 组员退群操作
      * @RequestMapping(path="exit_group",methods="POST")
      */
     public function exitGroup()
@@ -163,22 +194,8 @@ class GroupController extends AbstractController
         if (empty($groupInfo)) return false;
         if (empty($userInfo)) return false;
 
-        //删除组跟用户板绑定关系
-        GroupRelation::query()->where('group_id', $groupInfo['id'])->where('uid', $contactData['uid'])->delete();
-
-        //推送新成员进群通知
-        $message = [];
-        $content = $userInfo['desc'] . ' 已退出群聊';
-        $message['id'] = generate_rand_id();
-        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
-        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
-        $message['uid'] = $contactData['uid'];
-        $message['sendTime'] = time() * 1000;
-        $message['toContactId'] = $contactData['group_id'];
-        $message['content'] = $content ?? '';
-        var_dump($message);
         //通知用户退群事件
-        $this->container->get(GroupWsTask::class)->sendMessage($contactData['group_id'], $message, GroupEvent::GROUP_MEMBER_EXIT);
+        $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo);
     }
 
     /**

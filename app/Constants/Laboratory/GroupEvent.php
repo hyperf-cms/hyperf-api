@@ -31,6 +31,12 @@ class GroupEvent extends AbstractConstants
     const CREATE_GROUP_EVENT = 'create_group';
 
     /**
+     * 修改群组操作
+     */
+    const EDIT_GROUP_EVENT = 'edit_group';
+
+
+    /**
      * 新加入组员事件
      */
     const NEW_MEMBER_JOIN_GROUP_EVENT = 'new_member_join_group';

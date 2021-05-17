@@ -40,7 +40,6 @@ class GroupService extends BaseService
                 'fd' => $fd
             ]);
         }
-
         return $fdList;
     }
 
