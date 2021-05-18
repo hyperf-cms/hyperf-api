@@ -118,9 +118,11 @@ class GroupController extends AbstractController
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
+        var_dump($contactData);
 
         if (empty($contactData['group_id'])) return false;
         $groupInfo = Group::findById($contactData['group_id']);
+        $userInfo = User::findById($contactData['uid']);
         if (empty($groupInfo)) return false;
         $groupInfo->avatar = $contactData['avatar'] ?? '';
         $groupInfo->group_name = $contactData['group_name'] ?? '';
@@ -129,6 +131,8 @@ class GroupController extends AbstractController
         $groupInfo->validation = $contactData['validation'] ?? 0;
         $groupInfo->save();
 
+        $message = [];
+        $content = $userInfo['desc'] . ' 修改了群资料';
         $message['id'] = generate_rand_id();
         $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
         $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
@@ -139,6 +143,7 @@ class GroupController extends AbstractController
 
         //通知群里所有群员修改群资料操作
         $this->container->get(GroupWsTask::class)->sendMessage($contactData['group_id'], $message, GroupEvent::EDIT_GROUP_EVENT);
+        return true;
     }
 
     /**
@@ -176,6 +181,7 @@ class GroupController extends AbstractController
             $this->container->get(GroupWsTask::class)->groupMemberJoinEvent($groupInfo, $contactIdList);
             $this->container->get(GroupWsTask::class)->sendMessage($contactData['id'], $newMemberJoinMessage, GroupEvent::NEW_MEMBER_JOIN_GROUP_EVENT);
         }
+        return true;
     }
 
     /**
@@ -196,6 +202,8 @@ class GroupController extends AbstractController
 
         //通知用户退群事件
         $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo);
+
+        return true;
     }
 
     /**
