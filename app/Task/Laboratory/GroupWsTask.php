@@ -142,14 +142,15 @@ class GroupWsTask
      * 组员退群事件
      * @param array $groupInfo
      * @param array $userInfo
+     * @param string $event
      * @return bool
      */
-    public function groupMemberExitEvent(array $groupInfo, array $userInfo)
+    public function groupMemberExitEvent(array $groupInfo, array $userInfo, string $event)
     {
         if (empty($groupInfo)) return false;
         if (empty($userInfo)) return false;
         $message = [];
-        $content = $userInfo['desc'] . ' 已退出群聊';
+        $content = $event == GroupEvent::GROUP_MEMBER_EXIT_EVENT ? $userInfo['desc'] . ' 已退出群聊' : $userInfo['desc'] . ' 被踢出群聊';
         $message['id'] = generate_rand_id();
         $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
         $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
@@ -157,6 +158,7 @@ class GroupWsTask
         $message['sendTime'] = time() * 1000;
         $message['toContactId'] = $groupInfo['group_id'];
         $message['content'] = $content ?? '';
+        $message['displayName'] = $groupInfo['group_name'] ?? '';
         $message['group_member'] = [];
         $message['member_total'] = [];
 
@@ -177,14 +179,8 @@ class GroupWsTask
             $message['group_member'] = $groupMembersList;
             $message['member_total'] = count($groupMembersList);
         }
-
         //根据组ID获取该群所有在线用户
-        $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupInfo['group_id']);
-        foreach ($uidFdList as $key => $value) {
-            $sendMessage['type'] = GroupEvent::GROUP_MEMBER_EXIT;
-            $sendMessage['message'] = $message;
-            $this->sender->push((int) $value['fd'], json_encode($sendMessage));
-        }
+        $this->sendMessage($groupInfo['group_id'], $message, $event);
         //删除组跟用户板绑定关系
         GroupRelation::query()->where('group_id', $groupInfo['group_id'])->where('uid', $userInfo['id'])->delete();
         return true;

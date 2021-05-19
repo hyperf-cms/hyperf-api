@@ -44,6 +44,11 @@ class GroupEvent extends AbstractConstants
     /**
      * 组员退群事件
      */
-    const GROUP_MEMBER_EXIT = 'group_member_exit';
+    const GROUP_MEMBER_EXIT_EVENT = 'group_member_exit';
+
+    /**
+     * 删除组员事件
+     */
+    const DELETE_GROUP_MEMBER_EVENT = 'delete_group_member';
 
 }

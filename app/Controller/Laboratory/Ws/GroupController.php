@@ -111,14 +111,13 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 组员退群操作
+     * 组员修改群资料操作
      * @RequestMapping(path="edit_group",methods="POST")
      */
     public function editGroup()
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
-        var_dump($contactData);
 
         if (empty($contactData['group_id'])) return false;
         $groupInfo = Group::findById($contactData['group_id']);
@@ -201,7 +200,29 @@ class GroupController extends AbstractController
         if (empty($userInfo)) return false;
 
         //通知用户退群事件
-        $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo);
+        $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo, GroupEvent::GROUP_MEMBER_EXIT_EVENT );
+
+        return true;
+    }
+
+    /**
+     * 将用户剔除群聊事件
+     * @RequestMapping(path="delete_group_member",methods="POST")
+     */
+    public function deleteGroupMember()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+        if (empty($contactData['group_id'])) return false;
+        if (empty($contactData['uid'])) return false;
+        $groupInfo = Group::findById($contactData['group_id'])->toArray();
+        $userInfo = User::findById($contactData['uid'])->toArray();
+        if (empty($groupInfo)) return false;
+        if (empty($userInfo)) return false;
+
+        //通知用户退群事件
+        $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo, GroupEvent::DELETE_GROUP_MEMBER_EVENT);
 
         return true;
     }
