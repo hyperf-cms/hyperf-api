@@ -156,7 +156,7 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 获取群邀请
+     * 获取群员管理列表
      * @RequestMapping(path="group_member_manage", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
@@ -168,10 +168,14 @@ class GroupController extends AbstractController
         if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, '群ID参数不允许为空');
         if (empty($groupInfo = Group::findById($contactId))) $this->throwExp(StatusCode::ERR_EXCEPTION, '该组不存在');
 
-        $groupMemberQuery = GroupRelation::query()->where('group_id', $contactId);
+        $groupMemberQuery = GroupRelation::query()->from('ct_group_relation as a')->where('a.group_id', $contactId);
+        $groupMemberQuery = $groupMemberQuery->leftJoin('users as b', 'a.uid', '=', 'b.id');
+        $groupMemberQuery = $groupMemberQuery->select('a.*', 'b.id', 'b.desc', 'b.avatar');
+
+        if (!empty($this->request->query('desc')))  $groupMemberQuery->where('b.desc', 'like', '%' . $this->request->query('desc') . '%');
         $total = $groupMemberQuery->count();
         $groupMemberQuery = $this->pagingCondition($groupMemberQuery, $this->request->all());
-        $groupMemberList = $groupMemberQuery->with('getUserInfo:id,desc,avatar')->orderBy('level', 'asc')->get()->toArray();
+        $groupMemberList = $groupMemberQuery->orderBy('level', 'asc')->get()->toArray();
 
         return $this->success([
             'list' => $groupMemberList,

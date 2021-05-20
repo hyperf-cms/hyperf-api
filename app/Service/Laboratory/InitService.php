@@ -95,7 +95,7 @@ class InitService extends BaseService
             $userGroupList[] = $temp;
         }
         return [
-            'type' => WsMessage::MESSAGE_TYPE_INIT,
+            'event' => WsMessage::MESSAGE_TYPE_INIT,
             'user_info' => $returnUserInfo,
             'user_contact' => $userContactList,
             'user_group' => $userGroupList

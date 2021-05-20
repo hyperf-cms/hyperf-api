@@ -31,26 +31,27 @@ class FriendController extends AbstractController
         $contactData = $chatMessage['message'];
 
         $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
-        $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_NO;
+        $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_YES;
         //添加聊天记录
         FriendChatHistory::addMessage($contactData, $receptionState);
-
         $contactData['status'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_STATUS_SUCCEED;
         $contactData['toContactId'] = $contactData['fromUser']['id'];
 
         unset($contactData['fromUser']['unread']);
         unset($contactData['fromUser']['lastSendTime']);
         unset($contactData['fromUser']['lastContent']);
-
         return [
-            'message' => [
-                'id' => $contactData['id'],
-                'status' => $contactData['status'],
-                'type' => $contactData['type'],
-                'sendTime' => $contactData['sendTime'],
-                'content' => $contactData['content'],
-                'toContactId' => $contactData['fromUser']['id'],
-                'fromUser' => $contactData['fromUser'],
+            'message_data' => [
+                'message' => [
+                    'id' => $contactData['id'],
+                    'status' => $contactData['status'],
+                    'type' => $contactData['type'],
+                    'sendTime' => $contactData['sendTime'],
+                    'content' => $contactData['content'],
+                    'toContactId' => $contactData['fromUser']['id'],
+                    'fromUser' => $contactData['fromUser'],
+                ],
+                'event' => ''
             ],
             'fd' => $contactId
         ];
@@ -100,9 +101,9 @@ class FriendController extends AbstractController
             ];
         }
         return [
-            'message' => [
+            'message_data' => [
                 'friend_history_message' => $list,
-                'type' => WsMessage::MESSAGE_TYPE_PULL_FRIEND_MESSAGE
+                'event' => WsMessage::MESSAGE_TYPE_PULL_FRIEND_MESSAGE
             ],
             'fd' => $userFd,
         ];
@@ -122,9 +123,9 @@ class FriendController extends AbstractController
             ->where('message_id',  $contactData['id'])
             ->delete();
         return [
-            'message' => [
+            'message_data' => [
                 'message' => $contactData,
-                'type' => WsMessage::MESSAGE_TYPE_WITHDRAW_MESSAGE
+                'event' => WsMessage::MESSAGE_TYPE_FRIEND_WITHDRAW_MESSAGE
             ],
             'fd' => $contactFd,
         ];

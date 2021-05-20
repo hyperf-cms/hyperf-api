@@ -35,7 +35,6 @@ class GroupEvent extends AbstractConstants
      */
     const EDIT_GROUP_EVENT = 'edit_group';
 
-
     /**
      * 新加入组员事件
      */
@@ -50,5 +49,10 @@ class GroupEvent extends AbstractConstants
      * 删除组员事件
      */
     const DELETE_GROUP_MEMBER_EVENT = 'delete_group_member';
+
+    /**
+     * 改变组员等级事件
+     */
+    const CHANGE_GROUP_MEMBER_LEVEL_EVENT = 'change_group_member_level';
 
 }
