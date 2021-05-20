@@ -76,6 +76,7 @@ class InitService extends BaseService
                 'index' => "[0]群聊",
                 'unread' => $unreadMessageInfo['unread'] ?? 0,
                 'member_total' => 0,
+                'level' => GroupRelation::getLevelById($userInfo['id'], $val['group_id']),
                 'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
                 'lastContentType' => $unreadMessageInfo['lastContentType'] ?? '',
                 'lastSendTime' => $unreadMessageInfo['lastSendTime'] ?? getMillisecond(),

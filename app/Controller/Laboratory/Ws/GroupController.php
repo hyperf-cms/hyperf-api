@@ -35,6 +35,7 @@ class GroupController extends AbstractController
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
+        var_dump($chatMessage);
         //添加聊天记录
         GroupChatHistory::addMessage($contactData);
         $fdList = GroupService::getInstance()->getOnlineGroupMemberFd($contactData['toContactId'], $contactData, true);
@@ -150,7 +151,7 @@ class GroupController extends AbstractController
             $newMemberJoinMessage['sendTime'] = time() * 1000;
             $newMemberJoinMessage['toContactId'] = $groupInsertData['group_id'];
             $newMemberJoinMessage['content'] = $content ?? '';
-            $this->container->get(GroupWsTask::class)->sendMessage($groupInsertData['group_id'], $newMemberJoinMessage, GroupEvent::NEW_MEMBER_JOIN_GROUP_EVENT);
+            $this->container->get(GroupWsTask::class)->sendMessage($groupInsertData['group_id'], $newMemberJoinMessage);
         }
     }
 

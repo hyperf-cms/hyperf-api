@@ -73,6 +73,7 @@ class GroupWsTask
 
         foreach ($uidFdList as $key => $value) {
             $sendMessage['event'] = GroupEvent::CREATE_GROUP_EVENT;
+            $message['group_info']['level'] = GroupRelation::getLevelById($value['uid'], $groupInfo['group_id']);
             $sendMessage['message'] = $message;
             $this->sender->push((int) $value['fd'], json_encode($sendMessage));
         }
@@ -207,6 +208,7 @@ class GroupWsTask
         $message['toContactId'] = $groupInfo['group_id'];
         $message['content'] = $content ?? '';
         $message['displayName'] = $groupInfo['group_name'] ?? '';
+        $message['level'] = GroupRelation::getLevelById($userInfo['id'], $groupInfo['group_id']);
         $message['group_member'] = [];
         $message['member_total'] = [];
 

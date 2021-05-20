@@ -68,4 +68,16 @@ class GroupRelation extends Model
     {
         return $this->belongsTo("App\Model\Auth\User", 'uid', 'id');
     }
+
+    /**
+     * 根据用户ID获取群聊等级
+     * @param int $uid
+     * @param string $groupId
+     * @return \Hyperf\Utils\HigherOrderTapProxy|mixed|void
+     */
+    public static function getLevelById(int $uid, string $groupId)
+    {
+        if (empty($uid) || empty($groupId)) return false;
+        return static::query()->where('uid', $uid)->where('group_id', $groupId)->value('level');
+    }
 }
