@@ -243,6 +243,10 @@ class GroupWsTask
     public function sendMessage(string $groupId, array $message, $event = '')
     {
         if (empty($groupId || empty($message))) return false;
+        if (empty($message['fromUser'])) {
+            $message['fromUser']['id'] = 0;
+            $message['fromUser']['displayName'] = '系统通知';
+        }
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);
         foreach ($uidFdList as $key => $value) {
             $sendMessage['event'] = $event;
