@@ -35,7 +35,8 @@ class MonitorWsProcess extends AbstractProcess
             $onlineUserList = Redis::getInstance()->hGetAll(ChatRedisKey::ONLINE_USER_FD_KEY);
             foreach ($onlineUserList as $key => $val) {
                 if (!$this->sender->check(intval($val))) {
-                    Redis::getInstance()->hDel(ChatRedisKey::ONLINE_USER_FD_KEY, $key);
+                    Redis::getInstance()->hDel(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $key);
+                    Redis::getInstance()->hDel(ChatRedisKey::ONLINE_FD_USER_KEY, (string) $val);
                 }
             }
             sleep(1);

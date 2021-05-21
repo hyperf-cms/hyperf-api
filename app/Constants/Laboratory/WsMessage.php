@@ -31,6 +31,16 @@ class WsMessage extends AbstractConstants
     const MESSAGE_TYPE_INIT = 'init';
 
     /**
+     * @Message("用户上线")
+     */
+    const FRIEND_ONLINE_MESSAGE = 'friend_online_message';
+
+    /**
+     * @Message("用户下线")
+     */
+    const FRIEND_OFFLINE_MESSAGE = 'friend_offline_message';
+
+    /**
      * @Message("拉取好友信息")
      */
     const MESSAGE_TYPE_PULL_FRIEND_MESSAGE = 'friend_history_message';

@@ -26,9 +26,14 @@ use Hyperf\Constants\Annotation\Constants;
 class ChatRedisKey extends AbstractConstants
 {
     /**
-     * @Message("在线用户与Fd板顶关系")
+     * @Message("在线用户与Fd绑定关系")
      */
     const ONLINE_USER_FD_KEY = 'online_user_fd_list';
+
+    /**
+     * @Message("Fd与在线用户绑定关系")
+     */
+    const ONLINE_FD_USER_KEY = 'online_fd_user_list';
 
     /**
      * @Message("用户未读的聊天记录")

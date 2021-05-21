@@ -26,32 +26,32 @@ use Hyperf\Constants\Annotation\Constants;
 class GroupEvent extends AbstractConstants
 {
     /**
-     * 创建组事件
+     * @Message("创建组事件")
      */
     const CREATE_GROUP_EVENT = 'create_group';
 
     /**
-     * 修改群组操作
+     * @Message("修改群组操作")
      */
     const EDIT_GROUP_EVENT = 'edit_group';
 
     /**
-     * 新加入组员事件
+     * @Message("新加入组员事件")
      */
     const NEW_MEMBER_JOIN_GROUP_EVENT = 'new_member_join_group';
 
     /**
-     * 组员退群事件
+     * @Message("组员退群事件")
      */
     const GROUP_MEMBER_EXIT_EVENT = 'group_member_exit';
 
     /**
-     * 删除组员事件
+     * @Message("删除组员事件")
      */
     const DELETE_GROUP_MEMBER_EVENT = 'delete_group_member';
 
     /**
-     * 改变组员等级事件
+     * @Message("改变组员等级事件")
      */
     const CHANGE_GROUP_MEMBER_LEVEL_EVENT = 'change_group_member_level';
 

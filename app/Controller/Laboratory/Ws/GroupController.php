@@ -35,7 +35,7 @@ class GroupController extends AbstractController
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
-        var_dump($chatMessage);
+
         //添加聊天记录
         GroupChatHistory::addMessage($contactData);
         $fdList = GroupService::getInstance()->getOnlineGroupMemberFd($contactData['toContactId'], $contactData, true);

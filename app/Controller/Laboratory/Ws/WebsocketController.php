@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Laboratory\Ws;
 
+use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
+use App\Model\Auth\User;
 use App\Pool\Redis;
 
+use App\Task\Laboratory\FriendWsTask;
+use App\Task\Laboratory\GroupWsTask;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -88,23 +92,34 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
     {
         //获取聊天初始化信息
         $initInfo = InitService::getInstance()->initialization();
+        //获取用户信息
+        $userInfo = conGet('user_info');
         //将在线用户放置Redis中
         Redis::getInstance()->hSet(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $initInfo['user_info']['id'], (string) $request->fd);
+        //将FD对应在线用户ID放置Redis中
+        Redis::getInstance()->hSet(ChatRedisKey::ONLINE_FD_USER_KEY, (string) $request->fd, (string) $initInfo['user_info']['id']);
 
         //连接信息发送
         $server->push($request->fd, MessageParser::encode($initInfo));
+        //通知好友该用户登陆状态
+        $this->container->get(FriendWsTask::class)->friendOnlineAndOfflineNotify($userInfo, WsMessage::FRIEND_ONLINE_MESSAGE);
     }
 
     /**
      * 用户关闭连接
-     * @param \Swoole\Http\Response|\Swoole\Server $server
+     * @param \Swoole\Http\Response|WebSocketServer $server
      * @param int $fd
      * @param int $reactorId
      */
     public function onClose($server, int $fd, int $reactorId): void
     {
-        $userInfo = conGet('user_info');
+        $uid = Redis::getInstance()->hGet(ChatRedisKey::ONLINE_FD_USER_KEY, (string) $fd);
+        $userInfo = User::findById($uid)->toArray();
+
         //删除在线列表中的用户
         Redis::getInstance()->hDel(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $userInfo['id']);
+        Redis::getInstance()->hDel(ChatRedisKey::ONLINE_FD_USER_KEY, (string) $fd);
+        //通知好友该用户登陆状态
+        $this->container->get(FriendWsTask::class)->friendOnlineAndOfflineNotify($userInfo, WsMessage::FRIEND_OFFLINE_MESSAGE);
     }
 }
