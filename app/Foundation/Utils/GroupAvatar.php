@@ -37,13 +37,13 @@ class GroupAvatar
      * 画布宽度
      * @var int
      */
-    public static $width = 150;
+    public static $width = 400;
 
     /**
      * 画布高度
      * @var int
      */
-    public static $height = 150;
+    public static $height = 400;
 
     /**
      * 初始化一些参数

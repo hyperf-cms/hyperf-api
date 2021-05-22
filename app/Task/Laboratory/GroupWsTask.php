@@ -285,8 +285,9 @@ class GroupWsTask
 
         $uidList = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->orderBy('created_at', 'desc')->limit(9)->pluck('uid')->toArray();
         $picList = User::query()->whereIn('id', $uidList)->pluck('avatar')->toArray();
-        GroupAvatar::init($picList, false, '121312');
+        GroupAvatar::init($picList, false, 'chat/group/avatar');
         $message['avatar'] = GroupAvatar::build();
+        Group::query()->where('group_id', $groupInfo['group_id'])->update(['avatar' => $message['avatar']]);
 
         $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::CHANGE_GROUP_AVATAR);
         return true;
