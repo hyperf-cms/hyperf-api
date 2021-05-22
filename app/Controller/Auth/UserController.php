@@ -126,7 +126,7 @@ class UserController extends AbstractController
         $user->username = $postData['username'];
         $user->password = md5($postData['password']);
         $user->status = $postData['status'] ?? '1';
-        $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->avatar = empty($postData['avatar']) ? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png' : $postData['avatar'];
         $user->last_login = time();
         $user->last_ip = getClientIp($this->request);
         $user->creater = $postData['creater'] ?? '无';
