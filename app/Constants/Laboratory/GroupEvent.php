@@ -60,4 +60,8 @@ class GroupEvent extends AbstractConstants
      */
     const DELETE_GROUP_EVENT = 'delete_group';
 
+    /**
+     * @Message("更新群聊头像")
+     */
+    const CHANGE_GROUP_AVATAR = 'change_group_avatar';
 }

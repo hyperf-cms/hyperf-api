@@ -8,7 +8,6 @@ use App\Constants\Laboratory\GroupEvent;
 use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
-use App\Foundation\Utils\GroupAvatar;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
@@ -114,7 +113,6 @@ class GroupController extends AbstractController
     /**
      * 创建组
      * @RequestMapping(path="create_group",methods="POST")
-     * @throws \League\Flysystem\FileExistsException
      */
     public function createGroup()
     {
@@ -125,7 +123,7 @@ class GroupController extends AbstractController
         $groupInsertData['group_id'] = getRandStr(16);
         $groupInsertData['uid'] = $contactData['creator']['id'];
         $groupInsertData['group_name'] = $contactData['name'];
-        $groupInsertData['avatar'] = empty($contactData['avatar']) ? $res = GroupAvatar::build() : $contactData['avatar'];
+        $groupInsertData['avatar'] = empty($contactData['avatar']) ? Group::DEFAULT_GROUP_AVATAR : $contactData['avatar'];
         $groupInsertData['size'] = $contactData['size'] ?? 200;
         $groupInsertData['introduction'] = $contactData['introduction'] ?? '';
         $groupInsertData['validation'] = $contactData['validation'] ?? 0;
@@ -155,6 +153,7 @@ class GroupController extends AbstractController
             $newMemberJoinMessage['toContactId'] = $groupInsertData['group_id'];
             $newMemberJoinMessage['content'] = $content ?? '';
             $this->container->get(GroupWsTask::class)->sendMessage($groupInsertData['group_id'], $newMemberJoinMessage);
+            $this->container->get(GroupWsTask::class)->changeGroupAvatar($groupInsertData);
         }
     }
 
@@ -227,6 +226,7 @@ class GroupController extends AbstractController
             //先通知用户加入群操作 然后发送加入群消息事件
             $this->container->get(GroupWsTask::class)->groupMemberJoinEvent($groupInfo, $contactIdList);
             $this->container->get(GroupWsTask::class)->sendMessage($contactData['id'], $newMemberJoinMessage);
+            $this->container->get(GroupWsTask::class)->changeGroupAvatar($groupInfo);
         }
         return true;
     }
@@ -249,6 +249,7 @@ class GroupController extends AbstractController
 
         //通知用户退群事件
         $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo, GroupEvent::GROUP_MEMBER_EXIT_EVENT );
+        $this->container->get(GroupWsTask::class)->changeGroupAvatar($groupInfo);
         return true;
     }
 
@@ -270,11 +271,12 @@ class GroupController extends AbstractController
 
         //通知用户退群事件
         $this->container->get(GroupWsTask::class)->groupMemberExitEvent($groupInfo, $userInfo, GroupEvent::DELETE_GROUP_MEMBER_EVENT);
+        $this->container->get(GroupWsTask::class)->changeGroupAvatar($groupInfo);
         return true;
     }
 
     /**
-     * 将用户剔除群聊事件
+     * 修改用户等级事件
      * @RequestMapping(path="change_group_member_level",methods="POST")
      */
     public function changeGroupMemberLevel()

@@ -53,4 +53,9 @@ class Group extends Model
      */
     const IS_GROUP_TYPE = 1;
     const IS_NOT_GROUP_TYPE = 0;
+
+    /**
+     * 声明群聊默认头像
+     */
+    const DEFAULT_GROUP_AVATAR = 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png';
 }

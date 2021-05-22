@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace App\Task\Laboratory;
 
 use App\Constants\Laboratory\GroupEvent;
+use App\Foundation\Utils\GroupAvatar;
 use App\Model\Auth\User;
 use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
@@ -260,8 +261,34 @@ class GroupWsTask
         GroupChatHistory::query()->where('to_group_id', $groupInfo['group_id'])->delete();
 
         //通知所有群用户
-        var_dump($groupInfo);
         $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::DELETE_GROUP_EVENT);
+        return true;
+    }
+
+    /**
+     * 更新群聊头像
+     * @param array $groupInfo
+     * @return bool
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function changeGroupAvatar(array $groupInfo)
+    {
+        if (empty($groupInfo)) return false;
+        //如果不是默认头像则不替换
+        if ($groupInfo['avatar'] != Group::DEFAULT_GROUP_AVATAR) return false;
+        $message = [];
+        $message['id'] = generate_rand_id();
+        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
+        $message['sendTime'] = time() * 1000;
+        $message['toContactId'] = $groupInfo['group_id'];
+
+        $uidList = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->orderBy('created_at', 'desc')->limit(9)->pluck('uid')->toArray();
+        $picList = User::query()->whereIn('id', $uidList)->pluck('avatar')->toArray();
+        GroupAvatar::init($picList, false, '121312');
+        $message['avatar'] = GroupAvatar::build();
+
+        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::CHANGE_GROUP_AVATAR);
         return true;
     }
 
