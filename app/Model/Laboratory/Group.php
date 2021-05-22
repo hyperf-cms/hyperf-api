@@ -57,5 +57,5 @@ class Group extends Model
     /**
      * 声明群聊默认头像
      */
-    const DEFAULT_GROUP_AVATAR = 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png';
+    const DEFAULT_GROUP_AVATAR = 'https://hyperf-cms.oss-cn-guangzhou.aliyuncs.com/chat/group/composite_avatar/594f172886b3617e9cf8e29cd65f342b%20(2).png';
 }

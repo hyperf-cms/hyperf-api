@@ -275,7 +275,7 @@ class GroupWsTask
     {
         if (empty($groupInfo)) return false;
         //如果不是默认头像则不替换
-        if ($groupInfo['avatar'] != Group::DEFAULT_GROUP_AVATAR) return false;
+        if (!strstr($groupInfo['avatar'], 'composite_avatar')) return false;
         $message = [];
         $message['id'] = generate_rand_id();
         $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
@@ -285,7 +285,7 @@ class GroupWsTask
 
         $uidList = GroupRelation::query()->where('group_id', $groupInfo['group_id'])->orderBy('created_at', 'desc')->limit(9)->pluck('uid')->toArray();
         $picList = User::query()->whereIn('id', $uidList)->pluck('avatar')->toArray();
-        GroupAvatar::init($picList, false, 'chat/group/avatar');
+        GroupAvatar::init($picList, false, 'chat/group/composite_avatar');
         $message['avatar'] = GroupAvatar::build();
         Group::query()->where('group_id', $groupInfo['group_id'])->update(['avatar' => $message['avatar']]);
 
