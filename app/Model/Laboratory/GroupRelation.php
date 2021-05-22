@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace App\Model\Laboratory;
 
 use App\Model\Model;
+use Hyperf\Database\Model\SoftDeletes;
 
+/**
+ * 群聊与组员关系
+ * Class GroupRelation
+ * @package App\Model\Laboratory
+ * @Author YiYuan-Lin
+ * @Date: 2021/5/22
+ */
 class GroupRelation extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *

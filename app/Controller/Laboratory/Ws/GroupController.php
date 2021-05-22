@@ -16,6 +16,7 @@ use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\Laboratory\GroupService;
 use App\Task\Laboratory\GroupWsTask;
+use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
@@ -288,6 +289,29 @@ class GroupController extends AbstractController
 
         $changeLevel = $contactData['level'] == GroupRelation::GROUP_MEMBER_LEVEL_MANAGER ? GroupRelation::GROUP_MEMBER_LEVEL_MEMBER : GroupRelation::GROUP_MEMBER_LEVEL_MANAGER;
         $this->container->get(GroupWsTask::class)->changeGroupMemberLevel($groupInfo, $userInfo, $changeLevel);
+        return true;
+    }
+
+    /**
+     * 解散群聊
+     * @RequestMapping(path="delete_group",methods="POST")
+     */
+    public function deleteGroup()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+
+        if (empty($contactData['group_id'])) return false;
+        if (empty($contactData['uid'])) return false;
+        $groupInfo = Group::findById($contactData['group_id'])->toArray();
+        $userInfo = User::findById($contactData['uid'])->toArray();
+
+        if (empty($groupInfo)) return false;
+        if (empty($userInfo)) return false;
+        Db::beginTransaction();
+        $this->container->get(GroupWsTask::class)->deleteGroup($groupInfo, $userInfo);
+        Db::commit();
         return true;
     }
 }

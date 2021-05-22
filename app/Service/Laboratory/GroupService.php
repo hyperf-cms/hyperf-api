@@ -30,7 +30,7 @@ class GroupService extends BaseService
         if (empty($groupId)) return [];
 
         //获取所有组员列表
-        $uidList = GroupRelation::query()->where('group_id', $groupId)->pluck('uid');
+        $uidList = GroupRelation::query()->withTrashed()->where('group_id', $groupId)->pluck('uid');
         $fdList = [];
         foreach ($uidList as $uid) {
             //判断如果排除本身，则只获取群其他成员fd

@@ -168,7 +168,7 @@ class GroupController extends AbstractController
         if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, '群ID参数不允许为空');
         if (empty($groupInfo = Group::findById($contactId))) $this->throwExp(StatusCode::ERR_EXCEPTION, '该组不存在');
 
-        $groupMemberQuery = GroupRelation::query()->from('ct_group_relation as a')->where('a.group_id', $contactId);
+        $groupMemberQuery = (new GroupRelation())->setTable('a')->from('ct_group_relation as a')->where('a.group_id', $contactId);
         $groupMemberQuery = $groupMemberQuery->leftJoin('users as b', 'a.uid', '=', 'b.id');
         $groupMemberQuery = $groupMemberQuery->select('a.*', 'b.id', 'b.desc', 'b.avatar');
 

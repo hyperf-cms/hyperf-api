@@ -234,6 +234,38 @@ class GroupWsTask
     }
 
     /**
+     * 解散群聊
+     * @param array $groupInfo
+     * @param array $userInfo
+     * @return bool
+     */
+    public function deleteGroup(array $groupInfo, array $userInfo)
+    {
+
+        if (empty($groupInfo)) return false;
+        if (empty($userInfo)) return false;
+        $message = [];
+        $content = $userInfo['desc'] . ' 已经解散了 "' . $groupInfo['group_name'] . '" 该群聊';
+        $message['id'] = generate_rand_id();
+        $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
+        $message['uid'] = $userInfo['id'];
+        $message['sendTime'] = time() * 1000;
+        $message['toContactId'] = $groupInfo['group_id'];
+        $message['content'] = $content ?? '';
+        $message['displayName'] = $groupInfo['group_name'] ?? '';
+
+        Group::query()->where('group_id', $groupInfo['group_id'])->delete();
+        GroupRelation::query()->where('group_id', $groupInfo['group_id'])->delete();
+        GroupChatHistory::query()->where('to_group_id', $groupInfo['group_id'])->delete();
+
+        //通知所有群用户
+        var_dump($groupInfo);
+        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::DELETE_GROUP_EVENT);
+        return true;
+    }
+
+    /**
      * 组消息发送
      * @param string $groupId
      * @param array $message

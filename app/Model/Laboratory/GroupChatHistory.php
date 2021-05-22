@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace App\Model\Laboratory;
 
 use App\Model\Model;
+use Hyperf\Database\Model\SoftDeletes;
 
+/**
+ * 群聊消息历史记录
+ * Class GroupChatHistory
+ * @package App\Model\Laboratory
+ * @Author YiYuan-Lin
+ * @Date: 2021/5/22
+ */
 class GroupChatHistory extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *

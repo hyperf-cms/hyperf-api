@@ -55,4 +55,9 @@ class GroupEvent extends AbstractConstants
      */
     const CHANGE_GROUP_MEMBER_LEVEL_EVENT = 'change_group_member_level';
 
+    /**
+     * @Message("解散群聊事件")
+     */
+    const DELETE_GROUP_EVENT = 'delete_group';
+
 }

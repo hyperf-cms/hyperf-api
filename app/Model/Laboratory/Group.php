@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Model\Laboratory;
 
 use App\Model\Model;
+use Hyperf\Database\Model\SoftDeletes;
 
 class Group extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
