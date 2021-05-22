@@ -8,6 +8,7 @@ use App\Constants\Laboratory\GroupEvent;
 use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
+use App\Foundation\Utils\GroupAvatar;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
@@ -113,6 +114,7 @@ class GroupController extends AbstractController
     /**
      * 创建组
      * @RequestMapping(path="create_group",methods="POST")
+     * @throws \League\Flysystem\FileExistsException
      */
     public function createGroup()
     {
@@ -123,7 +125,7 @@ class GroupController extends AbstractController
         $groupInsertData['group_id'] = getRandStr(16);
         $groupInsertData['uid'] = $contactData['creator']['id'];
         $groupInsertData['group_name'] = $contactData['name'];
-        $groupInsertData['avatar'] = empty($contactData['avatar']) ? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_4/594f172886b3617e9cf8e29cd65f342b.png' : $contactData['avatar'];
+        $groupInsertData['avatar'] = empty($contactData['avatar']) ? $res = GroupAvatar::build() : $contactData['avatar'];
         $groupInsertData['size'] = $contactData['size'] ?? 200;
         $groupInsertData['introduction'] = $contactData['introduction'] ?? '';
         $groupInsertData['validation'] = $contactData['validation'] ?? 0;

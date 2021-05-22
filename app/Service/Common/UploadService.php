@@ -6,6 +6,7 @@ use App\Foundation\Traits\Singleton;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use League\Flysystem\Filesystem;
+use phpDocumentor\Reflection\Types\Resource_;
 
 class UploadService extends BaseService
 {
@@ -113,5 +114,29 @@ class UploadService extends BaseService
         return [
             'url' => $fileUrl
         ];
+    }
+
+    /**
+     * 根据文件内容上传图片
+     * @param $content
+     * @param string $savePath
+     * @return string | bool
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadPicByContent(string $content, string $savePath = '')
+    {
+        if (empty($content)) return false;
+        //拼接得到文件名以及对应路径
+        $fileName =  md5(uniqid())  . '.' . 'jpg';
+        $uploadPath = $savePath . '/' . $fileName;
+
+        //外网访问的路径
+        $fileUrl = env('OSS_URL') . $uploadPath;
+        $this->filesystem->write(
+            $uploadPath,
+            $content
+        );
+
+        return $fileUrl;
     }
 }
