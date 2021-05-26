@@ -208,7 +208,7 @@ class GroupAvatar
             $start_x = $start_x + $pic_w + $space_x;
         }
         ob_start();
-        imagejpeg($background);
+        imagejpeg($background, null, 100);
         $imageData = ob_get_contents();
         ob_end_clean();
         imagedestroy($background);
