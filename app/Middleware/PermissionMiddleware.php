@@ -57,21 +57,21 @@ class PermissionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-            //获取访问目标控制器以及方法
-            $requestController = $this->request->getAttribute(Dispatched::class)->handler->callback;
-            $controller = $requestController[0];
-            $actionMethod = $requestController[1];
-            $actionName = 'Api:' .  ltrim($request->getUri()->getPath(), '/'). '-' . $actionMethod;
-            $actionName = preg_replace('/\/\d+/', '', $actionName);
+        //获取访问目标控制器以及方法
+        $requestController = $this->request->getAttribute(Dispatched::class)->handler->callback;
+        $controller = $requestController[0];
+        $actionMethod = $requestController[1];
+        $actionName = 'Api:' .  ltrim($request->getUri()->getPath(), '/'). '-' . $actionMethod;
+        $actionName = preg_replace('/\/\d+/', '', $actionName);
 
-            //获取当前用户
-            $user = UserService::getInstance()->getUserInfoByToken();
-            Context::set('user_info', $user);
+        //获取当前用户
+        $user = UserService::getInstance()->getUserInfoByToken();
+        Context::set('user_info', $user);
 
-            //判断是否是超级管理员
-            if ($user->hasRole(Role::SUPER_ADMIN)) return $handler->handle($request);
-            if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_PERMISSION, '无权限访问');
+        //判断是否是超级管理员
+        if ($user->hasRole(Role::SUPER_ADMIN)) return $handler->handle($request);
+        if (!$user->can($actionName)) Throw new BusinessException(StatusCode::ERR_NOT_PERMISSION, '无权限访问');
 
-            return $handler->handle($request);
+        return $handler->handle($request);
     }
 }

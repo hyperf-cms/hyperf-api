@@ -68,26 +68,29 @@
 
 > 捐杯咖啡或者一瓶肥宅快乐水
 
-<!--
 <table>
     <tr>
-        <td ><img style="display: inline-block;width: 300px;height: 300px" src="https://i.loli.net/2020/04/30/PJ1UlOGjrZNgAK6.jpg" ><p style="text-align: center">支付宝</p></td>
-        <td ><img style="display: inline-block;width: 300px;height: 300px" src="https://i.loli.net/2020/04/30/quwJb2GvSt3kpfF.jpg" ><p style="text-align: center">微信</p></td>
+        <td ><img style="display: inline-block;width: 300px;height: 300px" src="https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210527115716.png" ><p style="text-align: center">支付宝</p></td>
+        <td ><img style="display: inline-block;width: 300px;height: 300px" src="https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210527120018.png" ><p style="text-align: center">微信</p></td>
     </tr>
-</table> -->
+</table>
 
 ## 项目展示
 
-![enter description here](https://i.loli.net/2019/12/24/Ocs7n45uaMDhKef.png)
-![enter description here](https://i.loli.net/2019/12/24/8dZaITtQOY7uNbF.png)
-![enter description here](https://i.loli.net/2018/12/12/5c10a2f90e38a.jpg)
-![enter description here](https://i.loli.net/2018/12/16/5c153f4998458.jpg)
-![enter description here](https://i.loli.net/2018/12/16/5c153fe516daf.jpg)
-![enter description here](https://i.loli.net/2018/12/12/5c102c115c130.jpg)
+![登陆页](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/1.png)
+![首页](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/2.png)
+![导航页](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/3.png)
+![权限管理](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/4.png)
+![添加权限](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/5.png)
+![聊天模块](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/6.png)
+![群聊](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/7.png)
+![邀请组员](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/8.png)
+![聊天设置](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/9.png)
+![好友列表](https://shmily-album.oss-cn-shenzhen.aliyuncs.com/photo_album_17/10.png)
 
 ## 📝 License
 
-Copyright © 2019 [linyiyuan](https://github.com/linyiyuan).<br />
+Copyright © 2021 [linyiyuan](https://github.com/linyiyuan).<br />
 This project is [MIT](https://github.com/Nirongxu/vue-xuAdmin/blob/master/LICENSE) licensed.
 
 ---

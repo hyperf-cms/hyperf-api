@@ -3,14 +3,10 @@ declare(strict_types=1);
 
 namespace App\Process;
 
-use App\Foundation\Facades\Log;
 use App\Model\Setting\TimedTask;
 use App\Model\Setting\TimedTaskLog;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
-use Hyperf\Task\Task;
-use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\ApplicationContext;
 
 /**
  * 监听Ws的链接情况
