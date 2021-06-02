@@ -15,14 +15,17 @@ class CreateOperateLog extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('action', '255')->default('')->comment('操作');
-            $table->text('params')->default('')->comment('请求参数');
+            $table->text('data')->default('')->comment('请求参数');
             $table->string('username', '100')->default('')->comment('操作人账号');
             $table->string('operator', '100')->default('')->comment('操作人描述');
-            $table->string('deal_result', '255')->default('')->comment('处理结果');
-            $table->string('deal_exception', '1000')->default('')->comment('处理异常');
-            $table->tinyinteger('status')->default(1)->comment('账号状态 0-停用，1-启用');
+            $table->string('response_result', '1000')->default('')->comment('响应结果');
+            $table->string('response_code', '50')->default('')->comment('响应状态码');
+            $table->string('target_class', '50')->default('')->comment('目标类');
+            $table->string('target_method', '50')->default('')->comment('目标方法');
+            $table->string('request_ip', '50')->default('')->comment('请求IP');
+            $table->string('request_method', '50')->default('')->comment('请求方法');
+            $table->string('target_url', '100')->default('')->comment('目标路由');
             $table->integer('uid')->default(0)->comment('操作人ID');
-            $table->string('ip', 50)->default('')->comment('操作地点IP');
             $table->timestamps();
         });
     }
