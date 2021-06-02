@@ -22,6 +22,8 @@ class CreateCtUserApplicationTable extends Migration
             $table->string('application_reason', 255)->default('0')->comment('申请原因');
             $table->tinyInteger('read_state', 3)->default('0')->comment('读取状态 0 未读 1已读');
             $table->timestamps();
+            $table->index('uid', 'uid_index');
+            $table->index('receiver_id', 'receiver_id_index');
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_user_application` comment'好友/群组申请表'");//表注释一定加上前缀
     }

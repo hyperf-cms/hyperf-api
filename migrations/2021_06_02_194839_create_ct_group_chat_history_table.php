@@ -25,6 +25,9 @@ class CreateCtGroupChatHistoryTable extends Migration
             $table->string('file_name', 255)->default('')->comment('文件名称');
             $table->tinyInteger('reception_state', 3)->default('0')->comment('接受状态 0 未接收 1：接收');
             $table->timestamps();
+            $table->index('message_id', 'message_id_index');
+            $table->index('from_uid', 'from_uid_index');
+            $table->index('to_group_id', 'to_group_id_index');
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_group_chat_history` comment'群组聊天记录'");//表注释一定加上前缀
     }

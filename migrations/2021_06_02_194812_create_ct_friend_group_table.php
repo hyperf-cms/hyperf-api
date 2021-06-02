@@ -16,6 +16,7 @@ class CreateCtFriendGroupTable extends Migration
             $table->bigIncrements('id');
             $table->integer('uid', 11)->default('0')->comment('用户ID');
             $table->string('friend_group_name', 255)->default('0')->comment('分组名');
+            $table->index('uid', 'uid_index');
             $table->timestamps();
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_friend_group` comment'聊天群组表'");//表注释一定加上前缀

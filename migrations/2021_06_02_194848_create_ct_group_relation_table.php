@@ -17,6 +17,8 @@ class CreateCtGroupRelationTable extends Migration
             $table->string('group_id', 50)->default('0')->comment('群ID');
             $table->tinyInteger('level', 4)->default('2')->comment('级别：0群主，1管理员，2成员');
             $table->timestamps();
+            $table->primary(['uid', 'group_id'], 'uid_group_id_key');
+            $table->index('uid', 'uid_index');
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_group_relation` comment'群组-用户关联表'");//表注释一定加上前缀
     }

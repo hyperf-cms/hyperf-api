@@ -21,6 +21,7 @@ class CreateNoticeTable extends Migration
             $table->integer('public_time', 11)->default('0')->comment('发布时间');
             $table->tinyInteger('status', 4)->default('0')->comment('操作系统');
             $table->timestamps();
+            $table->index('public_time', 'notice_public_time_index');
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `notice` comment'系统通知表'");//表注释一定加上前缀
     }
