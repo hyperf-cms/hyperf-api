@@ -38,6 +38,17 @@ class User extends Model
      */
     protected $casts = [];
 
+    /**
+     * 定义状态枚举
+     */
+    const STATUS_ON = 1;
+    const STATUS_OFF= 0;
+
+    /**
+     * 定义性别
+     */
+    const SEX_BY_MALE = 1;
+    const SEX_BY_Female = 0;
 
     /**
      * 根据用户ID获取用户信息
