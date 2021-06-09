@@ -14,7 +14,7 @@ class CreateCtFriendGroupTable extends Migration
         Schema::create('ct_friend_group', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->integer('uid', 11)->default('0')->comment('用户ID');
+            $table->integer('uid')->default('0')->comment('用户ID');
             $table->string('friend_group_name', 255)->default('0')->comment('分组名');
             $table->index('uid', 'uid_index');
             $table->timestamps();

@@ -17,7 +17,7 @@ class CreateDictTypeTable extends Migration
             $table->string('dict_name', 100)->comment('字典名称');
             $table->string('dict_name', 100)->comment('字典类型');
             $table->string('remark', 500)->comment('备注');
-            $table->tinyInteger('status', 4)->default('0')->comment('状态（0正常 1停用）');
+            $table->tinyInteger('status')->default('0')->comment('状态（0正常 1停用）');
             $table->unique('dict_type', 'dict_type');
             $table->timestamps();
         });

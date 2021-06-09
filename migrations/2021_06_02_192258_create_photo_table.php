@@ -14,7 +14,7 @@ class CreatePhotoTable extends Migration
         Schema::create('photo', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->tinyInteger('photo_album', 4)->comment('所属相册');
+            $table->tinyInteger('photo_album')->comment('所属相册');
             $table->string('photo_url', 1000)->comment('图片路径');
             $table->timestamps();
         });

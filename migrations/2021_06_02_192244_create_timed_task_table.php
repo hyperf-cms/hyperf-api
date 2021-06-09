@@ -20,8 +20,8 @@ class CreateTimedTaskTable extends Migration
             $table->string('execute_time', 255)->comment('执行时间');
             $table->string('next_execute_time', 255)->comment('下次执行时间');
             $table->string('desc', 255)->comment('备注信息');
-            $table->integer('times', 11)->comment('执行次数');
-            $table->tinyInteger('status', 4)->default('0')->comment('1:启用 0：禁用');
+            $table->integer('times')->comment('执行次数');
+            $table->tinyInteger('status')->default('0')->comment('1:启用 0：禁用');
             $table->timestamps();
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `timed_task` comment'定时任务表'");//表注释一定加上前缀

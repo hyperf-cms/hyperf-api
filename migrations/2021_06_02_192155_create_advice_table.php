@@ -17,9 +17,9 @@ class CreateAdviceTable extends Migration
             $table->integer('user_id')->comment('用户ID');
             $table->string('title', 50)->comment('标题');
             $table->longText('content')->comment('内容');
-            $table->tinyInteger('status', 4)->default('0')->comment('状态（0：待解决，1：已解决，2：关闭）');
+            $table->tinyInteger('status')->default('0')->comment('状态（0：待解决，1：已解决，2：关闭）');
             $table->longText('reply')->comment('回复内容');
-            $table->tinyInteger('type', 4)->default('0')->comment('类型（0：bug，1：优化，2：混合');
+            $table->tinyInteger('type')->default('0')->comment('类型（0：bug，1：优化，2：混合');
             $table->timestamps();
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `advice` comment'系统建议表'");//表注释一定加上前缀

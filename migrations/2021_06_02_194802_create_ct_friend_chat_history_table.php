@@ -21,9 +21,9 @@ class CreateCtFriendChatHistoryTable extends Migration
             $table->text('content')->comment('消息内容');
             $table->integer('file_size', 11)->default('0')->comment('文件大小');
             $table->string('file_name', 255)->default('')->comment('文件名称');
-            $table->integer('to_uid', 11)->default('0')->comment('接收好友前');
-            $table->integer('from_uid', 11)->default('0')->comment('发送方');
-            $table->tinyInteger('reception_state', 3)->default('0')->comment('接受状态 0 未接收 1：接收');
+            $table->integer('to_uid')->default('0')->comment('接收好友前');
+            $table->integer('from_uid')->default('0')->comment('发送方');
+            $table->tinyInteger('reception_state')->default('0')->comment('接受状态 0 未接收 1：接收');
             $table->timestamps();
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_friend_chat_history` comment'好友聊天记录'");//表注释一定加上前缀

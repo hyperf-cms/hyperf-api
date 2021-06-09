@@ -15,11 +15,11 @@ class CreateNoticeTable extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('username', 255)->comment('用户名称');
-            $table->integer('user_id', 11)->comment('用户ID');
+            $table->integer('user_id')->comment('用户ID');
             $table->string('title', 50)->comment('标题');
             $table->longText('content')->comment('内容');
-            $table->integer('public_time', 11)->default('0')->comment('发布时间');
-            $table->tinyInteger('status', 4)->default('0')->comment('操作系统');
+            $table->integer('public_time')->default('0')->comment('发布时间');
+            $table->tinyInteger('status')->default('0')->comment('操作系统');
             $table->timestamps();
             $table->index('public_time', 'notice_public_time_index');
         });
