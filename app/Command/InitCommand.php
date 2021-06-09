@@ -29,7 +29,9 @@ class InitCommand extends HyperfCommand
         $this->setDescription('HyperfCms 项目初始化');
     }
 
-
+    /**
+     * 命令执行方法
+     */
     public function handle()
     {
         //初始化添加一个默认用户以及一个超级管理员角色
@@ -46,7 +48,7 @@ class InitCommand extends HyperfCommand
         $user->mobile = '1800000000';
         $user->sex = User::SEX_BY_MALE;
         $user->email = 'admin@admin.com';
-        $user->avatar = 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->avatar = 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1, 10) .'.png';
         $user->save();
         $super_role = [
             'name' => 'super_admin',
@@ -63,6 +65,13 @@ class InitCommand extends HyperfCommand
         //创建默认的两个角色
         $super_role = Role::create($super_role);
         $default_role = Role::create($default_role);
+
+        //创建权限
+        $permissionList = config('permissionData.permission_list');
+        foreach ($permissionList as $permission) {
+            if (empty(Permission::query()->find($permission['id']))) Permission::query()->insert($permission);
+            $this->line('添加权限成功----------------------------' . $permission['display_name']);
+        }
 
         //添加默认角色到默认用户
         $user->assignRole($super_role->name);
