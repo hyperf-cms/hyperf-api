@@ -13,7 +13,7 @@ class CreateCtUserApplicationTable extends Migration
     {
         Schema::create('ct_user_application', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->bigIncrements('id')->default('0');
+            $table->bigIncrements('id');
             $table->integer('uid')->default('0')->comment('用户ID');
             $table->integer('receiver_id')->default('0')->comment('接收方');
             $table->string('group_id', 50)->default('')->comment('好友分组ID || 群');

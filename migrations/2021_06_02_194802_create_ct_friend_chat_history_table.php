@@ -19,7 +19,7 @@ class CreateCtFriendChatHistoryTable extends Migration
             $table->string('status', 50)->default('')->comment('消息发送状态 going,failed,succeed');
             $table->bigInteger('send_time')->default('0')->comment('发送时间 13位毫秒');
             $table->text('content')->comment('消息内容');
-            $table->integer('file_size', 11)->default('0')->comment('文件大小');
+            $table->integer('file_size')->default('0')->comment('文件大小');
             $table->string('file_name', 255)->default('')->comment('文件名称');
             $table->integer('to_uid')->default('0')->comment('接收好友前');
             $table->integer('from_uid')->default('0')->comment('发送方');
