@@ -30,7 +30,6 @@ class CreatePermissionTables extends Migration
             $table->tinyInteger('type')->comment('类型：1: 菜单 2：按钮 3：接口')->default(1);
             $table->tinyInteger('hidden')->comment('是否隐藏菜单 1:true 0 false')->default(1);
             $table->tinyInteger('status')->comment('启动状态1：启动 0：禁用')->default(1);
-            $table->tinyInteger('type')->comment('类型 1:菜单 2：按钮 3：接口')->default(1);
             $table->smallInteger('sort')->comment('排序，数字越大越在前面');
             $table->timestamps();
         });
