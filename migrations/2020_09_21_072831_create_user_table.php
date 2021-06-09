@@ -21,7 +21,7 @@ class CreateUserTable extends Migration
             $table->string('avatar', '255')->default('')->comment('用户头像');
             $table->string('mobile', '15')->default('')->comment('手机号码');
             $table->string('last_ip', '15')->default(0)->comment('上次登录IP');
-            $table->tinyInteger('sex', '3')->default(0)->comment('用户性别');
+            $table->tinyInteger('sex')->default(0)->comment('用户性别');
             $table->string('creater', '100')->default('')->comment('创建者');
             $table->string('email', '100')->default('')->comment('邮箱地址');
             $table->string('address', '255')->default('')->comment('收货地址');

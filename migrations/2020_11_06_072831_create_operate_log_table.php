@@ -4,7 +4,7 @@ use Hyperf\Database\Schema\Schema;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Migrations\Migration;
 
-class CreateOperateLog extends Migration
+class CreateOperateLogTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class CreateOperateLog extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('action', '255')->default('')->comment('操作');
-            $table->text('data')->default('')->comment('请求参数');
+            $table->text('data')->comment('请求参数');
             $table->string('username', '100')->default('')->comment('操作人账号');
             $table->string('operator', '100')->default('')->comment('操作人描述');
             $table->string('response_result', '1000')->default('')->comment('响应结果');
