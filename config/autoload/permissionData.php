@@ -16,8 +16,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "1",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "2",
@@ -33,8 +33,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "1",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "3",
@@ -50,12 +50,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "4",
-            "parent_id"    => "2",
+            "parent_id"    => "3",
             "name"         => "Api:setting/user_module/user/store-store",
             "display_name" => "添加用户",
             "display_desc" => "",
@@ -67,12 +67,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "5",
-            "parent_id"    => "2",
+            "parent_id"    => "3",
             "name"         => "Api:setting/user_module/user/update-update",
             "display_name" => "修改用户",
             "display_desc" => "",
@@ -84,12 +84,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "6",
-            "parent_id"    => "2",
+            "parent_id"    => "3",
             "name"         => "Api:setting/user_module/user/destroy-destroy",
             "display_name" => "删除用户",
             "display_desc" => "",
@@ -101,8 +101,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "7",
@@ -118,12 +118,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "8",
-            "parent_id"    => "2",
+            "parent_id"    => "7",
             "name"         => "Api:setting/user_module/role/store-store",
             "display_name" => "增加角色",
             "display_desc" => "",
@@ -135,12 +135,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "9",
-            "parent_id"    => "2",
+            "parent_id"    => "7",
             "name"         => "Api:setting/user_module/role/update-update",
             "display_name" => "修改角色",
             "display_desc" => "",
@@ -152,12 +152,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "10",
-            "parent_id"    => "2",
+            "parent_id"    => "7",
             "name"         => "Api:setting/user_module/role/destroy-destroy",
             "display_name" => "删除角色",
             "display_desc" => "",
@@ -169,8 +169,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "11",
@@ -186,12 +186,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "12",
-            "parent_id"    => "2",
+            "parent_id"    => "11",
             "name"         => "Api:setting/user_module/permission/store-store",
             "display_name" => "增加权限",
             "display_desc" => "",
@@ -203,12 +203,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "13",
-            "parent_id"    => "2",
+            "parent_id"    => "11",
             "name"         => "Api:setting/user_module/permission/update-update",
             "display_name" => "修改权限",
             "display_desc" => "",
@@ -220,12 +220,12 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "14",
-            "parent_id"    => "2",
+            "parent_id"    => "11",
             "name"         => "Api:setting/user_module/permission/destroy-destroy",
             "display_name" => "删除权限",
             "display_desc" => "",
@@ -237,8 +237,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "19",
@@ -254,8 +254,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "3",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "20",
@@ -271,13 +271,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "21",
             "parent_id"    => "19",
-            "name"         => "Api:setting/monitoring_module/crontab-list",
+            "name"         => "Api:setting/monitoring_module/timed_task/list-index",
             "display_name" => "定时任务",
             "display_desc" => "记录系统一些定时任务",
             "url"          => "/setting/monitoring_module/crontab",
@@ -288,13 +288,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "10/6/2021 14:49:57"
         ],
         [
             "id"           => "22",
-            "parent_id"    => "19",
-            "name"         => "Api:setting/monitoring_module/crontab/store-store",
+            "parent_id"    => "21",
+            "name"         => "Api:setting/monitoring_module/timed_task/store-store",
             "display_name" => "添加定时任务",
             "display_desc" => "添加定时任务项",
             "url"          => "",
@@ -305,13 +305,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "23",
-            "parent_id"    => "19",
-            "name"         => "Api:setting/monitoring_module/crontab/update-update",
+            "parent_id"    => "21",
+            "name"         => "Api:setting/monitoring_module/timed_task/update-update",
             "display_name" => "修改定时任务",
             "display_desc" => "修改定时任务项",
             "url"          => "",
@@ -322,13 +322,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "24",
-            "parent_id"    => "19",
-            "name"         => "Api:setting/monitoring_module/crontab/change_status-changeStatus",
+            "parent_id"    => "21",
+            "name"         => "Api:setting/monitoring_module/timed_task/change_status-changeStatus",
             "display_name" => "修改定时任务状态",
             "display_desc" => "修改定时任务状态",
             "url"          => "",
@@ -339,13 +339,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "25",
-            "parent_id"    => "19",
-            "name"         => "Api:setting/monitoring_module/crontab/destroy-destroy",
+            "parent_id"    => "21",
+            "name"         => "Api:setting/monitoring_module/timed_task/destroy-destroy",
             "display_name" => "删除定时任务",
             "display_desc" => "删除定时任务",
             "url"          => "",
@@ -356,8 +356,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "26",
@@ -373,8 +373,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "4",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "27",
@@ -390,8 +390,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "28",
@@ -407,8 +407,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "29",
@@ -424,8 +424,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "30",
@@ -441,30 +441,30 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "31",
             "parent_id"    => "26",
-            "name"         => "Api:setting/system_module/config/list-index",
+            "name"         => "Api:setting/system_module/global_config/list-index",
             "display_name" => "参数设置",
             "display_desc" => "一些常用参数配置",
-            "url"          => "/setting/system_module/config/list",
-            "component"    => "setting/system_module/config/index",
+            "url"          => "/setting/system_module/global_config/config/list",
+            "component"    => "setting/system_module/globalConfig/index",
             "guard_name"   => "web",
             "icon"         => "config",
             "type"         => "1",
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "32",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/config/store-store",
+            "name"         => "Api:setting/system_module/global_config/store-store",
             "display_name" => "添加参数",
             "display_desc" => "添加参数操作",
             "url"          => "",
@@ -475,13 +475,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "33",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/config/update-update",
+            "name"         => "Api:setting/system_module/global_config/update-update",
             "display_name" => "修改参数",
             "display_desc" => "修改参数操作",
             "url"          => "",
@@ -492,13 +492,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "34",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/config/destroy-destroy",
+            "name"         => "Api:setting/system_module/global_config/destroy-destroy",
             "display_name" => "删除参数",
             "display_desc" => "删除参数操作",
             "url"          => "",
@@ -509,8 +509,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "35",
@@ -526,8 +526,8 @@ return [
             "hidden"       => "1",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "36",
@@ -543,8 +543,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "37",
@@ -560,8 +560,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "38",
@@ -577,8 +577,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "39",
@@ -594,8 +594,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "40",
@@ -611,8 +611,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "41",
@@ -628,8 +628,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "42",
@@ -645,8 +645,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "43",
@@ -662,8 +662,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "5",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "44",
@@ -679,13 +679,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "45",
             "parent_id"    => "43",
-            "name"         => "Api:setting/system_module/login_log/list-index",
+            "name"         => "Api:setting/log_module/login_log/list-index",
             "display_name" => "登陆日志",
             "display_desc" => "记录着用户登陆日志信息",
             "url"          => "/setting/log_module/login_log/list",
@@ -696,13 +696,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "46",
             "parent_id"    => "43",
-            "name"         => "setting/log_module/system_log-getLogPath",
+            "name"         => "Api:setting/log_module/system_log/log_path-getLogPath",
             "display_name" => "系统日志",
             "display_desc" => "系统的框架日志以及错误日志",
             "url"          => "/setting/log_module/system_log/list",
@@ -713,13 +713,13 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "47",
             "parent_id"    => "46",
-            "name"         => "setting/log_module/system_log/destroy_log-deleteLog",
+            "name"         => "Api:setting/log_module/system_log/destroy_log-deleteLog",
             "display_name" => "删除系统日志",
             "display_desc" => "删除系统日志操作",
             "url"          => "",
@@ -730,8 +730,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "48",
@@ -747,8 +747,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "49",
@@ -764,8 +764,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "50",
@@ -781,8 +781,8 @@ return [
             "hidden"       => "0",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "51",
@@ -798,8 +798,8 @@ return [
             "hidden"       => "1",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "52",
@@ -815,8 +815,8 @@ return [
             "hidden"       => "1",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "53",
@@ -832,8 +832,8 @@ return [
             "hidden"       => "1",
             "status"       => "1",
             "sort"         => "99",
-            "created_at"   => "2021-06-09 00:00:00",
-            "updated_at"   => "2021-06-09 00:00:00"
+            "created_at"   => "9/6/2021 00:00:00",
+            "updated_at"   => "9/6/2021 00:00:00"
         ],
         [
             "id"           => "54",
@@ -987,6 +987,92 @@ return [
             "sort"         => "99",
             "created_at"   => "2020-06-10 00:00:00",
             "updated_at"   => "2020-06-10 00:00:00"
+        ],
+        [
+            "id"           => "63",
+            "parent_id"    => "3",
+            "name"         => "Api:setting/user_module/user/change_status-changeStatus",
+            "display_name" => "修改权限状态",
+            "display_desc" => "修改用户状态",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "2",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2020-06-10 00:00:00",
+            "updated_at"   => "2020-06-10 00:00:00"
+        ],
+        [
+            "id"           => "64",
+            "parent_id"    => "3",
+            "name"         => "Api:setting/user_module/user/reset_password-resetPassword",
+            "display_name" => "重置用户密码",
+            "display_desc" => "重置用户密码",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "2",
+            "hidden"       => "1",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2020-06-10 00:00:00",
+            "updated_at"   => "2020-06-10 00:00:00"
+        ],
+        [
+            "id"           => "65",
+            "parent_id"    => "3",
+            "name"         => "Api:setting/user_module/permission/accord_user_permission-accordUserPermission",
+            "display_name" => "分配用户功能权限",
+            "display_desc" => "分配用户功能权限操作",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "2",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2020-06-10 00:00:00",
+            "updated_at"   => "2020-06-10 00:00:00"
+        ],
+        [
+            "id"           => "66",
+            "parent_id"    => "50",
+            "name"         => "Api:setting/system_module/advice/reply=reply",
+            "display_name" => "回复建议",
+            "display_desc" => "回复建议操作",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "2",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2020-06-10 00:00:00",
+            "updated_at"   => "2020-06-10 00:00:00"
+        ],
+        [
+            "id"           => "67",
+            "parent_id"    => "7",
+            "name"         => "\t Api:setting/user_module/permission/accord_role_permission-accordRolePermission",
+            "display_name" => "分配角色权限",
+            "display_desc" => "分配权限给角色",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "2",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2020-06-10 00:00:00",
+            "updated_at"   => "2020-06-10 00:00:00"
         ]
+
     ]
 ];
