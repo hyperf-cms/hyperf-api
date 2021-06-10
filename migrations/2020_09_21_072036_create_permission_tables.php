@@ -24,7 +24,7 @@ class CreatePermissionTables extends Migration
             $table->string('display_name', 50)->comment('名称');
             $table->string('display_desc', 100)->comment('描述');
             $table->string('url', 255);
-            $table->string('varchar', 255)->comment('组件地址');
+            $table->string('component', 255)->comment('组件地址');
             $table->string('guard_name');
             $table->string('icon')->comment('图标');
             $table->tinyInteger('type')->comment('类型：1: 菜单 2：按钮 3：接口')->default(1);
