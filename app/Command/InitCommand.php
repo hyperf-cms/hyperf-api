@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Model\Auth\User;
+use App\Model\System\DictData;
+use App\Model\System\DictType;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Donjan\Permission\Models\Permission;
@@ -72,6 +74,17 @@ class InitCommand extends HyperfCommand
             if (empty(Permission::query()->find($permission['id']))) Permission::query()->insert($permission);
             $this->line('添加权限成功----------------------------' . $permission['display_name']);
         }
+
+        //初始化字典数据
+        $dictTypeList = config('dictData.dict_type');
+        foreach ($dictTypeList as $dictType) {
+            if (empty(DictType::query()->find($dictType['dict_id']))) DictType::query()->insert($dictType);
+        }
+        $dictDataList = config('dictData.dict_data');
+        foreach ($dictDataList as $dictData) {
+            if (empty(DictData::query()->find($dictData['dict_code']))) DictData::query()->insert($dictData);
+        }
+        $this->line('初始化字典数据成功', 'info');
 
         //添加默认角色到默认用户
         $user->assignRole($super_role->name);

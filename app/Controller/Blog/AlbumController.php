@@ -61,7 +61,6 @@ class AlbumController extends AbstractController
      * @RequestMapping(path="album_option", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
      * })
      */
     public function albumOptionList()

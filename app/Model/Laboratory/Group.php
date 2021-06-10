@@ -9,8 +9,6 @@ use Hyperf\Database\Model\SoftDeletes;
 
 class Group extends Model
 {
-    use SoftDeletes;
-
     /**
      * The table associated with the model.
      *

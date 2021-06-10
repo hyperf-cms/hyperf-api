@@ -14,9 +14,9 @@ class CreateNoticeTable extends Migration
         Schema::create('notice', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->string('username', 255)->comment('用户名称');
-            $table->integer('user_id')->comment('用户ID');
-            $table->string('title', 50)->comment('标题');
+            $table->string('username', 255)->default('')->comment('用户名称');
+            $table->integer('user_id')->default('0')->comment('用户ID');
+            $table->string('title', 50)->default('')->comment('标题');
             $table->longText('content')->comment('内容');
             $table->integer('public_time')->default('0')->comment('发布时间');
             $table->tinyInteger('status')->default('0')->comment('操作系统');

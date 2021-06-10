@@ -100,7 +100,7 @@ class UserController extends AbstractController
         //配置验证
         $rules = [
             'username' => 'required|min:4|max:18|unique:users',
-            'password' => 'required|confirmed:password_confirmation',
+            'password' => 'required|min:6|max:18|confirmed:password_confirmation',
             'password_confirmation' => 'required',
             'status' => 'required',
             'mobile' => 'required',
@@ -116,6 +116,8 @@ class UserController extends AbstractController
             'roleData.array' => '[roleData]必须为数组',
             'username.min' => '[username]最少4位',
             'username.max' => '[username]最多18位',
+            'password.min' => '[password]最少6位',
+            'password.max' => '[password]最多18位',
             'password.confirmed' => '两次密码输入不一致',
             'mobile.required' => '手机号码不能为空',
         ];
@@ -133,6 +135,7 @@ class UserController extends AbstractController
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->email = $postData['email'] ?? '';
+        $user->address = $postData['address'] ?? '';
         $user->sex = $postData['sex'] ?? 0;
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加用户失败');
 
@@ -203,6 +206,7 @@ class UserController extends AbstractController
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->sex = $postData['sex'] ?? '';
+        $user->address = $postData['address'] ?? '';
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION,  '修改用户信息失败');
 
         //正确返回信息
@@ -312,6 +316,9 @@ class UserController extends AbstractController
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->sex = $postData['sex'] ?? '';
+        $user->address = $postData['address'] ?? '';
+        $user->email = $postData['email'] ?? '';
+        $user->status = $postData['status'] ?? '';
         if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION,  '修改用户信息失败');
 
         //将所有角色移除并重新赋予角色
@@ -349,29 +356,31 @@ class UserController extends AbstractController
     /**
      * @Explanation(content="修改用户密码")
      * @RequestMapping(path="reset_password", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function resetPassword()
     {
-        $postData = $this->request->all() ?? [];
+        $postData = $this->request->all()['postData'] ?? [];
         $params = [
-            'id' => $postData['id'],
-            'old_password' => $postData['old_password'] ?? '',
+            'id' => $postData['uid'],
             'new_password' => $postData['new_password'] ?? '',
             'confirm_password' => $postData['confirm_password'] ?? '',
         ];
         //配置验证
         $rules = [
             'id' => 'required',
-            'old_password' => 'required',
-            'new_password' => 'required',
+            'new_password' => 'required|min:6|max:18',
             'confirm_password' => 'required',
         ];
         $message = [
             'id.required' => '[id]缺失',
-            'old_password.required' => '[old_password]缺失',
             'new_password.required' => '[new_password]缺失',
+            'new_password.min' => '[new_password]最少6位',
+            'new_password.max' => '[new_password]最多18位',
             'confirm_password.required' => '[confirm_password]缺失',
         ];
 
@@ -379,14 +388,12 @@ class UserController extends AbstractController
         $userInfo = User::getOneByUid($params['id']);
 
         if (empty($userInfo)) $this->throwExp(400, '账号不存在');
-        if (md5($params['old_password']) != $userInfo['password']) $this->throwExp(StatusCode::ERR_EXCEPTION, '输入密码与原先密码不一致');
         if (md5($params['new_password']) != md5($params['confirm_password'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '两次密码输入不一致');
 
         $userInfo->password  = md5($params['new_password']);
         $updateRes = $userInfo->save();
 
         if (!$updateRes) $this->throwExp(400, '修改密码失败');
-
         return $this->success([], '修改密码成功');
     }
 

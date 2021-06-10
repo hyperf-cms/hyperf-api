@@ -101,6 +101,7 @@ class NoticeController extends AbstractController
         $noticeQuery->content = $params['content'];
         $noticeQuery->public_time = strtotime($params['public_time']);
         $noticeQuery->user_id = conGet('user_info')['id'];
+        $noticeQuery->username = conGet('user_info')['desc'];
 
         if (!$noticeQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统通知错误');
 

@@ -16,8 +16,6 @@ use Hyperf\Database\Model\SoftDeletes;
  */
 class GroupChatHistory extends Model
 {
-    use SoftDeletes;
-
     /**
      * The table associated with the model.
      *

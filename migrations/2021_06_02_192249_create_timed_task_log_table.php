@@ -15,8 +15,8 @@ class CreateTimedTaskLogTable extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->integer('task_id')->comment('任务ID');
-            $table->string('task_name', 255)->comment('任务名');
-            $table->string('task', 255)->comment('任务');
+            $table->string('task_name', 255)->default('')->comment('任务名');
+            $table->string('task', 255)->default('')->comment('任务');
             $table->integer('execute_time')->comment('执行时间');
             $table->text('error_log')->comment('错误信息');
             $table->tinyInteger('result')->default('0')->comment('执行结果 1：成功 0：失败');

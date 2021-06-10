@@ -14,9 +14,9 @@ class CreateDictTypeTable extends Migration
         Schema::create('dict_type', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('dict_id')->comment('字典主键');
-            $table->string('dict_name', 100)->comment('字典名称');
-            $table->string('dict_type', 100)->comment('字典类型');
-            $table->string('remark', 500)->comment('备注');
+            $table->string('dict_name', 100)->default('')->comment('字典名称');
+            $table->string('dict_type', 100)->default('')->comment('字典类型');
+            $table->string('remark', 500)->default('')->comment('备注');
             $table->tinyInteger('status')->default('0')->comment('状态（0正常 1停用）');
             $table->unique('dict_type', 'dict_type');
             $table->timestamps();

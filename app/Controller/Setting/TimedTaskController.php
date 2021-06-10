@@ -100,8 +100,9 @@ class TimedTaskController extends AbstractController
         $timedTaskQuery->execute_time = $params['execute_time'];
         $timedTaskQuery->status = $params['status'];
         $timedTaskQuery->desc = $params['desc'];
+        $timedTaskQuery->times = 0;
 
-        $executeTime = $timedTaskInfo['execute_time'] ?? '';
+        $executeTime = $params['execute_time'] ?? '';
         $nextExecuteTime = Cron::init($executeTime)->getNextRunDate()->format('Y-m-d H:i');
         $timedTaskQuery->next_execute_time = $nextExecuteTime;
 

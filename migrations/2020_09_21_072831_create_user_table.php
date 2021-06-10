@@ -20,7 +20,7 @@ class CreateUserTable extends Migration
             $table->tinyinteger('status')->default(1)->comment('账号状态 0-停用，1-启用');
             $table->string('avatar', '255')->default('')->comment('用户头像');
             $table->string('mobile', '15')->default('')->comment('手机号码');
-            $table->string('last_ip', '15')->default(0)->comment('上次登录IP');
+            $table->string('last_ip', '15')->default('')->comment('上次登录IP');
             $table->tinyInteger('sex')->default(0)->comment('用户性别');
             $table->string('creater', '100')->default('')->comment('创建者');
             $table->string('email', '100')->default('')->comment('邮箱地址');

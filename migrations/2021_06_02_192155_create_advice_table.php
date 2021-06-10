@@ -15,7 +15,7 @@ class CreateAdviceTable extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->integer('user_id')->comment('用户ID');
-            $table->string('title', 50)->comment('标题');
+            $table->string('title', 50)->default('')->comment('标题');
             $table->longText('content')->comment('内容');
             $table->tinyInteger('status')->default('0')->comment('状态（0：待解决，1：已解决，2：关闭）');
             $table->longText('reply')->comment('回复内容');
