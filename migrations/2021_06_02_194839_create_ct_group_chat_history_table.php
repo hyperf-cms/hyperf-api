@@ -23,6 +23,7 @@ class CreateCtGroupChatHistoryTable extends Migration
             $table->text('content')->comment('消息内容');
             $table->integer('file_size')->default('0')->comment('文件大小');
             $table->string('file_name', 255)->default('')->comment('文件名称');
+            $table->string('file_ext', 50)->default('')->comment('文件后缀');
             $table->tinyInteger('reception_state')->default('0')->comment('接受状态 0 未接收 1：接收');
             $table->timestamps();
             $table->index('message_id', 'message_id_index');

@@ -79,7 +79,11 @@ class GroupController extends AbstractController
         $contactData = $chatMessage['message'];
         $userFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $contactData['user_id']);
 
-        $messageList = GroupChatHistory::query()->where('to_group_id', $contactData['contact_id'])->orderBy('id', 'desc')->limit(300)->get()->toArray();
+        $userJoinGroupDate = GroupRelation::getJoinDateById($contactData['user_id'], $contactData['contact_id']);
+        $messageList = GroupChatHistory::query()->where('to_group_id', $contactData['contact_id'])
+            ->where('created_at', '>=', $userJoinGroupDate)
+            ->orderBy('id', 'desc')->limit(300)
+            ->get()->toArray();
         $messageList = array_reverse($messageList);
 
         $list = [];

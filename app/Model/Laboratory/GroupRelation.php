@@ -88,4 +88,17 @@ class GroupRelation extends Model
         if (empty($uid) || empty($groupId)) return false;
         return static::query()->where('uid', $uid)->where('group_id', $groupId)->value('level');
     }
+
+    /**
+     * 根据ID获取用户加入组别的时间
+     * @param int $uid
+     * @param string $groupId
+     * @return \Hyperf\Utils\HigherOrderTapProxy|mixed|void
+     */
+    public static function getJoinDateById(int $uid, string $groupId)
+    {
+       return static::query()->where('uid', $uid)
+           ->where('group_id', $groupId)
+           ->value('created_at');
+    }
 }

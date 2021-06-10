@@ -32,8 +32,14 @@ class GroupController extends AbstractController
     public function historyMessage()
     {
         $contactId = $this->request->query('contact_id') ?? '';
+        $uid = conGet('user_info')['id'];
+        $joinGroupTime = GroupRelation::getJoinDateById($uid, $contactId);
         if (empty($contactId)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID参数不允许为空');
-        $messageQuery = GroupChatHistory::query()->where('to_group_id', $contactId)->where('type', '!=', GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT);
+        $messageQuery = GroupChatHistory::query()
+            ->where('to_group_id', $contactId)
+            ->where('type', '!=', GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT)
+            ->where('created_at', '>=', $joinGroupTime);
+
         if (!empty($this->request->query('date'))) {
             $beginTime = $this->request->query('date');
             $endTime = $this->request->query('date') + 86400000;
