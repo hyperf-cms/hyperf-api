@@ -64,9 +64,16 @@ class InitCommand extends HyperfCommand
             'description' => '普通管理员'
         ];
 
+        $tourist_role = [
+            'name' => 'tourist_admin',
+            'guard_name' => 'web',
+            'description' => '游客'
+        ];
+
         //创建默认的两个角色
         $super_role = Role::create($super_role);
         $default_role = Role::create($default_role);
+        $tourist_role = Role::create($tourist_role);
 
         //创建权限
         $permissionList = config('permissionData.permission_list');

@@ -96,6 +96,17 @@ class StatusCode extends AbstractConstants
      */
     const ERR_USER_DISABLE= 2005;
 
+    /**
+     * @Message("用户名已经被使用！")
+     */
+    const ERR_USER_EXIST= 2006;
+
+
+    /**
+     * @Message("注册失败！")
+     */
+    const ERR_REGISTER_ERROR = 2007;
+
 
     /**
      * @Message("业务逻辑异常！")

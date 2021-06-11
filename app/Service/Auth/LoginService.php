@@ -8,6 +8,7 @@ use App\Service\System\LoginLogService;
 use App\Model\Auth\Permission;
 use App\Model\Auth\User;
 use App\Model\System\LoginLog;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
 use Phper666\JWTAuth\JWT;
@@ -71,6 +72,38 @@ class LoginService extends BaseService
         LoginLog::add($loginLogData);
 
         return $responseData;
+    }
+
+    /**
+     * 处理注册逻辑
+     * @param array $params
+     * @return array
+     */
+    public function register(array $params) : bool
+    {
+        //校验验证码 若是测试环境跳过验证码验证
+        if (env('APP_TEST')) {
+            $container = ApplicationContext::getContainer();
+            $redis = $container->get(\Hyperf\Redis\Redis::class);
+            $code = $redis->get($params['code_key']);
+            if (strtolower($params['captcha']) != strtolower($code)) $this->throwExp(StatusCode::ERR_CODE, '验证失败，验证码错误');
+        }
+        $postData = $this->request->all();
+
+        $user = new User();
+        $user->username = $postData['username'];
+        $user->password = md5($postData['password']);
+        $user->status = User::STATUS_ON;
+        $user->avatar = 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->last_login = time();
+        $user->last_ip = getClientIp($this->request);
+        $user->creater = '无';
+        $user->desc = $postData['desc'] ?? '';
+        $user->sex = User::SEX_BY_Female;
+
+        if (!$user->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '注册用户失败');
+        $user->assignRole('tourist_admin');
+        return true;
     }
 
     /**
