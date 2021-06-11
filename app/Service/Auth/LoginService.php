@@ -82,7 +82,7 @@ class LoginService extends BaseService
     public function register(array $params) : bool
     {
         //校验验证码 若是测试环境跳过验证码验证
-        if (env('APP_TEST')) {
+        if (!env('APP_TEST')) {
             $container = ApplicationContext::getContainer();
             $redis = $container->get(\Hyperf\Redis\Redis::class);
             $code = $redis->get($params['code_key']);
