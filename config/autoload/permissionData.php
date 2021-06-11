@@ -1059,7 +1059,7 @@ return [
         [
             "id"           => "67",
             "parent_id"    => "7",
-            "name"         => "\t Api:setting/user_module/permission/accord_role_permission-accordRolePermission",
+            "name"         => "Api:setting/user_module/permission/accord_role_permission-accordRolePermission",
             "display_name" => "分配角色权限",
             "display_desc" => "分配权限给角色",
             "url"          => "",
@@ -1072,7 +1072,24 @@ return [
             "sort"         => "99",
             "created_at"   => "2020-06-10 00:00:00",
             "updated_at"   => "2020-06-10 00:00:00"
-        ]
+        ],
+        [
+        "id"           => "68",
+        "parent_id"    => "48",
+        "name"         => "Api:setting/technique_module/json_decode-jsonDecode",
+        "display_name" => "Json解析",
+        "display_desc" => "用来解析json表达式",
+        "url"          => "/setting/technique_module/json_decode",
+        "component"    => "setting/technique_module/jsonDecode/",
+        "guard_name"   => "web",
+        "icon"         => "jsonDecode",
+        "type"         => "1",
+        "hidden"       => "0",
+        "status"       => "1",
+        "sort"         => "99",
+        "created_at"   => "2020-06-10 00:00:00",
+        "updated_at"   => "2020-06-10 00:00:00"
+    ]
 
     ]
 ];
