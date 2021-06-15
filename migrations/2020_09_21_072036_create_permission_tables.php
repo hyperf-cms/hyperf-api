@@ -27,8 +27,9 @@ class CreatePermissionTables extends Migration
             $table->string('component', 255)->default('')->comment('组件地址');
             $table->string('guard_name')->default('web');
             $table->string('icon')->default('')->comment('图标');
-            $table->tinyInteger('type')->comment('类型：1: 菜单 2：按钮 3：接口')->default(1);
+            $table->tinyInteger('type')->comment('类型：1: 目录 2：菜单 3：接口/按钮')->default(1);
             $table->tinyInteger('hidden')->comment('是否隐藏菜单 1:true 0 false')->default(1);
+            $table->tinyInteger('is_link')->comment('是否外链')->default(0);
             $table->tinyInteger('status')->comment('启动状态1：启动 0：禁用')->default(1);
             $table->smallInteger('sort')->comment('排序，数字越大越在前面')->default(99);
             $table->timestamps();

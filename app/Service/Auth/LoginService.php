@@ -137,17 +137,24 @@ class LoginService extends BaseService
     public function getRouters() :array
     {
         $userInfo = conGet('user_info');
-        $permissionList = permission::getUserPermissions($userInfo);
+        $permissionList = Permission::getUserPermissions($userInfo);
         $permissionList = objToArray($permissionList);
         $permissionList = array_column($permissionList, null, 'id');
 
         foreach ($permissionList as $key => $val) {
-            if ($val['status'] == permission::OFF_STATUS) unset($permissionList[$key]);
-            if ($val['type'] != permission::MENU_TYPE) unset($permissionList[$key]);
+            if ($val['status'] == Permission::OFF_STATUS) unset($permissionList[$key]);
+            if ($val['type'] == Permission::BUTTON_OR_API_TYPE) unset($permissionList[$key]);
         }
 
         //使用引用传递递归数组
-        $routers = [];
+        $routers = [
+           'default' => [
+                'path' => '',
+                'component' => 'Layout',
+                'redirect' => '/home',
+                'children' => [],
+            ]
+        ];
         $module_children = [];
         foreach($permissionList as $key => $value){
             if(isset($permissionList[$value['parent_id']])){
@@ -191,9 +198,20 @@ class LoginService extends BaseService
                     }
                     $routers[$value['id']]['children'] =  array_merge($routers[$value['id']]['children'], $temp);
                 }
+            }else {
+                array_push($routers['default']['children'], [
+                    'name' => $value['name'],
+                    'path' => $value['url'],
+                    'hidden' => $value['hidden'],
+                    'alwaysShow' => true,
+                    'component' => $value['component'],
+                    'meta' => [
+                        'icon' => $value['icon'],
+                        'title' => $value['display_name'],
+                    ],
+                ]);
             }
         }
-
         return array_values($routers);
     }
 
@@ -224,7 +242,7 @@ class LoginService extends BaseService
         $permission = Permission::getUserPermissions($user);
         $menuHeader = [];
         foreach ($menuList as $key => $val) {
-            if ($val['status'] != 0 && !empty($val['child'])) {
+            if ($val['status'] != 0) {
                 $menuHeader[] = [
                     'title' => $val['display_name'],
                     'icon' => $val['icon'],

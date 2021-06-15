@@ -17,18 +17,18 @@ class Permission extends DonjanPermission
 {
     /**
      * 声明权限类型枚举
-     * 1：菜单
-     * 2：按钮
-     * 3：接口
+     * 1：目录
+     * 2：菜单
+     * 3：接口/接口
      */
-    const MENU_TYPE = 1;
-    const BUTTON_TYPE = 2;
-    const API_TYPE = 3;
+    const DIRECTORY_TYPE = 1;
+    const MENU_TYPE = 2;
+    const BUTTON_OR_API_TYPE = 3;
 
     /**
      * 声明状态枚举
      * 1：开启
-     * 0：挂芭比
+     * 0：关闭
      */
     const ON_STATUS = 1;
     const OFF_STATUS = 0;
@@ -63,7 +63,6 @@ class Permission extends DonjanPermission
         }
         //递归过滤 不符合条件的数据
         $menuList = static::checkPermissionFilter($menuList);
-
         return $menuList;
     }
 
@@ -77,7 +76,7 @@ class Permission extends DonjanPermission
         if (!empty($item)) {
             foreach ($item as $key => $value) {
                 if ($value['status'] == self::OFF_STATUS) unset($item[$key]);
-                if ($value['type'] != self::MENU_TYPE) unset($item[$key]);
+                if ($value['type'] == self::BUTTON_OR_API_TYPE) unset($item[$key]);
                 if ($value['hidden'] == self::IS_HIDDEN) unset($item[$key]);
                 if (!empty($item[$key]['child']))  {
                     $item[$key]['child'] = array_values(static::checkPermissionFilter($item[$key]['child']));
