@@ -50,6 +50,11 @@ class StatusCode extends AbstractConstants
      */
     const ERR_SERVER = 500;
 
+    /**
+     * @Message("系统维护中。。。!")
+     */
+    const ERR_MAINTAIN = 404;
+
 
     /**
      * @Message("令牌过期！")
