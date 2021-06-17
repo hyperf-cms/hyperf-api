@@ -18,7 +18,7 @@ use App\Middleware\PermissionMiddleware;
 
 /**
  * 字典数据控制器
- * Class IndexController
+ * Class DictDataController
  * @Controller(prefix="setting/system_module/dict_data")
  */
 class DictDataController extends AbstractController

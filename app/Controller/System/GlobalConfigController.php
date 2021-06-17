@@ -45,9 +45,11 @@ class GlobalConfigController extends AbstractController
         $globalConfigQuery = $this->globalConfig->newQuery();
         $name = $this->request->input('name') ?? '';
         $keyName = $this->request->input('key_name') ?? '';
+        $type = $this->request->input('type') ?? '';
 
         if (!empty($name)) $globalConfigQuery->where('name', 'like', '%'. $name . '%');
         if (!empty($keyName)) $globalConfigQuery->where('key_name', 'like', '%'. $keyName . '%');
+        if (!empty($type)) $globalConfigQuery->where('type', $type);
 
         $total = $globalConfigQuery->count();
         $globalConfigQuery->orderBy('created_at', 'desc');
@@ -76,16 +78,19 @@ class GlobalConfigController extends AbstractController
             'key_name' => $postData['key_name'] ?? '',
             'data' => $postData['data'] ?? '',
             'remark' => $postData['remark'] ?? '',
+            'type' => $postData['type'] ?? '',
         ];
         //配置验证
         $rules = [
             'name' => 'required',
             'key_name' => 'required',
+            'type' => 'required',
         ];
         //错误信息
         $message = [
             'name.required' => '[name]缺失',
             'key_name.required' => '[key_name]缺失',
+            'type.required' => '[type]缺失',
         ];
         $this->verifyParams($params, $rules, $message);
 
@@ -94,6 +99,7 @@ class GlobalConfigController extends AbstractController
         $globalConfigQuery->key_name = $params['key_name'];
         $globalConfigQuery->data = $params['data'];
         $globalConfigQuery->remark = $params['remark'];
+        $globalConfigQuery->type = $params['type'];
 
         if (!$globalConfigQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加全局参数错误');
 
@@ -113,6 +119,10 @@ class GlobalConfigController extends AbstractController
     {
         $globalConfigInfo = GlobalConfig::findById($id);
         if (empty($globalConfigInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取全局参数失败');
+
+        if ($globalConfigInfo['type'] == GlobalConfig::TYPE_BY_BOOLEAN) {
+            $globalConfigInfo['data'] = boolval($globalConfigInfo['data']);
+        }
 
         return $this->success([
             'list' => $globalConfigInfo
@@ -138,16 +148,19 @@ class GlobalConfigController extends AbstractController
             'key_name' => $postData['key_name'] ?? '',
             'data' => $postData['data'] ?? '',
             'remark' => $postData['remark'] ?? '',
+            'type' => $postData['type'] ?? '',
         ];
         //配置验证
         $rules = [
             'name' => 'required',
             'key_name' => 'required',
+            'type' => 'required',
         ];
         //错误信息
         $message = [
             'name.required' => '[name]缺失',
             'key_name.required' => '[key_name]缺失',
+            'type.required' => '[type]缺失',
         ];
         $this->verifyParams($params, $rules, $message);
 
@@ -156,6 +169,7 @@ class GlobalConfigController extends AbstractController
         $globalConfigQuery->key_name = $params['key_name'];
         $globalConfigQuery->data = $params['data'];
         $globalConfigQuery->remark = $params['remark'];
+        $globalConfigQuery->type = $params['type'];
 
         if (!$globalConfigQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '修改全局参数错误');
 

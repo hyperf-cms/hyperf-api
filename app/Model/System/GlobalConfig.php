@@ -42,4 +42,24 @@ class GlobalConfig extends Model
      * @var array
      */
     protected $casts = [];
+
+    /**
+     * 定义参数类型枚举
+     */
+    const TYPE_BY_TEXT = 'text';
+    const TYPE_BY_JSON = 'json';
+    const TYPE_BY_HTML = 'html';
+    const TYPE_BY_BOOLEAN = 'boolean';
+
+    /**
+     * 根据KeyName获取参数信息
+     * @param string $keyName
+     * @return array|\Hyperf\Database\Model\Builder|\Hyperf\Database\Model\Model|object|null
+     */
+    public static function getOneByKeyName(string $keyName)
+    {
+        if (!empty($keyName)) return [];
+
+        return static::query()->where('key_name', $keyName)->first();
+    }
 }

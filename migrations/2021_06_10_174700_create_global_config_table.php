@@ -16,10 +16,11 @@ class CreateGlobalConfigTable extends Migration
             $table->bigIncrements('id');
             $table->string('key_name', 255)->default('')->comment('keyName');
             $table->string('name', 255)->default('')->comment('名称');
+            $table->string('type', 50)->default('text')->comment('类型 text html json boolean');
             $table->string('remark', 1000)->default('')->comment('备注');
             $table->text('data')->comment('数据');
             $table->timestamps();
-            $table->index('key_name', 'key_name_index');
+            $table->unique('key_name', 'key_name_unique');
         });
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `global_config` comment'参数配置表'");//表注释一定加上前缀
     }
