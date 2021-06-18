@@ -367,6 +367,7 @@ class UserController extends AbstractController
         $postData = $this->request->all()['postData'] ?? [];
         $params = [
             'id' => $postData['uid'],
+            'old_password' => $postData['old_password'] ?? '',
             'new_password' => $postData['new_password'] ?? '',
             'confirm_password' => $postData['confirm_password'] ?? '',
         ];
@@ -389,6 +390,7 @@ class UserController extends AbstractController
 
         if (empty($userInfo)) $this->throwExp(400, '账号不存在');
         if (md5($params['new_password']) != md5($params['confirm_password'])) $this->throwExp(StatusCode::ERR_EXCEPTION, '两次密码输入不一致');
+        if (!empty($params['old_password']) && md5($params['old_password']) != $userInfo['password']) $this->throwExp(StatusCode::ERR_EXCEPTION, '旧密码验证失败，请重试');
 
         $userInfo->password  = md5($params['new_password']);
         $updateRes = $userInfo->save();
