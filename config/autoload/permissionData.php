@@ -1276,6 +1276,58 @@ return [
             "sort"         => "99",
             "created_at"   => "2020-6-10 00:00:00",
             "updated_at"   => "2020-6-10 00:00:00"
+        ],
+        [
+            "id"           => "76",
+            "parent_id"    => "63",
+            "name"         => "Api:setting/technique_module/control",
+            "display_name" => "后台控制",
+            "display_desc" => "用来控制项目后台的一些开光以及一些配置选项",
+            "url"          => "/setting/technique_module/control",
+            "component"    => "setting/technique_module/control/",
+            "guard_name"   => "web",
+            "icon"         => "swagger",
+            "type"         => "2",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "3",
+            "created_at"   => "2021-6-17 09:48:18",
+            "updated_at"   => "2021-6-17 16:39:24"
+        ],
+        [
+            "id"           => "77",
+            "parent_id"    => "76",
+            "name"         => "Api:setting/technique_module/control/list-getConfigList",
+            "display_name" => "按钮查询",
+            "display_desc" => "获取按钮列表",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "3",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2021-6-17 16:38:33",
+            "updated_at"   => "2021-6-17 16:38:33"
+        ],
+        [
+            "id"           => "78",
+            "parent_id"    => "76",
+            "name"         => "Api:setting/technique_module/control/change_control-changeControl",
+            "display_name" => "按钮控制",
+            "display_desc" => "修改按钮开关",
+            "url"          => "",
+            "component"    => "",
+            "guard_name"   => "web",
+            "icon"         => "",
+            "type"         => "3",
+            "hidden"       => "0",
+            "status"       => "1",
+            "sort"         => "99",
+            "created_at"   => "2021-6-17 16:39:18",
+            "updated_at"   => "2021-6-17 16:39:18"
         ]
+
     ]
 ];

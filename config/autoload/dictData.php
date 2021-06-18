@@ -2,104 +2,123 @@
 
 return [
     'dict_type' => [
+
         [
             "dict_id"    => "1",
             "dict_name"  => "用户性别",
             "dict_type"  => "sys_user_sex",
+            "remark"     => "用户性别列表",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "用户性别列表"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "2",
             "dict_name"  => "用户状态",
             "dict_type"  => "sys_user_status",
+            "remark"     => "用户状态列表",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "用户状态列表"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "3",
             "dict_name"  => "权限状态",
             "dict_type"  => "sys_permission_status",
+            "remark"     => "权限状态列表",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "权限状态列表"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "4",
             "dict_name"  => "权限隐藏是否",
             "dict_type"  => "sys_permission_hidden",
+            "remark"     => "权限是否隐藏",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "权限是否隐藏"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "5",
             "dict_name"  => "权限类型",
             "dict_type"  => "sys_permission_type",
+            "remark"     => "权限类型列表",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "权限类型列表"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "6",
             "dict_name"  => "系统建议类型",
             "dict_type"  => "sys_advice_type",
+            "remark"     => "系统建议类型",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "系统建议类型"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "7",
             "dict_name"  => "系统建议状态",
             "dict_type"  => "sys_advice_status",
+            "remark"     => "系统建议状态",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "系统建议状态"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "8",
             "dict_name"  => "通知管理状态",
             "dict_type"  => "sys_notice_status",
+            "remark"     => "通知管理的状态枚举",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "通知管理的状态枚举"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "9",
             "dict_name"  => "相册状态",
             "dict_type"  => "blog_album_status",
+            "remark"     => "相册的启动状态",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "相册的启动状态"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "10",
             "dict_name"  => "相册类型",
             "dict_type"  => "blog_album_type",
+            "remark"     => "相册类型枚举",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "相册类型枚举"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_id"    => "12",
             "dict_name"  => "定时任务状态",
             "dict_type"  => "sys_timed_task_status",
+            "remark"     => "定时任务的状态枚举",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "定时任务的状态枚举"
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
+        ],
+        [
+            "dict_id"    => "13",
+            "dict_name"  => "权限是否外链",
+            "dict_type"  => "sys_permission_is_link",
+            "remark"     => "菜单是否外链",
+            "status"     => "1",
+            "created_at" => "2021-6-15 11:47:07",
+            "updated_at" => "2021-6-15 11:47:07"
+        ],
+        [
+            "dict_id"    => "14",
+            "dict_name"  => "参数设置类型枚举",
+            "dict_type"  => "sys_global_config_type",
+            "remark"     => "参数设置模块的类型相关枚举",
+            "status"     => "1",
+            "created_at" => "2021-6-17 10:29:41",
+            "updated_at" => "2021-6-17 10:29:41"
         ]
 
     ],
@@ -115,9 +134,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "性别男"
+            "remark"     => "性别男",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "2",
@@ -129,9 +148,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "性别女"
+            "remark"     => "性别女",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "3",
@@ -143,9 +162,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "性别未知"
+            "remark"     => "性别未知",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "4",
@@ -157,9 +176,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "用户启动状态"
+            "remark"     => "用户启动状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "5",
@@ -171,9 +190,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "用户禁用状态"
+            "remark"     => "用户禁用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "6",
@@ -185,9 +204,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "权限启用状态"
+            "remark"     => "权限启用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "7",
@@ -199,9 +218,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "权限禁用状态"
+            "remark"     => "权限禁用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "8",
@@ -213,9 +232,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "隐藏权限"
+            "remark"     => "隐藏权限",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "9",
@@ -227,9 +246,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "不隐藏权限"
+            "remark"     => "不隐藏权限",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "10",
@@ -241,9 +260,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "菜单权限类型"
+            "remark"     => "菜单权限类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "11",
@@ -255,9 +274,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "按钮权限类型"
+            "remark"     => "按钮权限类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "12",
@@ -269,9 +288,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "接口权限类型"
+            "remark"     => "接口权限类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "13",
@@ -283,9 +302,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "bug类型"
+            "remark"     => "bug类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "14",
@@ -297,9 +316,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "优化类型"
+            "remark"     => "优化类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "15",
@@ -311,9 +330,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "混合类型"
+            "remark"     => "混合类型",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "16",
@@ -325,9 +344,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "待解决状态"
+            "remark"     => "待解决状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "17",
@@ -339,9 +358,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "已解决状态"
+            "remark"     => "已解决状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "18",
@@ -353,9 +372,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "关闭状态"
+            "remark"     => "关闭状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "19",
@@ -367,9 +386,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "未发布状态"
+            "remark"     => "未发布状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "20",
@@ -381,9 +400,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "已发布状态"
+            "remark"     => "已发布状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "21",
@@ -395,9 +414,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "相册启动状态"
+            "remark"     => "相册启动状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "22",
@@ -409,9 +428,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "相册禁用状态"
+            "remark"     => "相册禁用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "23",
@@ -423,9 +442,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "普通相册"
+            "remark"     => "普通相册",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "24",
@@ -437,9 +456,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "密码相册"
+            "remark"     => "密码相册",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "25",
@@ -451,9 +470,9 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "启用状态"
+            "remark"     => "启用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
         ],
         [
             "dict_code"  => "26",
@@ -465,9 +484,93 @@ return [
             "list_class" => "",
             "is_default" => "1",
             "status"     => "1",
-            "created_at" => "2020-06-10 00:00:00",
-            "updated_at" => "2020-06-10 00:00:00",
-            "remark"     => "禁用状态"
+            "remark"     => "禁用状态",
+            "created_at" => "2020-6-10 00:00:00",
+            "updated_at" => "2020-6-10 00:00:00"
+        ],
+        [
+            "dict_code"  => "27",
+            "dict_sort"  => "1",
+            "dict_label" => "是",
+            "dict_value" => "1",
+            "dict_type"  => "sys_permission_is_link",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "是外链",
+            "created_at" => "2021-6-15 11:47:19",
+            "updated_at" => "2021-6-15 11:47:19"
+        ],
+        [
+            "dict_code"  => "28",
+            "dict_sort"  => "1",
+            "dict_label" => "否",
+            "dict_value" => "0",
+            "dict_type"  => "sys_permission_is_link",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "不是外链",
+            "created_at" => "2021-6-15 11:47:31",
+            "updated_at" => "2021-6-15 11:47:31"
+        ],
+        [
+            "dict_code"  => "29",
+            "dict_sort"  => "1",
+            "dict_label" => "文本",
+            "dict_value" => "text",
+            "dict_type"  => "sys_global_config_type",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "文本类型(string, int)",
+            "created_at" => "2021-6-17 10:30:03",
+            "updated_at" => "2021-6-17 10:30:03"
+        ],
+        [
+            "dict_code"  => "30",
+            "dict_sort"  => "1",
+            "dict_label" => "布尔值",
+            "dict_value" => "boolean",
+            "dict_type"  => "sys_global_config_type",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "布尔值类型",
+            "created_at" => "2021-6-17 10:30:29",
+            "updated_at" => "2021-6-17 10:30:29"
+        ],
+        [
+            "dict_code"  => "31",
+            "dict_sort"  => "1",
+            "dict_label" => "HTML",
+            "dict_value" => "html",
+            "dict_type"  => "sys_global_config_type",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "HTML格式",
+            "created_at" => "2021-6-17 10:30:45",
+            "updated_at" => "2021-6-17 10:30:45"
+        ],
+        [
+            "dict_code"  => "32",
+            "dict_sort"  => "1",
+            "dict_label" => "JSON",
+            "dict_value" => "json",
+            "dict_type"  => "sys_global_config_type",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "json格式",
+            "created_at" => "2021-6-17 10:31:02",
+            "updated_at" => "2021-6-17 10:31:02"
         ]
 
     ],

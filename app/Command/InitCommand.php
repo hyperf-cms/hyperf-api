@@ -7,6 +7,7 @@ namespace App\Command;
 use App\Model\Auth\User;
 use App\Model\System\DictData;
 use App\Model\System\DictType;
+use App\Model\System\GlobalConfig;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Donjan\Permission\Models\Permission;
@@ -92,6 +93,12 @@ class InitCommand extends HyperfCommand
             if (empty(DictData::query()->find($dictData['dict_code']))) DictData::query()->insert($dictData);
         }
         $this->line('初始化字典数据成功', 'info');
+
+        $globalConfigList = config('globalConfig.global_config');
+        foreach ($globalConfigList as $globalConfig) {
+            if (empty(GlobalConfig::query()->find($globalConfig['id']))) GlobalConfig::query()->insert($globalConfig);
+        }
+        $this->line('GlobalConfig初始化全局参数成功', 'info');
 
         //添加默认角色到默认用户
         $user->assignRole($super_role->name);
