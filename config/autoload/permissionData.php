@@ -515,7 +515,7 @@ return [
         [
             "id"           => "31",
             "parent_id"    => "30",
-            "name"         => "Api:setting/system_module/dict",
+            "name"         => "Api:setting/system_module/dict_type",
             "display_name" => "字典管理",
             "display_desc" => "配置系统的枚举项",
             "url"          => "/setting/system_module/dict/list",
@@ -532,7 +532,7 @@ return [
         [
             "id"           => "32",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/dict/list-index",
+            "name"         => "Api:setting/system_module/dict_type/list-index",
             "display_name" => "字典查询",
             "display_desc" => "",
             "url"          => "",
@@ -549,7 +549,7 @@ return [
         [
             "id"           => "33",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/dict/store-store",
+            "name"         => "Api:setting/system_module/dict_type/store-store",
             "display_name" => "字典添加",
             "display_desc" => "",
             "url"          => "",
@@ -566,7 +566,7 @@ return [
         [
             "id"           => "34",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/dict/update-update",
+            "name"         => "Api:setting/system_module/dict_type/update-update",
             "display_name" => "字典修改",
             "display_desc" => "",
             "url"          => "",
@@ -583,7 +583,7 @@ return [
         [
             "id"           => "35",
             "parent_id"    => "31",
-            "name"         => "Api:setting/system_module/dict/destroy-destroy",
+            "name"         => "Api:setting/system_module/dict_type/destroy-destroy",
             "display_name" => "字典删除",
             "display_desc" => "",
             "url"          => "",
