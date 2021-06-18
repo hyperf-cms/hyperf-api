@@ -58,7 +58,7 @@ class GlobalConfig extends Model
      */
     public static function getOneByKeyName(string $keyName)
     {
-        if (!empty($keyName)) return [];
+        if (empty($keyName)) return [];
 
         return static::query()->where('key_name', $keyName)->first();
     }

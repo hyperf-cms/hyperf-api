@@ -8,6 +8,7 @@ use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
 use App\Model\System\GlobalConfig;
 use App\Service\Auth\UserService;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,6 +26,9 @@ class CheckMaintainMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $writeRoute = ['/common/sys_config', '/common/auth/verification_code', '/auth/login', '/auth/register'];
+        if (in_array($request->getUri()->getPath(), $writeRoute)) return $handler->handle($request);
+
         //获取当前用户
         $user = UserService::getInstance()->getUserInfoByToken();
         //判断是否是超级管理员
@@ -47,4 +51,5 @@ class CheckMaintainMiddleware implements MiddlewareInterface
         }
         return $handler->handle($request);
     }
+
 }

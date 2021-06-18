@@ -43,6 +43,7 @@ class OperateLogService extends BaseService
 
         //获取用户信息
         $userInfo = conGet('user_info');
+        if (empty($userInfo)) return [];
 
         return [
             'action' => $content ?? '',
