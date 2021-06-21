@@ -79,7 +79,9 @@ class WsMiddleware implements MiddlewareInterface
                 $userInfo = User::query()->where(['id' => $jwtData['uid']])->first();
                 $userInfo = objToArray($userInfo);
                 conSet('user_info', $userInfo);
-
+                if (!empty($request->getQueryParams()['is_reconnection'])) {
+                    conSet('is_reconnection', true);
+                }
                 return $handler->handle($request);
             }
 

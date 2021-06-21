@@ -90,6 +90,8 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
      */
     public function onOpen($server, Request $request): void
     {
+        //是否重连，如果是断线重连择不通知好友新用户上线提示
+        $isReconnection = conGet('is_reconnection') ?? false;
         //获取聊天初始化信息
         $initInfo = InitService::getInstance()->initialization();
         //获取用户信息
@@ -102,7 +104,7 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
         //连接信息发送
         $server->push($request->fd, MessageParser::encode($initInfo));
         //通知好友该用户登陆状态
-        $this->container->get(FriendWsTask::class)->friendOnlineAndOfflineNotify($userInfo, WsMessage::FRIEND_ONLINE_MESSAGE);
+        $this->container->get(FriendWsTask::class)->friendOnlineAndOfflineNotify($userInfo, WsMessage::FRIEND_ONLINE_MESSAGE, $isReconnection);
     }
 
     /**

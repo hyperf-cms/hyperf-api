@@ -30,9 +30,10 @@ class FriendWsTask
      * 通知用户上线下线
      * @param array $userInfo
      * @param string $event
+     * @param bool $isReconnection
      * @return bool
      */
-    public function friendOnlineAndOfflineNotify(array $userInfo, string $event)
+    public function friendOnlineAndOfflineNotify(array $userInfo, string $event, bool $isReconnection = false)
     {
         if (empty($userInfo)) return false;
         //获取在线用户
@@ -47,6 +48,7 @@ class FriendWsTask
         $message['event'] = $event;
         $message['user_info'] = $userInfo;
         $message['online_status'] = $event == WsMessage::FRIEND_ONLINE_MESSAGE ? FriendRelation::FRIEND_ONLINE_STATUS: FriendRelation::FRIEND_ONLINE_STATUS_NO;
+        $message['is_reconnection'] = $isReconnection;
 
         foreach ($fdList as $key => $value) {
             $sendMessage = [
