@@ -87,7 +87,7 @@ class GroupController extends AbstractController
         $messageList = array_reverse($messageList);
 
         $list = [];
-        foreach ($messageList as $key => $value) {
+            foreach ($messageList as $key => $value) {
             $temp = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
@@ -103,6 +103,8 @@ class GroupController extends AbstractController
                 'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar') ?? '',
                 'displayName' => User::query()->where('id', $value['from_uid'])->value('desc') ?? '',
             ];
+            //格式化转发类型的消息类型
+            if ($value['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $temp['content'] = GroupService::getInstance()->formatForwardMessage($value['content'], $temp['fromUser']);
             $list[] = $temp;
         }
         return [

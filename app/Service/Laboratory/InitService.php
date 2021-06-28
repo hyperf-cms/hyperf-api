@@ -132,9 +132,9 @@ class InitService extends BaseService
 
         return [
             'unread' => $unread,
-            'lastContent' => $lastMessage['content'],
-            'lastSendTime' => intval($lastMessage['send_time']),
-            'lastContentType' => $lastMessage['type']
+            'lastContent' => $lastMessage['content'] ?? '',
+            'lastSendTime' => intval($lastMessage['send_time'] ?? 0),
+            'lastContentType' => $lastMessage['type'] ?? ''
         ];
     }
 
