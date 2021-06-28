@@ -50,13 +50,13 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
     public function onMessage($server, Frame $frame): void
     {
             $message = json_decode($frame->data, true);
-
             conSet('chat_message', MessageParser::encode([
                 'message' => $message['message'],
                 'file' => $message['file'] ?? '',
             ]));
             $targetUri = $message['uri'] ?? '';
             $requestMethod = $message['method'] ?? 'GET';
+            var_dump($targetUri);
             $dispatcher = $this->container
                 ->get(DispatcherFactory::class)
                 ->getDispatcher('ws');

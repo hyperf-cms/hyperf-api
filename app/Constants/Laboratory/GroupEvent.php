@@ -64,4 +64,9 @@ class GroupEvent extends AbstractConstants
      * @Message("更新群聊头像")
      */
     const CHANGE_GROUP_AVATAR = 'change_group_avatar';
+
+    /**
+     * @Message("转发信息")
+     */
+    const FORWARD_MESSAGE = 'forward_message';
 }
