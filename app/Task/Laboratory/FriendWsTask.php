@@ -64,13 +64,13 @@ class FriendWsTask
     }
 
     /**
-     * 转发信息
+     * 合并转发信息
      * @param array $userInfo
      * @param array $user
      * @param string $content
      * @return bool
      */
-    function forwardMessage(array $userInfo, array $user, string $content)
+    function mergeForwardMessage(array $userInfo, array $user, string $content)
     {
         //添加聊天记录
         $message = [];
@@ -83,6 +83,7 @@ class FriendWsTask
         $message['content'] = $content;
         $message['toContactId'] = $userInfo['id'];
         $message['fromUser'] = $user;
+        $message['isGroup'] = false;
         $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$userInfo['id']);
         $fromUserFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$user['id']);
         $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_YES;

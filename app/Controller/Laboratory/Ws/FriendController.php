@@ -52,6 +52,7 @@ class FriendController extends AbstractController
                     'content' => $contactData['content'],
                     'toContactId' => $contactData['fromUser']['id'],
                     'fromUser' => $contactData['fromUser'],
+                    'isGroup' => false,
                 ],
                 'event' => ''
             ],
@@ -95,6 +96,7 @@ class FriendController extends AbstractController
                 'toContactId' => $value['to_uid'],
                 'fileSize' => $value['file_size'],
                 'fileName' => $value['file_name'],
+                'isGroup' => false,
                 'fromUser' => [
                     'id' => $value['from_uid'],
                     'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),

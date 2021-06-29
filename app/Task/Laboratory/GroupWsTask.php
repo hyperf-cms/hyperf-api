@@ -297,13 +297,13 @@ class GroupWsTask
     }
 
     /**
-     * 转发信息
+     * 合并转发信息
      * @param array $groupInfo
      * @param array $user
      * @param string $content
      * @return bool
      */
-    function forwardMessage(array $groupInfo, array $user, string $content)
+    function mergeForwardMessage(array $groupInfo, array $user, string $content)
     {
         //添加聊天记录
         $message = [];
@@ -327,6 +327,41 @@ class GroupWsTask
     }
 
     /**
+     * 逐条转发信息
+     * @param array $groupInfo
+     * @param array $user
+     * @param array $content
+     * @return bool
+     */
+    function forwardMessage(array $groupInfo, array $user, array $content)
+    {
+        if (is_array($content)) {
+            foreach ($content as $item) {
+                var_dump($item);
+//                //添加聊天记录
+//                $message = [];
+//                $message['id'] = generate_rand_id();
+//                $message['from_uid'] = $user['id'];
+//                $message['to_group_id'] = $groupInfo['group_id'];
+//                $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD;
+//                $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+//                $message['sendTime'] = time() * 1000;
+//                $message['content'] = $content;
+//                $message['toContactId'] = $groupInfo['group_id'];
+//                $message['fromUser'] = $user;
+//
+//                //获取不在线用户，并添加到未读历史消息中
+//                $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($groupInfo['group_id']);
+//                foreach ($unOnlineUidList as $uid) {
+//                    Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $groupInfo['group_id']);
+//                }
+//                $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::FORWARD_MESSAGE);
+                return true;
+            }
+        }
+    }
+
+    /**
      * 组消息发送
      * @param string $groupId
      * @param array $message
@@ -340,6 +375,7 @@ class GroupWsTask
             $message['fromUser']['id'] = 0;
             $message['fromUser']['displayName'] = '系统通知';
         }
+        $message['isGroup'] = true;
         //添加聊天记录
         GroupChatHistory::addMessage($message, 1);
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);

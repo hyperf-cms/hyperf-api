@@ -25,10 +25,10 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 class MessageController extends AbstractController
 {
     /**
-     * 发送信息
-     * @RequestMapping(path="forward_message",methods="POST")
+     * 合并转发信息
+     * @RequestMapping(path="merge_forward_message",methods="POST")
      */
-    public function forwardMessage()
+    public function mergeForwardMessage()
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
@@ -40,12 +40,38 @@ class MessageController extends AbstractController
                 $groupInfo = Group::query()->where('group_id', $item['id'])->first();
                 if (empty($groupInfo)) continue;
                 $groupInfo = objToArray($groupInfo);
-                $this->container->get(GroupWsTask::class)->forwardMessage($groupInfo, $user, $content);
+                $this->container->get(GroupWsTask::class)->mergeForwardMessage($groupInfo, $user, $content);
             }else {
                 $userInfo = User::query()->where('id', $item['id'])->first();
                 if (empty($userInfo)) continue;
                 $userInfo = objToArray($userInfo);
-                $this->container->get(FriendWsTask::class)->forwardMessage($userInfo, $user, $content);
+                $this->container->get(FriendWsTask::class)->mergeForwardMessage($userInfo, $user, $content);
+            }
+        }
+    }
+
+    /**
+     * 合并转发信息
+     * @RequestMapping(path="forward_message",methods="POST")
+     */
+    public function forwardMessage()
+    {
+        $chatMessage = MessageParser::decode(conGet('chat_message'));
+        $contactData = $chatMessage['message'];
+
+        $user = $contactData['user'];
+        foreach ($contactData['contact'] as $item) {
+            if ($item['is_group'] == 1) {
+                $groupInfo = Group::query()->where('group_id', $item['id'])->first();
+                var_dump($groupInfo);
+                if (empty($groupInfo)) continue;
+                $groupInfo = objToArray($groupInfo);
+                $this->container->get(GroupWsTask::class)->forwardMessage($groupInfo, $user, $contactData['message']);
+            }else {
+                $userInfo = User::query()->where('id', $item['id'])->first();
+                if (empty($userInfo)) continue;
+                $userInfo = objToArray($userInfo);
+                $this->container->get(FriendWsTask::class)->forwardMessage($userInfo, $user, $contactData['message']);
             }
         }
     }

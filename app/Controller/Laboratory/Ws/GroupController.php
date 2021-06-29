@@ -66,6 +66,7 @@ class GroupController extends AbstractController
                     'content' => $contactData['content'],
                     'toContactId' =>$contactData['toContactId'],
                     'fromUser' => $contactData['fromUser'],
+                    'isGroup' => true,
                 ],
             ],
             'fd' => $fdList
@@ -100,6 +101,7 @@ class GroupController extends AbstractController
                 'toContactId' => $value['to_group_id'],
                 'fileSize' => $value['file_size'],
                 'fileName' => $value['file_name'],
+                'isGroup' => true,
             ];
             if ($value['from_uid'] != 0) $temp['fromUser'] = [
                 'id' => $value['from_uid'],
