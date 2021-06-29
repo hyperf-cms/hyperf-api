@@ -129,4 +129,42 @@ class UploadService extends BaseService
             'messageId' => $messageId,
         ];
     }
+
+    /**
+     * 上传视频文件
+     * @param object $file
+     * @param string $savePath
+     * @param string $messageId
+     * @return array
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadVideo(object $file, string $savePath = '', string $messageId = '') : array
+    {
+        if ($file->getSize() > 20971520) $this->throwExp(UploadCode::ERR_UPLOAD_SIZE, '上传文件不能超过20M');
+        //得到上传文件的后缀
+        $fileExt = getExtByFile($file->getClientFilename());
+        if (!in_array($fileExt, ['mp4', 'avi', 'mov', 'rmvb', 'flv', '3GP', 'FLV', 'WMV'])) $this->throwExp(UploadCode::ERR_UPLOAD_TYPE, '上传文件必须为视频文件');
+
+        //拼接得到文件名以及对应路径
+        $fileName =  md5(uniqid())  . '.' . $fileExt;
+        $uploadPath = $savePath . '/' . $fileName;
+
+        //外网访问的路径
+        $fileUrl = env('OSS_URL') . $uploadPath;
+
+        $stream = fopen($file->getRealPath(), 'r+');
+        $this->filesystem->writeStream(
+            $uploadPath,
+            $stream
+        );
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+        return [
+            'fileName' => $fileName,
+            'fileExt' => $fileExt,
+            'url' => $fileUrl,
+            'messageId' => $messageId,
+        ];
+    }
 }

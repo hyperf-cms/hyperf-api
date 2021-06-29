@@ -117,4 +117,38 @@ class UploadController extends AbstractController
         $uploadResult = UploadService::getInstance()->uploadFile($params['file'], $params['savePath'], $params['messageId']);
         return $this->success($uploadResult);
     }
+
+    /**
+     * 上传文件
+     * @RequestMapping(path="upload_video", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\Flysystem\FileExistsException
+     */
+    public function uploadVideo()
+    {
+        $params = [
+            'savePath' => $this->request->input('savePath') ?? '',
+            'file' => $this->request->file('file'),
+            'messageId' => $this->request->input('messageId') ?? ''
+        ];
+        //配置验证
+        $rules = [
+            'savePath' => 'required',
+            'file' => 'required|file',
+            'messageId' => 'required ',
+        ];
+        $message = [
+            'savePath.required' => '[savePath]缺失',
+            'file.required' => '[file]缺失',
+            'messageId.required' => '[messageId]缺失',
+            'file.file' => '[file] 参数必须为文件类型',
+        ];
+        $this->verifyParams($params, $rules, $message);
+
+        $uploadResult = UploadService::getInstance()->uploadVideo($params['file'], $params['savePath'], $params['messageId']);
+        return $this->success($uploadResult);
+    }
 }
