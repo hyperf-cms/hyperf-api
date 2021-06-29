@@ -56,7 +56,6 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
             ]));
             $targetUri = $message['uri'] ?? '';
             $requestMethod = $message['method'] ?? 'GET';
-            var_dump($targetUri);
             $dispatcher = $this->container
                 ->get(DispatcherFactory::class)
                 ->getDispatcher('ws');

@@ -9,7 +9,9 @@ use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\Group;
 use App\Pool\Redis;
+use App\Task\Laboratory\FriendWsTask;
 use App\Task\Laboratory\GroupWsTask;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -35,9 +37,15 @@ class MessageController extends AbstractController
         $user = $contactData['user'];
         foreach ($contactData['contact'] as $item) {
             if ($item['is_group'] == 1) {
-                $this->container->get(GroupWsTask::class)->forwardMessage($item, $user, $content);
+                $groupInfo = Group::query()->where('group_id', $item['id'])->first();
+                if (empty($groupInfo)) continue;
+                $groupInfo = objToArray($groupInfo);
+                $this->container->get(GroupWsTask::class)->forwardMessage($groupInfo, $user, $content);
             }else {
-                var_dump($item);
+                $userInfo = User::query()->where('id', $item['id'])->first();
+                if (empty($userInfo)) continue;
+                $userInfo = objToArray($userInfo);
+                $this->container->get(FriendWsTask::class)->forwardMessage($userInfo, $user, $content);
             }
         }
     }

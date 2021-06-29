@@ -15,6 +15,7 @@ use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\Laboratory\GroupService;
+use App\Service\Laboratory\MessageService;
 use App\Task\Laboratory\GroupWsTask;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -52,6 +53,8 @@ class GroupController extends AbstractController
         unset($contactData['fromUser']['lastSendTime']);
         unset($contactData['fromUser']['lastContent']);
 
+        //格式化转发消息类型
+        if ($contactData['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $contactData['content'] = GroupService::getInstance()->formatForwardMessage($contactData['content'], $contactData['fromUser']);
         return [
             'message_data' => [
                 'event' => '',
@@ -87,7 +90,7 @@ class GroupController extends AbstractController
         $messageList = array_reverse($messageList);
 
         $list = [];
-            foreach ($messageList as $key => $value) {
+        foreach ($messageList as $key => $value) {
             $temp = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
@@ -104,7 +107,7 @@ class GroupController extends AbstractController
                 'displayName' => User::query()->where('id', $value['from_uid'])->value('desc') ?? '',
             ];
             //格式化转发类型的消息类型
-            if ($value['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $temp['content'] = GroupService::getInstance()->formatForwardMessage($value['content'], $temp['fromUser']);
+            if ($value['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $temp['content'] = MessageService::getInstance()->formatForwardMessage($value['content'], $temp['fromUser']);
             $list[] = $temp;
         }
         return [

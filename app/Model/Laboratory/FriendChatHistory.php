@@ -50,6 +50,7 @@ class FriendChatHistory extends Model
     const FRIEND_CHAT_MESSAGE_TYPE_IMAGE = 'image';
     const FRIEND_CHAT_MESSAGE_TYPE_FILE = 'file';
     const FRIEND_CHAT_MESSAGE_TYPE_EVENT = 'event';
+    const FRIEND_CHAT_MESSAGE_TYPE_FORWARD = 'forward';
 
     /**
      * 群消息状态枚举

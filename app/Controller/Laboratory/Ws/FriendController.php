@@ -9,7 +9,9 @@ use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
+use App\Service\Laboratory\MessageService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
@@ -84,12 +86,12 @@ class FriendController extends AbstractController
 
         $list = [];
         foreach ($messageList as $key => $value) {
-            $list[] = [
+            $temp = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
                 'type' => $value['type'],
-                'sendTime' => intval($value['send_time']),
                 'content' => $value['content'],
+                'sendTime' => intval($value['send_time']),
                 'toContactId' => $value['to_uid'],
                 'fileSize' => $value['file_size'],
                 'fileName' => $value['file_name'],
@@ -99,6 +101,8 @@ class FriendController extends AbstractController
                     'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
                 ],
             ];
+            if ($temp['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD) $temp['content'] = MessageService::getInstance()->formatForwardMessage($temp['content'], $temp['fromUser']);
+            $list[] = $temp;
         }
         return [
             'message_data' => [

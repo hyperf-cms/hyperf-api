@@ -12,6 +12,7 @@ use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
 use App\Service\Laboratory\GroupService;
+use App\Service\Laboratory\MessageService;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
@@ -308,23 +309,23 @@ class GroupWsTask
         $message = [];
         $message['id'] = generate_rand_id();
         $message['from_uid'] = $user['id'];
-        $message['to_group_id'] = $groupInfo['id'];
+        $message['to_group_id'] = $groupInfo['group_id'];
         $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD;
         $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
         $message['sendTime'] = time() * 1000;
         $message['content'] = $content;
-        $message['toContactId'] = $groupInfo['id'];
+        $message['toContactId'] = $groupInfo['group_id'];
         $message['fromUser'] = $user;
 
         //获取不在线用户，并添加到未读历史消息中
-        $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($groupInfo['id']);
+        $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($groupInfo['group_id']);
         foreach ($unOnlineUidList as $uid) {
-            Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $groupInfo['id']);
+            Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $groupInfo['group_id']);
         }
-
-        $this->sendMessage($groupInfo['id'], $message, GroupEvent::FORWARD_MESSAGE);
+        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::FORWARD_MESSAGE);
         return true;
     }
+
     /**
      * 组消息发送
      * @param string $groupId
@@ -339,14 +340,15 @@ class GroupWsTask
             $message['fromUser']['id'] = 0;
             $message['fromUser']['displayName'] = '系统通知';
         }
+        //添加聊天记录
+        GroupChatHistory::addMessage($message, 1);
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);
+        if ($message['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $message['content'] = MessageService::getInstance()->formatForwardMessage($message['content'], $message['fromUser']);
         foreach ($uidFdList as $key => $value) {
             $sendMessage['event'] = $event;
             $sendMessage['message'] = $message;
             $this->sender->push((int) $value['fd'], json_encode($sendMessage));
         }
-        //添加聊天记录
-        GroupChatHistory::addMessage($message, 1);
         return true;
     }
 }

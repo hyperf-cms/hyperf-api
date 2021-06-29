@@ -2,6 +2,9 @@
 namespace App\Service\Laboratory;
 
 use App\Foundation\Traits\Singleton;
+use App\Model\Auth\User;
+use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Swoole\Http\Request;
@@ -18,7 +21,38 @@ class MessageService extends BaseService
 {
     use Singleton;
 
+    /**
+     * 格式化转发类型消息
+     * @param string $content
+     * @param array $fromUser
+     * @return array
+     */
+    public function formatForwardMessage(string $content, array $fromUser)
+    {
+        if (empty($content)) return [];
+        $content = json_decode($content, true);
+        if (is_null($content)) return [];
 
+        $messageList = GroupChatHistory::query()->whereIn('message_id', $content)->orderBy('send_time', 'asc')->get()->toArray();
+        if (empty($messageList)) {
+            $messageList = FriendChatHistory::query()->whereIn('message_id', $content)->orderBy('send_time', 'asc')->get()->toArray();
+        }
+        if (empty($messageList)) return [];
+        foreach ($messageList as $key => $value) {
+            if ($value['from_uid'] != 0) $messageList[$key]['fromUser'] = [
+                'id' => $value['from_uid'],
+                'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar') ?? '',
+                'displayName' => User::query()->where('id', $value['from_uid'])->value('desc') ?? '',
+            ];
+        }
+        $total = count($messageList);
+
+        return [
+            'message' => $messageList,
+            'fromUser' => $fromUser,
+            'total' => $total
+        ];
+    }
 
 
 }
