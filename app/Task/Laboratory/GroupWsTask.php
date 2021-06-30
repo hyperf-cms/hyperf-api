@@ -7,6 +7,7 @@ use App\Constants\Laboratory\ChatRedisKey;
 use App\Constants\Laboratory\GroupEvent;
 use App\Foundation\Utils\GroupAvatar;
 use App\Model\Auth\User;
+use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
@@ -337,27 +338,32 @@ class GroupWsTask
     {
         if (is_array($content)) {
             foreach ($content as $item) {
-                var_dump($item);
-//                //添加聊天记录
-//                $message = [];
-//                $message['id'] = generate_rand_id();
-//                $message['from_uid'] = $user['id'];
-//                $message['to_group_id'] = $groupInfo['group_id'];
-//                $message['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD;
-//                $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
-//                $message['sendTime'] = time() * 1000;
-//                $message['content'] = $content;
-//                $message['toContactId'] = $groupInfo['group_id'];
-//                $message['fromUser'] = $user;
-//
-//                //获取不在线用户，并添加到未读历史消息中
-//                $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($groupInfo['group_id']);
-//                foreach ($unOnlineUidList as $uid) {
-//                    Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $groupInfo['group_id']);
-//                }
-//                $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::FORWARD_MESSAGE);
-                return true;
+                $messageSource = $item['is_group'] == true ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
+                $messageSource = objToArray($messageSource);
+                if (empty($messageSource)) continue;
+                //添加聊天记录
+                $message = [];
+                $message['id'] = generate_rand_id();
+                $message['from_uid'] = $user['id'];
+                $message['to_group_id'] = $groupInfo['group_id'];
+                $message['type'] = $messageSource['type'];
+                $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+                $message['sendTime'] = time() * 1000;
+                $message['content'] = $messageSource['content'];
+                $message['toContactId'] = $groupInfo['group_id'];
+                $message['fromUser'] = $user;
+                $message['fileSize'] = $messageSource['file_size'];
+                $message['fileName'] = $messageSource['file_name'];
+                $message['fileExt'] = $messageSource['file_ext'];
+
+                //获取不在线用户，并添加到未读历史消息中
+                $unOnlineUidList = GroupService::getInstance()->getUnOnlineGroupMember($groupInfo['group_id']);
+                foreach ($unOnlineUidList as $uid) {
+                    Redis::getInstance()->sAdd(ChatRedisKey::GROUP_CHAT_UNREAD_MESSAGE_BY_USER . $uid, $groupInfo['group_id']);
+                }
+                $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::FORWARD_MESSAGE);
             }
+            return true;
         }
     }
 

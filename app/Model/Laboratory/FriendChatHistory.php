@@ -78,6 +78,7 @@ class FriendChatHistory extends Model
         $model->content = $message['content'];
         $model->file_size = $message['fileSize'] ?? 0;
         $model->file_name = $message['fileName'] ?? '';
+        $model->file_ext = $message['fileExt'] ?? '';
         $model->to_uid = $message['toContactId'];
         $model->from_uid = $message['fromUser']['id'] ?? 0;
         $model->reception_state = $receptionState;

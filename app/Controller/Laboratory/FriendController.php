@@ -69,6 +69,7 @@ class FriendController extends AbstractController
                 'type' => $value['type'],
                 'fileSize' => $value['file_size'],
                 'fileName' => $value['file_name'],
+                'fileExt' => $value['file_ext'],
                 'sendTime' => date('Y-m-d', $sendTime) == date('Y-m-d') ? date('H:i:s', $sendTime) : date('Y-m-d, H:i:s', $sendTime) ,
                 'content' => $value['content'],
                 'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),

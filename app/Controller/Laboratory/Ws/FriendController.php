@@ -96,6 +96,7 @@ class FriendController extends AbstractController
                 'toContactId' => $value['to_uid'],
                 'fileSize' => $value['file_size'],
                 'fileName' => $value['file_name'],
+                'fileExt' => $value['file_ext'],
                 'isGroup' => false,
                 'fromUser' => [
                     'id' => $value['from_uid'],

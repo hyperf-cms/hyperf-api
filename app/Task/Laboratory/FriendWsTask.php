@@ -4,11 +4,10 @@ declare(strict_types = 1);
 namespace App\Task\Laboratory;
 
 use App\Constants\Laboratory\ChatRedisKey;
-use App\Constants\Laboratory\GroupEvent;
 use App\Constants\Laboratory\WsMessage;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
-use App\Model\Laboratory\GroupRelation;
+use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
 use App\Service\Laboratory\FriendService;
 use App\Service\Laboratory\MessageService;
@@ -99,4 +98,52 @@ class FriendWsTask
         $this->sender->push((int) $fromUserFd, json_encode($sendMessage));
         return true;
     }
+
+    /**
+     * 逐条转发信息
+     * @param array $userInfo
+     * @param array $user
+     * @param array $content
+     * @return bool
+     */
+    function forwardMessage(array $userInfo, array $user, array $content)
+    {
+        if (is_array($content)) {
+            foreach ($content as $item) {
+                $messageSource = $item['is_group'] == true ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
+                $messageSource = objToArray($messageSource);
+                if (empty($messageSource)) continue;
+                //添加聊天记录
+                $message = [];
+                $message['id'] = generate_rand_id();
+                $message['from_uid'] = $user['id'];
+                $message['to_uid'] = $userInfo['id'];
+                $message['type'] = $messageSource['type'];
+                $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
+                $message['sendTime'] = time() * 1000;
+                $message['content'] = $messageSource['content'];
+                $message['toContactId'] = $userInfo['id'];
+                $message['fromUser'] = $user;
+                $message['fileSize'] = $messageSource['file_size'];
+                $message['fileName'] = $messageSource['file_name'];
+                $message['fileExt'] = $messageSource['file_ext'];
+                $message['isGroup'] = false;
+                $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$userInfo['id']);
+                $fromUserFd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$user['id']);
+                $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_YES;
+
+                //添加消息记录
+                FriendChatHistory::addMessage($message, $receptionState);
+                if ($message['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD) $message['content'] = MessageService::getInstance()->formatForwardMessage($message['content'], $message['fromUser']);
+
+                $sendMessage = [
+                    'message' => $message,
+                ];
+                $this->sender->push((int) $contactId, json_encode($sendMessage));
+                $this->sender->push((int) $fromUserFd, json_encode($sendMessage));
+            }
+            return true;
+        }
+    }
+
 }

@@ -51,7 +51,7 @@ class MessageController extends AbstractController
     }
 
     /**
-     * 合并转发信息
+     * 转发信息
      * @RequestMapping(path="forward_message",methods="POST")
      */
     public function forwardMessage()
@@ -63,7 +63,6 @@ class MessageController extends AbstractController
         foreach ($contactData['contact'] as $item) {
             if ($item['is_group'] == 1) {
                 $groupInfo = Group::query()->where('group_id', $item['id'])->first();
-                var_dump($groupInfo);
                 if (empty($groupInfo)) continue;
                 $groupInfo = objToArray($groupInfo);
                 $this->container->get(GroupWsTask::class)->forwardMessage($groupInfo, $user, $contactData['message']);
@@ -75,6 +74,5 @@ class MessageController extends AbstractController
             }
         }
     }
-
 }
 

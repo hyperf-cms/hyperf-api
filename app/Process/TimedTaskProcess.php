@@ -76,7 +76,6 @@ class TimedTaskProcess extends AbstractProcess
         }else {
             TimedTask::updateNextExecuteTime($task['id']);
         }
-        var_dump(1);
         return $timedTaskLog->save();
 
     }
