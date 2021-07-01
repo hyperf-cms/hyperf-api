@@ -37,7 +37,7 @@ class MessageService extends BaseService
         $isGroup = $content[0]['is_group'] ?? false;
 
         $messageQuery = $isGroup == true ? GroupChatHistory::query() : FriendChatHistory::query();
-        $messageList = $messageQuery->whereIn('message_id', $messageIdList)->orderBy('send_time', 'asc')->get()->toArray();Dispatched;
+        $messageList = $messageQuery->whereIn('message_id', $messageIdList)->orderBy('send_time', 'asc')->get()->toArray();
         if (empty($messageList)) return [];
         foreach ($messageList as $key => $value) {
             if ($value['from_uid'] != 0) $messageList[$key]['fromUser'] = [
