@@ -163,7 +163,6 @@ class LoginService extends BaseService
                 $module_children[] = &$permissionList[$key];
             }
         }
-
         foreach ($module_children as $key => $value) {
             if (!empty($value['children'])) {
                 $routers[$value['id']] = [
@@ -179,25 +178,7 @@ class LoginService extends BaseService
                     ],
                     'children' => []
                 ];
-                foreach ($value['children'] as $k => $v) {
-                    $temp = [];
-                    if (!empty($v['children'])) {
-                        foreach ($v['children'] as $k1 => $v1) {
-                            $temp[] = [
-                                'name' => $v1['name'],
-                                'path' => $v1['url'],
-                                'hidden' => $v1['hidden'],
-                                'alwaysShow' => true,
-                                'component' => $v1['component'],
-                                'meta' => [
-                                    'icon' => $v1['icon'],
-                                    'title' => $v1['display_name'],
-                                ],
-                            ];
-                        }
-                    }
-                    $routers[$value['id']]['children'] =  array_merge($routers[$value['id']]['children'], $temp);
-                }
+                $routers[$value['id']]['children'] = $this->dealRouteChildren($value['children']);
             }else {
                 array_push($routers['default']['children'], [
                     'name' => $value['name'],
@@ -213,6 +194,37 @@ class LoginService extends BaseService
             }
         }
         return array_values($routers);
+    }
+
+    /**
+     * 处理路由下顶级路由下子路由
+     * @param array $children
+     * @return array
+     */
+    private function dealRouteChildren(array $children) : array
+    {
+        $temp = [];
+        if (!empty($children)) {
+            foreach ($children as $k => $v) {
+                if ($v['type'] == Permission::MENU_TYPE) {
+                    $temp[] = [
+                        'name' => $v['name'],
+                        'path' => $v['url'],
+                        'hidden' => $v['hidden'],
+                        'alwaysShow' => true,
+                        'component' => $v['component'],
+                        'meta' => [
+                            'icon' => $v['icon'],
+                            'title' => $v['display_name'],
+                        ],
+                    ];
+                }
+                if (!empty($v['children'])) {
+                    $temp = array_merge($temp, $this->dealRouteChildren($v['children']));
+                }
+            }
+        }
+        return $temp;
     }
 
     /**
