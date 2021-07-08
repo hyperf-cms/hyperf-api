@@ -22,7 +22,7 @@ class CreateGlobalConfigTable extends Migration
             $table->timestamps();
             $table->unique('key_name', 'key_name_unique');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `global_config` comment'参数配置表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."global_config` comment'参数配置表'");//表注释一定加上前缀
     }
 
     /**

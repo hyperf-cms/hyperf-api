@@ -23,7 +23,7 @@ class CreateTimedTaskLogTable extends Migration
             $table->index('task_id', 'task_id_index');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `timed_task_log` comment'任务日志表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."timed_task_log` comment'任务日志表'");//表注释一定加上前缀
     }
 
     /**

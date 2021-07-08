@@ -19,7 +19,7 @@ class CreateCtFriendGroupTable extends Migration
             $table->index('uid', 'uid_index');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_friend_group` comment'聊天群组表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_friend_group` comment'聊天群组表'");//表注释一定加上前缀
     }
 
     /**

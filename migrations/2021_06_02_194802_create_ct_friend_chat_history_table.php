@@ -26,7 +26,7 @@ class CreateCtFriendChatHistoryTable extends Migration
             $table->tinyInteger('reception_state')->default('0')->comment('接受状态 0 未接收 1：接收');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_friend_chat_history` comment'好友聊天记录'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_friend_chat_history` comment'好友聊天记录'");//表注释一定加上前缀
     }
 
     /**

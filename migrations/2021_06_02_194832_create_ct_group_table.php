@@ -23,7 +23,7 @@ class CreateCtGroupTable extends Migration
             $table->timestamps();
             $table->index('uid', 'uid_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_group` comment'群组表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_group` comment'群组表'");//表注释一定加上前缀
     }
 
     /**

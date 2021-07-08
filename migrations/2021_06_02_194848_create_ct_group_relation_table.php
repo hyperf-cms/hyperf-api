@@ -20,7 +20,7 @@ class CreateCtGroupRelationTable extends Migration
             $table->primary(['uid', 'group_id'], 'uid_group_id_key');
             $table->index('uid', 'uid_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_group_relation` comment'群组-用户关联表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_group_relation` comment'群组-用户关联表'");//表注释一定加上前缀
     }
 
     /**

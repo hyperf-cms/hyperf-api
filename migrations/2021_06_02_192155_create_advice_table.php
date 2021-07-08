@@ -22,7 +22,7 @@ class CreateAdviceTable extends Migration
             $table->tinyInteger('type')->default('0')->comment('类型（0：bug，1：优化，2：混合');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `advice` comment'系统建议表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."advice` comment'系统建议表'");//表注释一定加上前缀
     }
 
     /**
