@@ -6,6 +6,7 @@ use App\Constants\Laboratory\WsMessage;
 use App\Foundation\Traits\Singleton;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\FriendGroup;
 use App\Model\Laboratory\FriendRelation;
 use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
@@ -39,17 +40,30 @@ class InitService extends BaseService
         $returnUserInfo['avatar'] = $userInfo['avatar'];
 
         //获取用户联系人
-        $userList = User::query()->where('id', '!=', $userInfo['id'])->get()->toArray();
+        $userListQuery = FriendRelation::query();
+        $userListQuery->where('uid',  $userInfo['id']);
+        $userListQuery->with('getUser:id,desc,avatar');
+        $userList = $userListQuery->get()->toArray();
+
+        //获取用户的组
+        $friendGroup[0] = [
+            'id' => 0,
+            'uid' => $userInfo['id'],
+            'friend_group_name' => '我的好友',
+        ];
+        $friendGroup += FriendGroup::query()->select('id', 'friend_group_name as label')->where('uid', $userInfo['id'])->orderBy('sort', 'asc')->get()->toArray();
+        $friendGroup = array_column($friendGroup, null, 'id');
         $userContactList = [];
         foreach ($userList as $key => $val) {
             $fd = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string) $val['id']);
             $unreadMessageInfo = $this->getUnReadMessageByUser($val, $userInfo);
             $userContactList[] = [
-                'id' => $val['id'],
+                'id' => $val['get_user']['id'],
                 'is_group' => Group::IS_NOT_GROUP_TYPE,
-                'displayName' => $val['desc'],
-                'avatar' => $val['avatar'],
-                'index' => $val['desc'],
+                'displayName' => empty($val['friend_remark']) ? $val['get_user']['desc'] : $val['friend_remark'],
+                'avatar' => $val['get_user']['avatar'],
+                'index' => $friendGroup[$val['friend_group']]['friend_group_name'],
+                'friend_group' => $val['friend_group'],
                 'unread' => $unreadMessageInfo['unread'] ?? 0,
                 'status' => empty($fd) ? FriendRelation::FRIEND_ONLINE_STATUS_NO : FriendRelation::FRIEND_ONLINE_STATUS,
                 'lastContent' => $unreadMessageInfo['lastContent'] ?? '',
@@ -99,6 +113,7 @@ class InitService extends BaseService
             'event' => WsMessage::MESSAGE_TYPE_INIT,
             'user_info' => $returnUserInfo,
             'user_contact' => $userContactList,
+            'friend_group' =>$friendGroup,
             'user_group' => $userGroupList
         ];
     }

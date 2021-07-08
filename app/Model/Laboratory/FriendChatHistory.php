@@ -5,8 +5,16 @@ declare(strict_types=1);
 namespace App\Model\Laboratory;
 
 use App\Model\Model;
+use App\Pool\Redis;
 use phpDocumentor\Reflection\Types\Boolean;
 
+/**
+ * 好友消息
+ * Class FriendChatHistory
+ * @package App\Model\Laboratory
+ * @Author YiYuan-Lin
+ * @Date: 2021/7/8
+ */
 class FriendChatHistory extends Model
 {
     /**
@@ -59,6 +67,11 @@ class FriendChatHistory extends Model
     const FRIEND_CHAT_MESSAGE_STATUS_SUCCEED = 'succeed';
     const FRIEND_CHAT_MESSAGE_STATUS_FAILED = 'failed';
 
+    /**
+     * 好友消息容器
+     */
+    const FRIEND_MESSAGE_CONTAINER_REDIS_KEY = 'FRIEND_MESSAGE_CONTAINER_BY_USER_';
+
 
     /**
      * 添加聊天记录
@@ -82,7 +95,29 @@ class FriendChatHistory extends Model
         $model->to_uid = $message['toContactId'];
         $model->from_uid = $message['fromUser']['id'] ?? 0;
         $model->reception_state = $receptionState;
+        $model->save();
 
-        return $model->save();
+        //添加消息到好友容器中
+        //self::addMessageToContainer($message['id']);
+
+        return true;
     }
+
+    /**
+     * 将消息添加到个人消息容器中
+     * @param $messageId
+     * @return bool
+     */
+//    static function addMessageToContainer(string $messageId)
+//    {
+//        if (empty($messageId)) return false;
+//
+//        $messageInfo = static::query()->where('message_id', $messageId)->first();
+//        if (!empty($messageId)) {
+//            Redis::getInstance()->hset(self::FRIEND_MESSAGE_CONTAINER_REDIS_KEY . $messageInfo['from_uid'], $messageId, json_encode($messageInfo));
+//            Redis::getInstance()->hset(self::FRIEND_MESSAGE_CONTAINER_REDIS_KEY . $messageInfo['to_uid'], $messageId, json_encode($messageInfo));
+//        }
+//
+//        return true;
+//    }
 }

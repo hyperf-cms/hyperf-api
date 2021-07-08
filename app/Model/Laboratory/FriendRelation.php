@@ -43,4 +43,12 @@ class FriendRelation extends Model
      */
     const FRIEND_ONLINE_STATUS = 1;
     const FRIEND_ONLINE_STATUS_NO = 0;
+
+    /**
+     * 与user表关联
+     * @return \Hyperf\Database\Model\Relations\BelongsTo
+     */
+    public function getUser() {
+        return $this->belongsTo('App\Model\Auth\User', 'friend_id', 'id');
+    }
 }

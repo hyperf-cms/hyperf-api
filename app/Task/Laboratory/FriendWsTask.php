@@ -5,12 +5,14 @@ namespace App\Task\Laboratory;
 
 use App\Constants\Laboratory\ChatRedisKey;
 use App\Constants\Laboratory\WsMessage;
+use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
 use App\Service\Laboratory\FriendService;
 use App\Service\Laboratory\MessageService;
+use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -146,4 +148,83 @@ class FriendWsTask
         }
     }
 
+    /**
+     * 维护好友关系
+     * @param Model $model
+     * @return bool
+     */
+    public function maintainFriendRelation(Model $model)
+    {
+        $userList = User::query()->where('id', '!=', $model['id'])->get()->pluck('id');
+
+        foreach ($userList as $user_id) {
+            FriendRelation::insert([
+                'uid' => $user_id,
+                'friend_id' => $model['id'],
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        //组装联系人信息
+        $contact['id'] = $model['id'];
+        $contact['displayName'] = $model['desc'];
+        $contact['avatar'] = $model['avatar'];
+        $contact['index'] = $model['desc'];
+        $contact['unread'] = 0;
+        $contact['lastSendTime'] = 0;
+        $contact['lastContent'] = '';
+        $contact['is_group'] = 0;
+        $contact['status'] = FriendRelation::FRIEND_ONLINE_STATUS_NO;
+
+        //获取在线用户
+        $fdList = FriendService::getInstance()->getOnlineFriendList($model->toArray());
+        //组装消息
+        $message['id'] = generate_rand_id();
+        $message['status'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_EVENT;
+        $message['sendTime'] = time() * 1000;
+        $message['event'] = WsMessage::MESSAGE_TYPE_NEW_FRIEND_JOIN;
+        $message['contact'] = $contact;
+
+        foreach ($fdList as $key => $value) {
+            $sendMessage = [
+                'message' => $message,
+                'event' => WsMessage::MESSAGE_TYPE_NEW_FRIEND_JOIN
+            ];
+            $this->sender->push((int) $value['fd'], json_encode($sendMessage));
+        }
+        return true;
+    }
+
+    /**
+     * 删除好友关系
+     * @param Model $model
+     * @return bool
+     */
+    public function deleteContactEvent(Model $model)
+    {
+        $userList = User::query()->where('id', '!=', $model['id'])->get()->pluck('id');
+
+        //维护好友关系
+        FriendRelation::query()->where('uid', $model['id'])->orWhere('friend_id', $model['id'])->delete();
+        //获取在线用户
+        $fdList = FriendService::getInstance()->getOnlineFriendList($model->toArray());
+        //组装消息
+        $message['id'] = generate_rand_id();
+        $message['status'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_STATUS_SUCCEED;
+        $message['type'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_EVENT;
+        $message['sendTime'] = time() * 1000;
+        $message['event'] = WsMessage::MESSAGE_TYPE_FRIEND_DELETE;
+        $message['contact_id'] = $model['id'];
+
+        foreach ($fdList as $key => $value) {
+            $sendMessage = [
+                'message' => $message,
+                'event' => WsMessage::MESSAGE_TYPE_FRIEND_DELETE
+            ];
+            $this->sender->push((int) $value['fd'], json_encode($sendMessage));
+        }
+        return true;
+    }
 }
