@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'default' => 'oss',
+    'default' => env('FILE_TYPE','oss'),
     'storage' => [
         'local' => [
             'driver' => \Hyperf\Filesystem\Adapter\LocalAdapterFactory::class,
@@ -18,15 +18,15 @@ return [
         ],
         'ftp' => [
             'driver' => \Hyperf\Filesystem\Adapter\FtpAdapterFactory::class,
-            'host' => 'ftp.example.com',
-            'username' => 'username',
-            'password' => 'password',
-            // 'port' => 21,
-            // 'root' => '/path/to/root',
-            // 'passive' => true,
-            // 'ssl' => true,
-            // 'timeout' => 30,
-            // 'ignorePassiveAddress' => false,
+            'host' => env('FTP_HOST','127.0.0.1'),
+            'username' => env('FTP_USERNAME',''),
+            'password' => env('FTP_PASSWORD',''),
+            'port' => env('FTP_PORT',21),
+            'root' => env('FTP_ROOT','/'),
+            'passive' => env('FTP_PASSIVE',true),
+            'ssl' => env('FTP_SSL',false),
+            'timeout' => env('FTP_TIMEOUT',30),
+            'ignorePassiveAddress' => env('FTP_IPA',false),
         ],
         'memory' => [
             'driver' => \Hyperf\Filesystem\Adapter\MemoryAdapterFactory::class,
