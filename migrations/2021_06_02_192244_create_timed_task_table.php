@@ -24,7 +24,7 @@ class CreateTimedTaskTable extends Migration
             $table->tinyInteger('status')->default('0')->comment('1:启用 0：禁用');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `timed_task` comment'定时任务表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."timed_task` comment'定时任务表'");//表注释一定加上前缀
     }
 
     /**

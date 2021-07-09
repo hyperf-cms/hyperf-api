@@ -26,7 +26,7 @@ class CreatePhotoAlbumTable extends Migration
             $table->integer('album_sort')->default('99')->comment('相册排序 数字越小越靠前');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `photo_album` comment'相册'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."photo_album` comment'相册'");//表注释一定加上前缀
     }
 
     /**

@@ -25,7 +25,7 @@ class CreateCtUserApplicationTable extends Migration
             $table->index('uid', 'uid_index');
             $table->index('receiver_id', 'receiver_id_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_user_application` comment'好友/群组申请表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_user_application` comment'好友/群组申请表'");//表注释一定加上前缀
     }
 
     /**

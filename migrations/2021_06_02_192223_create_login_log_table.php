@@ -23,7 +23,7 @@ class CreateLoginLogTable extends Migration
             $table->string('response_code', 50)->default('')->comment('返回状态码');
             $table->dateTime('login_date')->comment('登陆时间');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `login_log` comment'登陆日志'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."login_log` comment'登陆日志'");//表注释一定加上前缀
     }
 
     /**

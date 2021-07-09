@@ -25,7 +25,7 @@ class CreateDictDataTable extends Migration
             $table->string('remark', 500)->comment('备注');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `advice` comment'字典数据表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."advice` comment'字典数据表'");//表注释一定加上前缀
     }
 
     /**

@@ -23,7 +23,7 @@ class CreateNoticeTable extends Migration
             $table->timestamps();
             $table->index('public_time', 'notice_public_time_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `notice` comment'系统通知表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."notice` comment'系统通知表'");//表注释一定加上前缀
     }
 
     /**

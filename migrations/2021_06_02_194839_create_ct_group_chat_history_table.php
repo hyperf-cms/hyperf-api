@@ -30,7 +30,7 @@ class CreateCtGroupChatHistoryTable extends Migration
             $table->index('from_uid', 'from_uid_index');
             $table->index('to_group_id', 'to_group_id_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `ct_group_chat_history` comment'群组聊天记录'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."ct_group_chat_history` comment'群组聊天记录'");//表注释一定加上前缀
     }
 
     /**

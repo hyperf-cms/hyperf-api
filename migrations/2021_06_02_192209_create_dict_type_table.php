@@ -21,7 +21,7 @@ class CreateDictTypeTable extends Migration
             $table->unique('dict_type', 'dict_type');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `dict_type` comment'字典类型表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".(env('DB_PREFIX','')?:'')."dict_type` comment'字典类型表'");//表注释一定加上前缀
     }
 
     /**
