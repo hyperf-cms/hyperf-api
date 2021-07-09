@@ -130,16 +130,16 @@ class InitService extends BaseService
 
         $lastMessage = FriendChatHistory::query()
             ->where(function ($query) use ($currentUserInfo, $user) {
-                $query->where('from_uid', $currentUserInfo['id'])->where('to_uid', $user['id']);
+                $query->where('from_uid', $currentUserInfo['id'])->where('to_uid', $user['get_user']['id']);
             })->orWhere(function ($query) use ($currentUserInfo, $user) {
-                $query->where('from_uid', $user['id'])->where('to_uid', $currentUserInfo['id']);
+                $query->where('from_uid', $user['get_user']['id'])->where('to_uid', $currentUserInfo['id']);
             })
             ->orderBy('send_time', 'desc')
             ->first();
 
         $unread = FriendChatHistory::query()
             ->where(function ($query) use ($currentUserInfo, $user) {
-                $query->where('from_uid', $user['id'])->where('to_uid', $currentUserInfo['id'])
+                $query->where('from_uid', $user['get_user']['id'])->where('to_uid', $currentUserInfo['id'])
                     ->where('reception_state', FriendChatHistory::RECEPTION_STATE_NO);
             })
             ->orderBy('send_time', 'desc')

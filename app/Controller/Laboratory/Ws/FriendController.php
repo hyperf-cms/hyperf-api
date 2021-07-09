@@ -9,6 +9,7 @@ use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\FriendRelation;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
 use App\Service\Laboratory\MessageService;
@@ -34,6 +35,8 @@ class FriendController extends AbstractController
 
         $contactId = Redis::getInstance()->hget(ChatRedisKey::ONLINE_USER_FD_KEY, (string)$contactData['toContactId']);
         $receptionState = empty($contactId) ? FriendChatHistory::RECEPTION_STATE_NO : FriendChatHistory::RECEPTION_STATE_YES;
+        if (!empty($name = FriendRelation::getFriendRemarkNameById($contactData['fromUser']['id'], $contactData['toContactId']))) $contactData['fromUser']['displayName'] = $name;
+
         //添加聊天记录
         FriendChatHistory::addMessage($contactData, $receptionState);
         $contactData['status'] = FriendChatHistory::FRIEND_CHAT_MESSAGE_STATUS_SUCCEED;
@@ -87,6 +90,12 @@ class FriendController extends AbstractController
 
         $list = [];
         foreach ($messageList as $key => $value) {
+            //获取用户联系人
+            $userInfo = User::query()->select('id', 'desc', 'avatar')->where('id', $value['from_uid'])->first();
+            $displayName = $userInfo['desc'];
+            $friendRemark = FriendRelation::query()->where('uid', $value['to_uid'])->where('friend_id', $value['from_uid'])->value('friend_remark');
+            if (!empty($friendRemark) && $value['from_uid'] != $contactData['user_id']) $displayName = $friendRemark;
+
             $temp = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
@@ -99,12 +108,13 @@ class FriendController extends AbstractController
                 'fileExt' => $value['file_ext'],
                 'isGroup' => false,
                 'fromUser' => [
-                    'id' => $value['from_uid'],
-                    'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
-                    'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
+                    'id' => $userInfo['id'],
+                    'avatar' => $userInfo['avatar'] ?? '',
+                    'displayName' => $displayName,
                 ],
             ];
-            if ($temp['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD) $temp['content'] = MessageService::getInstance()->formatForwardMessage($temp['content'], $temp['fromUser']);
+            if ($temp['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD)
+                $temp['content'] = MessageService::getInstance()->formatForwardMessage($temp['content'], $temp['fromUser']);
             $list[] = $temp;
         }
         return [
