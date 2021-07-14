@@ -7,6 +7,7 @@ use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
+use App\Model\Laboratory\FriendRelation;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
@@ -63,6 +64,12 @@ class FriendController extends AbstractController
         $list = [];
         foreach ($messageList as $key => $value) {
             $sendTime = intval($value['send_time'] / 1000);
+            //获取用户联系人
+            $user = User::query()->select('id', 'desc', 'avatar')->where('id', $value['from_uid'])->first();
+            $displayName = $user['desc'];
+            $friendRemark = FriendRelation::query()->where('uid', $value['to_uid'])->where('friend_id', $value['from_uid'])->value('friend_remark');
+            if (!empty($friendRemark) && $value['from_uid'] != $userInfo['id']) $displayName = $friendRemark;
+
             $list[] = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
@@ -72,8 +79,8 @@ class FriendController extends AbstractController
                 'fileExt' => $value['file_ext'],
                 'sendTime' => date('Y-m-d', $sendTime) == date('Y-m-d') ? date('H:i:s', $sendTime) : date('Y-m-d, H:i:s', $sendTime) ,
                 'content' => $value['content'],
-                'avatar' => User::query()->where('id', $value['from_uid'])->value('avatar'),
-                'displayName' => User::query()->where('id', $value['from_uid'])->value('desc'),
+                'avatar' => $user['avatar'],
+                'displayName' => $displayName,
             ];
         }
         return $this->success([
