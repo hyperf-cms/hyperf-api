@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
+use App\Service\Laboratory\MessageService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
@@ -70,7 +71,7 @@ class FriendController extends AbstractController
             $friendRemark = FriendRelation::query()->where('uid', $value['to_uid'])->where('friend_id', $value['from_uid'])->value('friend_remark');
             if (!empty($friendRemark) && $value['from_uid'] != $userInfo['id']) $displayName = $friendRemark;
 
-            $list[] = [
+            $temp = [
                 'id' => $value['message_id'],
                 'status' => $value['status'],
                 'type' => $value['type'],
@@ -81,7 +82,15 @@ class FriendController extends AbstractController
                 'content' => $value['content'],
                 'avatar' => $user['avatar'],
                 'displayName' => $displayName,
+                'fromUser' => [
+                    'id' => $user['id'],
+                    'avatar' => $user['avatar'] ?? '',
+                    'displayName' => $displayName,
+                ],
             ];
+            if ($temp['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD)
+                $temp['content'] = MessageService::getInstance()->formatForwardMessage($temp['content'], $temp['fromUser']);
+            $list[] = $temp;
         }
         return $this->success([
             'list' => $list,
