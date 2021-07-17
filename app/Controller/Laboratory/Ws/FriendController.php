@@ -87,7 +87,6 @@ class FriendController extends AbstractController
             ->where('to_uid', $contactData['user_id'])
             ->where('from_uid', $contactData['contact_id'])
             ->update(['reception_state' => FriendChatHistory::RECEPTION_STATE_YES]);
-
         $list = [];
         foreach ($messageList as $key => $value) {
             //获取用户联系人
