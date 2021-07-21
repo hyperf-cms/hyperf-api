@@ -7,6 +7,7 @@ namespace App\Controller\System;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
+use App\Model\System\DictData;
 use App\Model\System\DictType;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
