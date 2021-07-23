@@ -77,11 +77,8 @@ class InitCommand extends HyperfCommand
         $tourist_role = Role::create($tourist_role);
 
         //创建权限
-        $permissionList = config('permissionData.permission_list');
-        foreach ($permissionList as $permission) {
-            if (empty(Permission::query()->find($permission['id']))) Permission::query()->insert($permission);
-            $this->line('添加权限成功----------------------------' . $permission['display_name']);
-        }
+        $permissionList = config('permissionData');
+        $this->InitPermission($permissionList);
 
         //初始化字典数据
         $dictTypeList = config('dictData.dict_type');
@@ -104,5 +101,33 @@ class InitCommand extends HyperfCommand
         $user->assignRole($super_role->name);
         // 通过内置方法 line 在 Console 输出 Hello Hyperf.
         $this->line('初始化用户成功' . PHP_EOL . '默认用户名：admin@admin.com' . PHP_EOL . '默认密码：admin@admin.com' . PHP_EOL, 'info');
+    }
+    public function InitPermission(array $PermissionList,$pid = 0)
+    {
+        foreach ($PermissionList as  $v) {
+            $p = Permission::query()->where('name', $v['name'])->first();
+            if(!$p){
+                $p = new Permission();
+                $p->parent_id       = $pid;
+                $p->name            = $v['name'];
+                $p->display_name    = $v['display_name'];
+                $p->display_desc    = $v['display_desc'];
+                $p->url             = $v['url'];
+                $p->component       = $v['component'];
+                $p->guard_name      = $v['guard_name'];
+                $p->icon            = $v['icon'];
+                $p->type            = $v['type'];
+                $p->hidden          = $v['hidden'];
+                $p->status          = $v['status'];
+                $p->sort            = $v['sort'];
+                if( !$p->save() )
+                    continue;
+                $this->line('添加权限成功----------------------------' . $v['display_name']);
+            }else{
+                $this->line('权限已存在----------------------------' . $v['display_name']);
+            }
+            if ( isset($v['subfield']) )
+                $this->InitPermission($v['subfield'],$p->id);
+        }
     }
 }
