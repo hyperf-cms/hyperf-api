@@ -142,7 +142,7 @@ class InitCommand extends HyperfCommand
                 foreach ($v['dict_data'] as $vv) {
                     $p = DictData::query()->where('dict_type', $v['dict_type'])->where('dict_label',$vv['dict_label'])->first();
                     if(!$p){
-                        $p = new DictType();
+                        $p = new DictData();
                         $p->dict_sort    = $vv['dict_sort'];
                         $p->dict_label   = $vv['dict_label'];
                         $p->dict_value   = $vv['dict_value'];
