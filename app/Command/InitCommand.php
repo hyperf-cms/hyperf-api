@@ -81,15 +81,8 @@ class InitCommand extends HyperfCommand
         $this->InitPermission($permissionList);
 
         //初始化字典数据
-        $dictTypeList = config('dictData.dict_type');
-        foreach ($dictTypeList as $dictType) {
-            if (empty(DictType::query()->find($dictType['dict_id']))) DictType::query()->insert($dictType);
-        }
-        $dictDataList = config('dictData.dict_data');
-        foreach ($dictDataList as $dictData) {
-            if (empty(DictData::query()->find($dictData['dict_code']))) DictData::query()->insert($dictData);
-        }
-        $this->line('初始化字典数据成功', 'info');
+        $dictList = config('dictData');
+        $this->InitDict($dictList);
 
         $globalConfigList = config('globalConfig.global_config');
         foreach ($globalConfigList as $globalConfig) {
@@ -102,6 +95,7 @@ class InitCommand extends HyperfCommand
         // 通过内置方法 line 在 Console 输出 Hello Hyperf.
         $this->line('初始化用户成功' . PHP_EOL . '默认用户名：admin@admin.com' . PHP_EOL . '默认密码：admin@admin.com' . PHP_EOL, 'info');
     }
+
     public function InitPermission(array $PermissionList,$pid = 0)
     {
         foreach ($PermissionList as  $v) {
@@ -130,4 +124,41 @@ class InitCommand extends HyperfCommand
                 $this->InitPermission($v['subfield'],$p->id);
         }
     }
+
+    public function InitDict(array $DictList)
+    {
+        foreach ($DictList as  $v) {
+            $p = DictType::query()->where('dict_type', $v['dict_type'])->first();
+            if(!$p){
+                $p = new DictType();
+                $p->dict_type    = $v['dict_type'];
+                $p->dict_name    = $v['dict_name'];
+                $p->remark       = $v['remark'];
+                $p->status       = $v['status'];
+                if( !$p->save() )
+                    continue;
+            }
+            if( is_array($v['dict_data']) ){
+                foreach ($v['dict_data'] as $vv) {
+                    $p = DictData::query()->where('dict_type', $v['dict_type'])->where('dict_label',$vv['dict_label'])->first();
+                    if(!$p){
+                        $p = new DictType();
+                        $p->dict_sort    = $vv['dict_sort'];
+                        $p->dict_label   = $vv['dict_label'];
+                        $p->dict_value   = $vv['dict_value'];
+                        $p->dict_type    = $v['dict_type'];
+                        $p->css_class    = $vv['css_class'];
+                        $p->list_class   = $vv['list_class'];
+                        $p->is_default   = $vv['is_default'];
+                        $p->status       = $vv['status'];
+                        $p->remark       = $vv['remark'];
+                        if( !$p->save() )
+                            continue;
+                    }
+                }
+            }
+        }
+        $this->line('初始化字典数据成功', 'info');
+    }
+
 }
