@@ -1012,7 +1012,7 @@ return [
             "display_name" => "系统日志",
             "display_desc" => "系统的框架日志以及错误日志",
             "url"          => "/setting/log_module/system_log/list",
-            "component"    => "setting/log+module/systemLog",
+            "component"    => "setting/log_module/systemLog",
             "guard_name"   => "web",
             "icon"         => "logs",
             "type"         => "2",
