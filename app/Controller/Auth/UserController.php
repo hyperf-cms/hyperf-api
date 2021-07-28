@@ -129,7 +129,7 @@ class UserController extends AbstractController
         $user->username = $postData['username'];
         $user->password = md5($postData['password']);
         $user->status = $postData['status'] ?? '1';
-        $user->avatar = empty($postData['avatar']) ? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png' : $postData['avatar'];
+        $user->avatar = empty($postData['avatar']) ? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png' : $postData['avatar'];
         $user->last_login = time();
         $user->last_ip = getClientIp($this->request);
         $user->creater = $postData['creater'] ?? '无';
@@ -313,7 +313,7 @@ class UserController extends AbstractController
 
         $user = User::getOneByUid($id);
         $user->status = $postData['status'] ?? '1';
-        $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->avatar = $postData['avatar'] ?? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->sex = $postData['sex'] ?? '';

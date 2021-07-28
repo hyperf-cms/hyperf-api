@@ -51,7 +51,7 @@ class InitCommand extends HyperfCommand
         $user->mobile = '1800000000';
         $user->sex = User::SEX_BY_MALE;
         $user->email = 'admin@admin.com';
-        $user->avatar = 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1, 10) .'.png';
+        $user->avatar = 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1, 10) .'.png';
         $user->save();
         $super_role = [
             'name' => 'super_admin',
