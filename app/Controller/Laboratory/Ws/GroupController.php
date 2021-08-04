@@ -156,7 +156,8 @@ class GroupController extends AbstractController
         if (!empty($contactIdList)) {
             //推送新成员进群通知
             $newMemberJoinMessage = [];
-            $content = join(User::query()->whereIn('id', $contactIdList)->pluck('desc')->toArray(), ' , ') . ' 加入群聊';
+            $joinUserInfo = User::query()->whereIn('id', $contactIdList)->pluck('desc')->toArray();
+            $content = join(' , ', $joinUserInfo) . ' 加入群聊';
             $newMemberJoinMessage['id'] = generate_rand_id();
             $newMemberJoinMessage['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
             $newMemberJoinMessage['type'] = GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_EVENT;
@@ -315,7 +316,6 @@ class GroupController extends AbstractController
     {
         $chatMessage = MessageParser::decode(conGet('chat_message'));
         $contactData = $chatMessage['message'];
-
 
         if (empty($contactData['group_id'])) return false;
         if (empty($contactData['uid'])) return false;

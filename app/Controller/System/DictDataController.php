@@ -58,7 +58,6 @@ class DictDataController extends AbstractController
             'total' => $total,
         ]);
     }
-
     /**
      * 根据字典类型获取字典数据
      * @param string $dictType

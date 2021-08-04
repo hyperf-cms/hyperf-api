@@ -259,13 +259,13 @@ class GroupWsTask
         $message['toContactId'] = $groupInfo['group_id'];
         $message['content'] = $content ?? '';
         $message['displayName'] = $groupInfo['group_name'] ?? '';
+        //通知所有群用户
+        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::DELETE_GROUP_EVENT);
 
+        //删除关于群主一切内容
         Group::query()->where('group_id', $groupInfo['group_id'])->delete();
         GroupRelation::query()->where('group_id', $groupInfo['group_id'])->delete();
         GroupChatHistory::query()->where('to_group_id', $groupInfo['group_id'])->delete();
-
-        //通知所有群用户
-        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::DELETE_GROUP_EVENT);
         return true;
     }
 
@@ -293,7 +293,7 @@ class GroupWsTask
         $message['avatar'] = GroupAvatar::build();
         Group::query()->where('group_id', $groupInfo['group_id'])->update(['avatar' => $message['avatar']]);
 
-        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::CHANGE_GROUP_AVATAR);
+        $this->sendMessage($groupInfo['group_id'], $message, GroupEvent::CHANGE_GROUP_AVATAR, false);
         return true;
     }
 
@@ -372,9 +372,10 @@ class GroupWsTask
      * @param string $groupId
      * @param array $message
      * @param string $event
+     * @param bool $isAddChatHistory
      * @return bool
      */
-    public function sendMessage(string $groupId, array $message, $event = '')
+    public function sendMessage(string $groupId, array $message, string $event = '', bool $isAddChatHistory = true )
     {
         if (empty($groupId || empty($message))) return false;
         if (empty($message['fromUser'])) {
@@ -382,8 +383,9 @@ class GroupWsTask
             $message['fromUser']['displayName'] = '系统通知';
         }
         $message['isGroup'] = true;
+
         //添加聊天记录
-        GroupChatHistory::addMessage($message, 1);
+        if ($isAddChatHistory) GroupChatHistory::addMessage($message, 1);
         $uidFdList = GroupService::getInstance()->getOnlineGroupMemberFd($groupId);
         if ($message['type'] == GroupChatHistory::GROUP_CHAT_MESSAGE_TYPE_FORWARD) $message['content'] = MessageService::getInstance()->formatForwardMessage($message['content'], $message['fromUser']);
         foreach ($uidFdList as $key => $value) {

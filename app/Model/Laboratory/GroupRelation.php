@@ -64,6 +64,8 @@ class GroupRelation extends Model
         $model = new static;
         $model->uid = $uid;
         $model->group_id = $groupId;
+        $model->is_up = 0;
+        $model->is_not_disturb = 0;
         $model->level = $level;
         return $model->save();
     }

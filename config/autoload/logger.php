@@ -30,7 +30,7 @@ $handlers = [
     [
         'class' => App\Foundation\Handler\LogFileHandler::class,
         'constructor' => [
-            'filename' => BASE_PATH . '/runtime/logs/hyperf/hyperf-debug.log',
+            'filename' => BASE_PATH . '/runtime/logs/hyperf_debug/hyperf-debug.log',
             'level' => Monolog\Logger::DEBUG,
         ],
         'formatter' => [
@@ -46,7 +46,7 @@ $handlers = [
     [
         'class' => App\Foundation\Handler\LogFileHandler::class,
         'constructor' => [
-            'filename' => BASE_PATH . '/runtime/logs/hyperf/hyperf-error.log',
+            'filename' => BASE_PATH . '/runtime/logs/hyperf_error/hyperf-error.log',
             'level' => Monolog\Logger::ERROR,
         ],
         'formatter' => [
