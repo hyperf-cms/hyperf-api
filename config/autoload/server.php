@@ -18,8 +18,8 @@ return [
         [
             'name' => 'http',
             'type' => Server::SERVER_HTTP,
-            'host' => '0.0.0.0',
-            'port' => 9501,
+            'host' => env('SERVER_HOST_HTTP', '0.0.0.0'),
+            'port' => intval(env('SERVER_PORT_HTTP', '9501')),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
@@ -28,8 +28,8 @@ return [
         [
             'name' => 'ws',
             'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9502,
+            'host' => env('SERVER_HOST_WS', '0.0.0.0'),
+            'port' => intval(env('SERVER_PORT_WS', '9502')),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
