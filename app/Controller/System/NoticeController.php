@@ -7,6 +7,8 @@ namespace App\Controller\System;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
+use App\Foundation\Utils\Queue;
+use App\Job\EmailNotificationJob;
 use App\Model\System\Notice;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -31,6 +33,12 @@ class NoticeController extends AbstractController
      * @var Notice
 */
     private $notice;
+
+    /**
+     * @Inject()
+     * @var Queue
+     */
+    private $queue;
 
     /**
      * 获取系统通知列表
@@ -105,6 +113,11 @@ class NoticeController extends AbstractController
 
         if (!$noticeQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统通知错误');
 
+        //分发队列
+        $this->queue->push(new EmailNotificationJob([
+            'title' => $params['title'],
+            'content' => $params['content'],
+        ]));
         return $this->successByMessage('添加系统通知成功');
     }
 

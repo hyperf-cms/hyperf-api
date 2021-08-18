@@ -64,4 +64,14 @@ class Log
         return self::channel('sql_log', config('app_env', 'app'));
 
     }
+
+    /**
+     * 队列错误日志
+     * @return \Psr\Log\LoggerInterface
+     */
+    public static function jobLog()
+    {
+        return self::channel('jon_log', config('app_env', 'app'));
+
+    }
 }
