@@ -37,7 +37,8 @@
         "easyswoole/verifycode": "3.x",
         "hyperf/filesystem": "2.1.*",
         "xxtime/flysystem-aliyun-oss": "^1.5",
-        "dragonmantank/cron-expression": "^3.1"
+        "dragonmantank/cron-expression": "^3.1",
+        "doctrine/dbal": "^3.0"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",

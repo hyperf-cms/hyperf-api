@@ -71,7 +71,7 @@ class Log
      */
     public static function jobLog()
     {
-        return self::channel('jon_log', config('app_env', 'app'));
+        return self::channel('job_log', config('app_env', 'app'));
 
     }
 }

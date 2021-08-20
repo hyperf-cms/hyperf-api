@@ -26,7 +26,7 @@ class CheckMaintainMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $writeRoute = ['/common/sys_config', '/common/auth/verification_code', '/auth/login', '/auth/register', '/test'];
+        $writeRoute = ['/common/sys_config', '/common/auth/verification_code', '/auth/login', '/auth/register', '/test', ];
         if (in_array($request->getUri()->getPath(), $writeRoute)) return $handler->handle($request);
 
         //获取当前用户
