@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Foundation\Facades\Log;
 use App\Foundation\Utils\Mail;
 use App\Model\Laboratory\Bilibili\UpUser;
+use App\Model\Laboratory\Bilibili\UpUserReport;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -29,6 +30,21 @@ class IndexController extends AbstractController
      */
     public function index()
    {
+       $data = [
+           'time' =>
+               1629685860,
+           'mid' =>
+               "13839125",
+           'following' =>
+               79, 'follower' =>
+               114138, 'video_play' =>
+               0, 'readling' =>
+               0, 'likes' =>
+               378255, 'recharge_month' =>
+               0, 'recharge_total' =>
+               0
+       ];
+       UpUserReport::query()->insert($data);
        return config('bilibili.cookie');
 //        $url = 'https://m.bilibili.com/video/BV1Q624y1q7sj';
 

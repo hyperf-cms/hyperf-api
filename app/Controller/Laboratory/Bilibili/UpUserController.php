@@ -9,6 +9,8 @@ use App\Foundation\Annotation\Explanation;
 use App\Foundation\Utils\Queue;
 use App\Job\Bilibili\UpUserInfoRecordJob;
 use App\Model\Laboratory\Bilibili\UpUser;
+use App\Model\Laboratory\Bilibili\UpUserReport;
+use App\Service\Laboratory\Bilibili\UpUserService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -29,6 +31,12 @@ class UpUserController extends AbstractController
      * @var UpUser
      */
     private $upUser;
+
+    /**
+     * @Inject()
+     * @var UpUserReport
+     */
+    private $upUserReport;
 
     /**
      * @Inject()
@@ -79,5 +87,93 @@ class UpUserController extends AbstractController
         if ($isExistEmptyUrl) return $this->successByMessage('录入Up主成功，部分Url条目为空录入失败');
 
         return $this->successByMessage('录入Up主成功');
+    }
+
+    /**
+     * 获取Up用户搜索列表
+     * @RequestMapping(path="up_user_search", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function upUserSearchList()
+    {
+        $mid = $this->request->input('mid') ?? '';
+        $upUserQuery = $this->upUser->newQuery();
+        if (!empty($mid)) $upUserQuery->where('mid', $mid);
+
+        $list = $upUserQuery->limit(10)->orderBy('created_at')->get()->toArray();
+        foreach ($list as $key => $value) {
+            $list[$key]['name'] = $value['name'] . '(' . $value['mid'] . ')';
+        }
+        return $this->success([
+            'list' => $list,
+        ]);
+    }
+
+    /**
+     * 获取Up用户列表
+     * @RequestMapping(path="up_user", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function upUserList()
+    {
+        $mid = $this->request->input('mid') ?? '';
+        $name =  $this->request->input('name') ?? '';
+
+        $upUserQuery = $this->upUser->newQuery();
+        if (!empty($mid)) $upUserQuery->where('mid', $mid);
+        if (!empty($name)) $upUserQuery->where('name', 'like', '%' . $name . '%');
+
+        $total = $upUserQuery->count();
+        $this->pagingCondition($upUserQuery, $this->request->all());
+        $list = $upUserQuery->get()->toArray();
+
+        return $this->success([
+            'list' => $list,
+            'total' => $total
+        ]);
+    }
+
+    /**
+     * up主图表趋势
+     * @RequestMapping(path="up_user_chart_trend", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function upUserChartTrend()
+    {
+        $mid = $this->request->input('mid') ?? '';
+        $date = $this->request->input('date') ?? '';
+
+        $upUserReportQuery = $this->upUserReport->newQuery();
+        if (empty($mid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写搜索UP主mid');
+        if (!empty($mid)) $upUserReportQuery->where('mid', $mid);
+        // 处理时间
+        $date = $date ?? [date('Y-m-d', strtotime('-6 days')), date('Y-m-d', time())];
+        $beginTime = strtotime($date[0]);
+        $endTime = strtotime($date[1]) + 86400;
+        $range = getRangeBetweenTime($beginTime, $endTime);
+        if ($range > 7) $this->throwExp(StatusCode::ERR_EXCEPTION, '时间范围不能超过7天');
+        $timestampList = [];
+        for ($i = $beginTime; $i < $endTime; $i = $i + 3600) {
+            $timestampList[] = $i;
+        }
+        $upUserReportQuery->where('time', '>=', $beginTime);
+        $upUserReportQuery->where('time', '<=', $endTime);
+
+        $rows = UpUserService::getInstance()->upUserChartTrend($upUserReportQuery, $timestampList);
+
+        return $this->success([
+            'rows' => $rows,
+        ]);
     }
 }

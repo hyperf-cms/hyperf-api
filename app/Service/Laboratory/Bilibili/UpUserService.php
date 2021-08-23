@@ -4,6 +4,7 @@ namespace App\Service\Laboratory\Bilibili;
 use App\Foundation\Traits\Singleton;
 use App\Model\Laboratory\Bilibili\UpUser;
 use App\Service\BaseService;
+use Hyperf\Database\Model\Builder;
 
 class UpUserService extends BaseService
 {
@@ -34,7 +35,7 @@ class UpUserService extends BaseService
     private $upUserElecApi  = 'https://api.bilibili.com/x/ugcpay-rank/elec/month/up?up_mid=';
 
     /**
-     * 根据Up主mid获取相关数据信息
+     * 记录Up主数据
      * @param array $upUserMid
      * @return bool
      * @throws \Exception
@@ -44,31 +45,117 @@ class UpUserService extends BaseService
         if (empty($upUserMid)) return false;
 
         foreach ($upUserMid as $mid) {
-            $upUserInfo = curl_get($this->upUserInfoApi . $mid);
-            $upUserStat = curl_get($this->upUserStatApi . $mid);
-            //这个接口比较特殊，需要用到cookie
-            $upUserUpStat = curl_get($this->upUserUpStatApi . $mid, [], [],  config('bilibili.cookie'));
-            $upUserElec = curl_get($this->upUserElecApi . $mid);
-
-            $updateData['name'] = $upUserInfo['data']['name'] ?? '';
-            $updateData['sex'] = $upUserInfo['data']['sex'] ?? '';
-            $updateData['sign'] = $upUserInfo['data']['sign'] ?? '';
-            $updateData['face'] = $upUserInfo['data']['face'] ?? '';
-            $updateData['level'] = $upUserInfo['data']['level'] ?? '';
-            $updateData['top_photo'] = $upUserInfo['data']['top_photo'] ?? '';
-            $updateData['birthday'] = $upUserInfo['data']['birthday'] ?? '';
-            $updateData['following'] = $upUserStat['data']['following'] ?? 0;
-            $updateData['follower'] = $upUserStat['data']['follower'] ?? 0;
-            $updateData['video_play'] = $upUserUpStat['data']['archive']['view'] ?? 0;
-            $updateData['readling'] = $upUserUpStat['data']['article']['view'] ?? 0;
-            $updateData['likes'] = $upUserUpStat['data']['likes'] ?? 0;
-            $updateData['recharge_month'] = $upUserElec['data']['count'] ?? 0;
-            $updateData['recharge_total'] = $upUserElec['data']['total'] ?? 0;
-            $updateData['live_room_info'] = empty($upUserInfo['data']['live_room']) ? '' : json_encode($upUserInfo['data']['live_room']);
-            $updateData['updated_at'] = date('Y-m-d H:i:s');
-            UpUser::where('mid', $mid)->update($updateData);
+            $upUserInfo = $this->getUpUserInfoFromBilibili($mid);
+            if (!empty($upUserInfo)) {
+                $updateData['name'] = $upUserInfo['name'] ?? '';
+                $updateData['sex'] = $upUserInfo['sex'] ?? '';
+                $updateData['sign'] = $upUserInfo['sign'] ?? '';
+                $updateData['face'] = $upUserInfo['face'] ?? '';
+                $updateData['level'] = $upUserInfo['level'] ?? '';
+                $updateData['top_photo'] = $upUserInfo['top_photo'] ?? '';
+                $updateData['birthday'] = $upUserInfo['birthday'] ?? '';
+                $updateData['following'] = $upUserInfo['following'] ?? 0;
+                $updateData['follower'] = $upUserInfo['follower'] ?? 0;
+                $updateData['video_play'] = $upUserInfo['archive']['view'] ?? 0;
+                $updateData['readling'] = $upUserInfo['article']['view'] ?? 0;
+                $updateData['likes'] = $upUserInfo['likes'] ?? 0;
+                $updateData['recharge_month'] = $upUserInfo['count'] ?? 0;
+                $updateData['recharge_total'] = $upUserInfo['total'] ?? 0;
+                $updateData['live_room_info'] = empty($upUserInfo['live_room']) ? '' : json_encode($upUserInfo['live_room']);
+                $updateData['updated_at'] = date('Y-m-d H:i:s');
+                UpUser::where('mid', $mid)->update($updateData);
+            }
         }
 
         return true;
+    }
+
+    /**
+     * 根据Mid从Bilibili获取Up主数据
+     * @param string $upUserMid
+     * @return array
+     * @throws \Exception
+     */
+    public function getUpUserInfoFromBilibili(string $upUserMid) : array
+    {
+        if (empty($upUserMid)) return [];
+        $upUserInfo = curl_get($this->upUserInfoApi . $upUserMid);
+        $upUserStat = curl_get($this->upUserStatApi . $upUserMid);
+        //这个接口比较特殊，需要用到cookie
+        $upUserUpStat = curl_get($this->upUserUpStatApi . $upUserMid, [], [],  config('bilibili.cookie'));
+        $upUserElec = curl_get($this->upUserElecApi . $upUserMid);
+
+        return  [
+            'name' => $upUserInfo['data']['name'] ?? '',
+            'sex' => $upUserInfo['data']['sex'] ?? '',
+            'sign' => $upUserInfo['data']['sign'] ?? '',
+            'face' => $upUserInfo['data']['face'] ?? '',
+            'level' => $upUserInfo['data']['level'] ?? '',
+            'top_photo' => $upUserInfo['data']['top_photo'] ?? '',
+            'birthday' => $upUserInfo['data']['birthday'] ?? '',
+            'following' => $upUserStat['data']['following'] ?? 0,
+            'follower' => $upUserStat['data']['follower'] ?? 0,
+            'video_play' => $upUserUpStat['data']['archive']['view'] ?? 0,
+            'readling' => $upUserUpStat['data']['article']['view'] ?? 0,
+            'likes' => $upUserUpStat['data']['likes'] ?? 0,
+            'recharge_month' => $upUserElec['data']['count'] ?? 0,
+            'recharge_total' => $upUserElec['data']['total'] ?? 0,
+            'live_room_info' => empty($upUserInfo['data']['live_room']) ? '' : json_encode($upUserInfo['data']['live_room']),
+        ];
+    }
+
+    /**
+     * 获取UP主数据趋势图表
+     * @param Builder $query
+     * @param array $timestampList
+     * @return array
+     */
+    public function upUserChartTrend(Builder $query, array $timestampList = [])
+    {
+        $query->orderBy('time');
+        $upUserReport = $query->get([
+            'time', 'following', 'follower', 'video_play', 'readling', 'likes', 'recharge_total'
+        ])->toArray();
+        $upUserReport = array_column($upUserReport, null, 'time');
+
+        $rows = [];
+        $list = [];
+        foreach ($timestampList as $ts) {
+            $dataDate = date('Y-m-d', $ts);
+            $list['following'][$dataDate][] = intval($upUserReport[$ts]['following'] ?? 0);
+            $list['follower'][$dataDate][] = intval($upUserReport[$ts]['follower'] ?? 0);
+            $list['video_play'][$dataDate][] = intval($upUserReport[$ts]['video_play'] ?? 0);
+            $list['readling'][$dataDate][] = intval($upUserReport[$ts]['readling'] ?? 0);
+            $list['likes'][$dataDate][] = intval($upUserReport[$ts]['likes'] ?? 0);
+            $list['recharge_total'][$dataDate][] = intval($upUserReport[$ts]['recharge_total'] ?? 0);
+        }
+        foreach ($list as $key => $value) {
+            $rows[$key]['columns'] = ['time'];
+            for ($i = 0; $i < 24; $i ++) {
+                $temp = [];
+                foreach ($value as $k => $v) {
+                    $temp['time'] = $i;
+                    $temp[$k] = $value[$k][$i] ?? 0;
+                    if ($i == 0) {
+                        $rows[$key]['columns'][] = $k;
+                    }
+                }
+                $rows[$key]['rows'][] = $temp;
+            }
+        }
+        $rows['following']['label'] = '关注数';
+        $rows['following']['desc'] = '截止到当前时间（小时），时间范围内的实时关注数变化趋势对比。';
+        $rows['follower']['label'] = '粉丝数';
+        $rows['follower']['desc'] = '截止到当前时间（小时），时间范围内的粉丝数变化趋势对比。';
+        $rows['video_play']['label'] = '视频播放数';
+        $rows['video_play']['desc'] = '截止到当前时间（小时），时间范围内的视频播放数趋势对比。';
+        $rows['readling']['label'] = '阅读数';
+        $rows['readling']['desc'] = '截止到当前时间（小时），时间范围内的阅读数变化趋势对比。';
+        $rows['likes']['label'] = '获赞数';
+        $rows['likes']['desc'] = '截止到当前时间（小时），时间范围内的获赞数变化趋势对比。';
+        $rows['recharge_total']['label'] = '总充电数';
+        $rows['recharge_total']['desc'] = '截止到当前时间（小时），时间范围内的总充电数变化趋势对比。';
+
+        return $rows;
     }
 }

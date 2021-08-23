@@ -138,6 +138,24 @@ $logConfig = [
         ],
     ],
 
+    'crontab_log' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler ::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/crontab_log/crontab_log',
+                'level' => Monolog\Logger::ERROR,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
     'sql_log' => [
             'handler' => [
             'class' => Monolog\Handler\RotatingFileHandler ::class,
