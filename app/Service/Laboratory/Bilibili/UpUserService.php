@@ -110,7 +110,7 @@ class UpUserService extends BaseService
      * @param array $timestampList
      * @return array
      */
-    public function upUserChartTrend(Builder $query, array $timestampList = [])
+    public function upUserChartTrend(Builder $query, array $timestampList = []) : array
     {
         $query->orderBy('time');
         $upUserReport = $query->get([
@@ -157,5 +157,23 @@ class UpUserService extends BaseService
         $rows['recharge_total']['desc'] = '截止到当前时间（小时），时间范围内的总充电数变化趋势对比。';
 
         return $rows;
+    }
+
+    /**
+     * 获取UP主数据报表
+     * @param Builder $query
+     * @return array
+     */
+    public function upUserDataReport(Builder $query) : array
+    {
+        $query->orderBy('time', 'desc');
+        $upUserReport = $query->get([
+            'time', 'following', 'follower', 'video_play', 'readling', 'likes', 'recharge_total', 'recharge_month'
+        ])->toArray();
+
+        foreach ($upUserReport as $key => $value) {
+            $upUserReport[$key]['time'] = date('Y-m-d H:i', $value['time']);
+        }
+        return $upUserReport;
     }
 }

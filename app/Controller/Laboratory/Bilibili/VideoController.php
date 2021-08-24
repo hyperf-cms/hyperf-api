@@ -7,9 +7,9 @@ use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
 use App\Foundation\Utils\Queue;
-use App\Job\Bilibili\UpUserInfoRecordJob;
-use App\Model\Laboratory\Bilibili\UpUser;
-use App\Model\Laboratory\Bilibili\UpUserReport;
+use App\Job\Bilibili\VideoInfoRecordJob;
+use App\Model\Laboratory\Bilibili\Video;
+use App\Model\Laboratory\Bilibili\VideoReport;
 use App\Service\Laboratory\Bilibili\UpUserService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -20,23 +20,23 @@ use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
 
 /**
- * Up主
- * Class UpUserController
- * @Controller(prefix="laboratory/bilibili_module/up_user")
+ * Bilibili视频
+ * Class VideoController
+ * @Controller(prefix="laboratory/bilibili_module/video")
  */
-class UpUserController extends AbstractController
+class VideoController extends AbstractController
 {
     /**
      * @Inject()
-     * @var UpUser
+     * @var Video
      */
-    private $upUser;
+    private $video;
 
     /**
      * @Inject()
-     * @var UpUserReport
+     * @var VideoReport
      */
-    private $upUserReport;
+    private $videoReport;
 
     /**
      * @Inject()
@@ -45,8 +45,8 @@ class UpUserController extends AbstractController
     private $queue;
 
     /**
-     * @Explanation(content="录入Up主")
-     * @RequestMapping(path="up_user_add", methods="post")
+     * @Explanation(content="视频录入")
+     * @RequestMapping(path="video_add", methods="post")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
@@ -54,58 +54,58 @@ class UpUserController extends AbstractController
      * @throws \Exception
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function upUserAdd()
+    public function videoAdd()
     {
-        $upUserInfo = $this->request->all()['up_user_info'] ?? [];
-        if (empty($upUserInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, 'Up主信息不能为空');
+        $videoInfo = $this->request->all()['video_info'] ?? [];
+        if (empty($videoInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '视频链接信息不能为空');
 
-        //是否存在空的upUserUrl
+        //是否存在空的URL
         $isExistEmptyUrl = false;
-        $addMidArr = [];
-        foreach ($upUserInfo as $upUser) {
-            $upUserUrl = $upUser['up_user_url'] ?? '';
-            $timedStatus = $upUser['timed_status'] ?? '';
-            if (empty($upUserUrl)) {
+        $addBVidArr = [];
+        foreach ($videoInfo as $video) {
+            $videoUrl = $video['video_url'] ?? '';
+            $timedStatus = $video['timed_status'] ?? '';
+            if (empty($videoUrl)) {
                 $isExistEmptyUrl = true;
                 continue;
             }
-            $lastString = basename($upUserUrl);
-            $mid = explode('?', $lastString)[0] ?? '';
-            if (empty($mid)) continue;
+            $lastString = basename($videoUrl);
+            $bvid = explode('?', $lastString)[0] ?? '';
+            if (empty($bvid)) continue;
 
-            $upUser = new UpUser();
-            $upUser->mid = $mid;
-            $upUser->timed_status = $timedStatus;
-            $upUser->save();
-            $addMidArr[] = $mid;
+            $video = new Video();
+            $video->bvid = $bvid;
+            $video->timed_status = $timedStatus;
+            $video->save();
+            $addBVidArr[] = $bvid;
         }
         //推送一个队列，异步获取Up主信息
-        $this->queue->push(new UpUserInfoRecordJob([
-            'up_user_mid' => $addMidArr,
+        $this->queue->push(new VideoInfoRecordJob([
+            'video_bvid' => $addBVidArr,
         ]));
 
-        if ($isExistEmptyUrl) return $this->successByMessage('录入Up主成功，部分Url条目为空录入失败');
+        if ($isExistEmptyUrl) return $this->successByMessage('录入视频成功，部分Url条目为空录入失败');
 
-        return $this->successByMessage('录入Up主成功');
+        return $this->successByMessage('录入视频成功');
     }
 
     /**
-     * 获取Up用户搜索列表
-     * @RequestMapping(path="up_user_search", methods="get")
+     * 获取视频标题搜索列表
+     * @RequestMapping(path="video_title_search", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
      * })
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function upUserSearchList()
+    public function videoTitleSearch()
     {
-        $mid = $this->request->input('mid') ?? '';
-        $upUserQuery = $this->upUser->newQuery();
-        if (!empty($mid)) $upUserQuery->where('mid', $mid);
+        $bvid = $this->request->input('bvid') ?? '';
+        $videoQuery = $this->video->newQuery();
+        if (!empty($bvid)) $videoQuery->where('bvid', $bvid);
 
-        $list = $upUserQuery->limit(10)->orderBy('created_at')->get()->toArray();
+        $list = $videoQuery->limit(10)->orderBy('created_at')->get()->toArray();
         foreach ($list as $key => $value) {
-            $list[$key]['name'] = $value['name'] . '(' . $value['mid'] . ')';
+            $list[$key]['title'] = $value['title'] . '(' . $value['bvid'] . ')';
         }
         return $this->success([
             'list' => $list,
@@ -114,25 +114,29 @@ class UpUserController extends AbstractController
 
     /**
      * 获取Up用户列表
-     * @RequestMapping(path="up_user", methods="get")
+     * @RequestMapping(path="video", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
      * })
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function upUserList()
+    public function videoList()
     {
-        $mid = $this->request->input('mid') ?? '';
-        $name =  $this->request->input('name') ?? '';
+        $bvid = $this->request->input('bvid') ?? '';
+        $mid =  $this->request->input('mid') ?? '';
+        $title =  $this->request->input('title') ?? '';
+        $publicTime = $this->request->input('public_time') ?? '';
 
-        $upUserQuery = $this->upUser->newQuery();
-        if (!empty($mid)) $upUserQuery->where('mid', $mid);
-        if (!empty($name)) $upUserQuery->where('name', 'like', '%' . $name . '%');
+        $videoQuery = $this->video->newQuery();
+        if (!empty($bvid)) $videoQuery->where('bvid', $mid);
+        if (!empty($mid)) $videoQuery->where('mid', $mid);
+        if (!empty($publicTime)) $videoQuery->whereBetween('public_time', [strtotime($publicTime[0]), strtotime($publicTime[1])]);
+        if (!empty($title)) $videoQuery->where('title', 'like', '%' . $title . '%');
 
-        $total = $upUserQuery->count();
-        $this->pagingCondition($upUserQuery, $this->request->all());
-        $list = $upUserQuery->get()->toArray();
+        $total = $videoQuery->count();
+        $this->pagingCondition($videoQuery, $this->request->all());
+        $list = $videoQuery->get()->toArray();
 
         return $this->success([
             'list' => $list,
