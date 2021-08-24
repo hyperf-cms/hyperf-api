@@ -138,6 +138,13 @@ class VideoController extends AbstractController
         $this->pagingCondition($videoQuery, $this->request->all());
         $list = $videoQuery->get()->toArray();
 
+        foreach ($list as $key => $value) {
+            $list[$key]['public_time'] = date('Y-m-d H:i:s', $value['public_time']);
+            $owner = json_decode($value['owner'], true);
+            $list[$key]['name'] = $owner['name'];
+            $list[$key]['duration'] = floor ($value['duration'] / 60) . '分' . $value['duration'] % 60 . '秒';
+        }
+
         return $this->success([
             'list' => $list,
             'total' => $total

@@ -30,22 +30,8 @@ class IndexController extends AbstractController
      */
     public function index()
    {
-       $data = [
-           'time' =>
-               1629685860,
-           'mid' =>
-               "13839125",
-           'following' =>
-               79, 'follower' =>
-               114138, 'video_play' =>
-               0, 'readling' =>
-               0, 'likes' =>
-               378255, 'recharge_month' =>
-               0, 'recharge_total' =>
-               0
-       ];
-       UpUserReport::query()->insert($data);
-       return config('bilibili.cookie');
+       return floor (166 / 60) ;
+
 //        $url = 'https://m.bilibili.com/video/BV1Q624y1q7sj';
 
 
