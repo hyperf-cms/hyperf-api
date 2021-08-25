@@ -5,6 +5,7 @@ use App\Foundation\Traits\Singleton;
 use App\Model\Laboratory\Bilibili\Video;
 use App\Service\BaseService;
 use Hyperf\Database\Model\Builder;
+use Hyperf\DbConnection\Db;
 
 class VideoService extends BaseService
 {
@@ -40,7 +41,7 @@ class VideoService extends BaseService
                 $updateData['reply'] = $videoInfo['reply'] ?? 0;
                 $updateData['favorite'] = $videoInfo['favorite'] ?? 0;
                 $updateData['coin'] = $videoInfo['coin'] ?? 0;
-                $updateData['like'] = $videoInfo['like'] ?? 0;
+                $updateData['likes'] = $videoInfo['like'] ?? 0;
                 $updateData['dislike'] = $videoInfo['dislike'] ?? 0;
                 $updateData['owner'] = !empty($videoInfo['owner']) ? json_encode($videoInfo['owner']) : '';
                 $updateData['updated_at'] = date('Y-m-d H:i:s');
@@ -76,43 +77,55 @@ class VideoService extends BaseService
             'reply' => $videoInfo['data']['stat']['reply'] ?? 0,
             'favorite' => $videoInfo['data']['stat']['favorite'] ?? 0,
             'coin' => $videoInfo['data']['stat']['coin'] ?? 0,
-            'like' => $videoInfo['data']['stat']['like'] ?? 0,
+            'likes' => $videoInfo['data']['stat']['like'] ?? 0,
             'dislike' => $videoInfo['data']['stat']['dislike'] ?? 0,
         ];
     }
 
     /**
-     * 获取UP主数据趋势图表
+     * 视频数据趋势图表
      * @param Builder $query
      * @param array $timestampList
      * @return array
      */
-    public function upUserChartTrend(Builder $query, array $timestampList = []) : array
+    public function videoChartTrend(Builder $query, array $timestampList = []) : array
     {
         $query->orderBy('time');
-        $upUserReport = $query->get([
-            'time', 'following', 'follower', 'video_play', 'readling', 'likes', 'recharge_total'
+        $videoReport = $query->get([
+            'time', 'view', 'danmaku', 'reply', 'favorite', 'coin', 'likes', 'dislike'
         ])->toArray();
-        $upUserReport = array_column($upUserReport, null, 'time');
+        $minVideoReport = $query->select(Db::raw(
+            'min(view) as view, 
+                   min(danmaku) as danmaku,
+                   min(reply) as reply,
+                   min(favorite) as favorite,
+                   min(coin) as coin,
+                   min(likes) as likes,
+                   min(dislike) as dislike
+        '))->first()->toArray();
+        $videoReport = array_column($videoReport, null, 'time');
 
         $rows = [];
         $list = [];
         foreach ($timestampList as $ts) {
             $dataDate = date('Y-m-d', $ts);
-            $list['following'][$dataDate][] = intval($upUserReport[$ts]['following'] ?? 0);
-            $list['follower'][$dataDate][] = intval($upUserReport[$ts]['follower'] ?? 0);
-            $list['video_play'][$dataDate][] = intval($upUserReport[$ts]['video_play'] ?? 0);
-            $list['readling'][$dataDate][] = intval($upUserReport[$ts]['readling'] ?? 0);
-            $list['likes'][$dataDate][] = intval($upUserReport[$ts]['likes'] ?? 0);
-            $list['recharge_total'][$dataDate][] = intval($upUserReport[$ts]['recharge_total'] ?? 0);
+            if (!empty($videoReport[$ts]['view'])) $list['view'][$dataDate][$ts] = intval($videoReport[$ts]['view']);
+            if (!empty($videoReport[$ts]['likes'])) $list['likes'][$dataDate][$ts] = intval($videoReport[$ts]['likes']);
+            if (!empty($videoReport[$ts]['favorite'])) $list['favorite'][$dataDate][$ts] = intval($videoReport[$ts]['favorite']);
+            if (!empty($videoReport[$ts]['coin'])) $list['coin'][$dataDate][$ts] = intval($videoReport[$ts]['coin']);
+            if (!empty($videoReport[$ts]['danmaku'])) $list['danmaku'][$dataDate][$ts] = intval($videoReport[$ts]['danmaku']);
+            if (!empty($videoReport[$ts]['reply'])) $list['reply'][$dataDate][$ts] = intval($videoReport[$ts]['reply']);
+            if (!empty($videoReport[$ts]['dislike'])) $list['dislike'][$dataDate][$ts] = intval($videoReport[$ts]['dislike']);
         }
+
         foreach ($list as $key => $value) {
             $rows[$key]['columns'] = ['time'];
             for ($i = 0; $i < 24; $i ++) {
                 $temp = [];
                 foreach ($value as $k => $v) {
                     $temp['time'] = $i;
-                    $temp[$k] = $value[$k][$i] ?? 0;
+                    //如果某个时间点数据为空，则拿其上个时间点数据作为补充
+                    $temp[$k] = $value[$k][strtotime($k) + ($i * 3600)] ?? '';
                     if ($i == 0) {
                         $rows[$key]['columns'][] = $k;
                     }
@@ -120,37 +133,53 @@ class VideoService extends BaseService
                 $rows[$key]['rows'][] = $temp;
             }
         }
-        $rows['following']['label'] = '关注数';
-        $rows['following']['desc'] = '截止到当前时间（小时），时间范围内的实时关注数变化趋势对比。';
-        $rows['follower']['label'] = '粉丝数';
-        $rows['follower']['desc'] = '截止到当前时间（小时），时间范围内的粉丝数变化趋势对比。';
-        $rows['video_play']['label'] = '视频播放数';
-        $rows['video_play']['desc'] = '截止到当前时间（小时），时间范围内的视频播放数趋势对比。';
-        $rows['readling']['label'] = '阅读数';
-        $rows['readling']['desc'] = '截止到当前时间（小时），时间范围内的阅读数变化趋势对比。';
+        $rows['view']['label'] = '视频播放数';
+        $rows['view']['desc'] = '截止到当前时间（小时），时间范围内的视频播放数变化趋势对比。';
+        $rows['view']['chartSettings']['min'] = [$minVideoReport['view']];
+        $rows['danmaku']['label'] = '弹幕数';
+        $rows['danmaku']['desc'] = '截止到当前时间（小时），时间范围内的弹幕数变化趋势对比。';
+        $rows['danmaku']['chartSettings']['min'] = [$minVideoReport['danmaku']];
+        $rows['reply']['label'] = '评论数';
+        $rows['reply']['desc'] = '截止到当前时间（小时），时间范围内的评论数变化趋势对比。';
+        $rows['reply']['chartSettings']['min'] = [$minVideoReport['reply']];
+        $rows['favorite']['label'] = '收藏数';
+        $rows['favorite']['desc'] = '截止到当前时间（小时），时间范围内的实时收藏数变化趋势对比。';
+        $rows['favorite']['chartSettings']['min'] = [$minVideoReport['favorite']];
+        $rows['coin']['label'] = '硬币枚数';
+        $rows['coin']['desc'] = '截止到当前时间（小时），时间范围内的硬币枚数趋势对比。';
+        $rows['coin']['chartSettings']['min'] = [$minVideoReport['coin']];
         $rows['likes']['label'] = '获赞数';
-        $rows['likes']['desc'] = '截止到当前时间（小时），时间范围内的获赞数变化趋势对比。';
-        $rows['recharge_total']['label'] = '总充电数';
-        $rows['recharge_total']['desc'] = '截止到当前时间（小时），时间范围内的总充电数变化趋势对比。';
+        $rows['likes']['desc'] = '截止到当前时间（小时），时间范围内的获赞数趋势对比。';
+        $rows['likes']['chartSettings']['min'] = [$minVideoReport['likes']];
 
         return $rows;
     }
 
     /**
-     * 获取UP主数据报表
+     * 获取视频数据报表
      * @param Builder $query
      * @return array
      */
-    public function upUserDataReport(Builder $query) : array
+    public function videoDataReport(Builder $query) : array
     {
         $query->orderBy('time', 'desc');
-        $upUserReport = $query->get([
-            'time', 'following', 'follower', 'video_play', 'readling', 'likes', 'recharge_total', 'recharge_month'
+        $videoReport = $query->get([
+            'time', 'view', 'danmaku', 'reply', 'favorite', 'coin', 'likes', 'dislike'
         ])->toArray();
 
-        foreach ($upUserReport as $key => $value) {
-            $upUserReport[$key]['time'] = date('Y-m-d H:i', $value['time']);
+        foreach ($videoReport as $key => $value) {
+            $videoReport[$key]['time'] = date('Y-m-d H:i', $value['time']);
+
+            if (empty($videoReport[$key + 1])) continue;
+            $videoReport[$key]['view_trend'] = $value['view'] - $videoReport[$key + 1]['view'];
+            $videoReport[$key]['danmaku_trend'] = $value['danmaku'] - $videoReport[$key + 1]['danmaku'];
+            $videoReport[$key]['reply_trend'] = $value['reply'] - $videoReport[$key + 1]['reply'];
+            $videoReport[$key]['favorite_trend'] = $value['favorite'] - $videoReport[$key + 1]['favorite'];
+            $videoReport[$key]['coin_trend'] = $value['coin'] - $videoReport[$key + 1]['coin'];
+            $videoReport[$key]['likes_trend'] = $value['likes'] - $videoReport[$key + 1]['likes'];
+            $videoReport[$key]['dislike_trend'] = $value['dislike'] - $videoReport[$key + 1]['dislike'];
         }
-        return $upUserReport;
+
+        return $videoReport;
     }
 }

@@ -5,6 +5,7 @@ use App\Foundation\Traits\Singleton;
 use App\Model\Laboratory\Bilibili\UpUser;
 use App\Service\BaseService;
 use Hyperf\Database\Model\Builder;
+use Hyperf\DbConnection\Db;
 
 class UpUserService extends BaseService
 {
@@ -116,26 +117,36 @@ class UpUserService extends BaseService
         $upUserReport = $query->get([
             'time', 'following', 'follower', 'video_play', 'readling', 'likes', 'recharge_total'
         ])->toArray();
+        $minUpUserReport = $query->select(Db::raw(
+            'min(following) as following, 
+                   min(follower) as follower,
+                   min(video_play) as video_play,
+                   min(readling) as readling,
+                   min(likes) as likes,
+                   min(recharge_total) as recharge_total
+        '))->first()->toArray();
         $upUserReport = array_column($upUserReport, null, 'time');
 
         $rows = [];
         $list = [];
         foreach ($timestampList as $ts) {
             $dataDate = date('Y-m-d', $ts);
-            $list['following'][$dataDate][] = intval($upUserReport[$ts]['following'] ?? 0);
-            $list['follower'][$dataDate][] = intval($upUserReport[$ts]['follower'] ?? 0);
-            $list['video_play'][$dataDate][] = intval($upUserReport[$ts]['video_play'] ?? 0);
-            $list['readling'][$dataDate][] = intval($upUserReport[$ts]['readling'] ?? 0);
-            $list['likes'][$dataDate][] = intval($upUserReport[$ts]['likes'] ?? 0);
-            $list['recharge_total'][$dataDate][] = intval($upUserReport[$ts]['recharge_total'] ?? 0);
+            if (!empty($upUserReport[$ts]['following'])) $list['following'][$dataDate][$ts] = intval($upUserReport[$ts]['following']);
+            if (!empty($upUserReport[$ts]['follower'])) $list['follower'][$dataDate][$ts] = intval($upUserReport[$ts]['follower']);
+            if (!empty($upUserReport[$ts]['likes'])) $list['likes'][$dataDate][$ts] = intval($upUserReport[$ts]['likes']);
+            if (!empty($upUserReport[$ts]['recharge_total'])) $list['recharge_total'][$dataDate][$ts] = intval($upUserReport[$ts]['recharge_total']);
+            if (!empty($upUserReport[$ts]['video_play'])) $list['video_play'][$dataDate][$ts] = intval($upUserReport[$ts]['video_play']);
+            if (!empty($upUserReport[$ts]['readling'])) $list['readling'][$dataDate][$ts] = intval($upUserReport[$ts]['readling']);
         }
+
         foreach ($list as $key => $value) {
             $rows[$key]['columns'] = ['time'];
             for ($i = 0; $i < 24; $i ++) {
                 $temp = [];
                 foreach ($value as $k => $v) {
                     $temp['time'] = $i;
-                    $temp[$k] = $value[$k][$i] ?? 0;
+                    //如果某个时间点数据为空，则拿其上个时间点数据作为补充
+                    $temp[$k] = $value[$k][strtotime($k) + ($i * 3600)] ?? '';
                     if ($i == 0) {
                         $rows[$key]['columns'][] = $k;
                     }
@@ -143,18 +154,24 @@ class UpUserService extends BaseService
                 $rows[$key]['rows'][] = $temp;
             }
         }
-        $rows['following']['label'] = '关注数';
-        $rows['following']['desc'] = '截止到当前时间（小时），时间范围内的实时关注数变化趋势对比。';
         $rows['follower']['label'] = '粉丝数';
         $rows['follower']['desc'] = '截止到当前时间（小时），时间范围内的粉丝数变化趋势对比。';
-        $rows['video_play']['label'] = '视频播放数';
-        $rows['video_play']['desc'] = '截止到当前时间（小时），时间范围内的视频播放数趋势对比。';
-        $rows['readling']['label'] = '阅读数';
-        $rows['readling']['desc'] = '截止到当前时间（小时），时间范围内的阅读数变化趋势对比。';
+        $rows['follower']['chartSettings']['min'] = [$minUpUserReport['follower']];
         $rows['likes']['label'] = '获赞数';
         $rows['likes']['desc'] = '截止到当前时间（小时），时间范围内的获赞数变化趋势对比。';
+        $rows['likes']['chartSettings']['min'] = [$minUpUserReport['likes']];
         $rows['recharge_total']['label'] = '总充电数';
         $rows['recharge_total']['desc'] = '截止到当前时间（小时），时间范围内的总充电数变化趋势对比。';
+        $rows['recharge_total']['chartSettings']['min'] = [$minUpUserReport['recharge_total']];
+        $rows['following']['label'] = '关注数';
+        $rows['following']['desc'] = '截止到当前时间（小时），时间范围内的实时关注数变化趋势对比。';
+        $rows['following']['chartSettings']['min'] = [$minUpUserReport['following']];
+        $rows['video_play']['label'] = '视频播放数';
+        $rows['video_play']['desc'] = '截止到当前时间（小时），时间范围内的视频播放数趋势对比。';
+        $rows['video_play']['chartSettings']['min'] = [$minUpUserReport['video_play']];
+        $rows['readling']['label'] = '阅读数';
+        $rows['readling']['desc'] = '截止到当前时间（小时），时间范围内的阅读数变化趋势对比。';
+        $rows['readling']['chartSettings']['min'] = [$minUpUserReport['readling']];
 
         return $rows;
     }
@@ -173,7 +190,17 @@ class UpUserService extends BaseService
 
         foreach ($upUserReport as $key => $value) {
             $upUserReport[$key]['time'] = date('Y-m-d H:i', $value['time']);
+
+            if (empty($upUserReport[$key + 1])) continue;
+            $upUserReport[$key]['following_trend'] = $value['following'] - $upUserReport[$key + 1]['following'];
+            $upUserReport[$key]['follower_trend'] = $value['follower'] - $upUserReport[$key + 1]['follower'];
+            $upUserReport[$key]['video_play_trend'] = $value['video_play'] - $upUserReport[$key + 1]['video_play'];
+            $upUserReport[$key]['readling_trend'] = $value['readling'] - $upUserReport[$key + 1]['readling'];
+            $upUserReport[$key]['likes_trend'] = $value['likes'] - $upUserReport[$key + 1]['likes'];
+            $upUserReport[$key]['recharge_total_trend'] = $value['recharge_total'] - $upUserReport[$key + 1]['recharge_total'];
+            $upUserReport[$key]['recharge_month_trend'] = $value['recharge_month'] - $upUserReport[$key + 1]['recharge_month'];
         }
+
         return $upUserReport;
     }
 }

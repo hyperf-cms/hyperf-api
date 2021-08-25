@@ -11,6 +11,7 @@ use App\Job\Bilibili\VideoInfoRecordJob;
 use App\Model\Laboratory\Bilibili\Video;
 use App\Model\Laboratory\Bilibili\VideoReport;
 use App\Service\Laboratory\Bilibili\UpUserService;
+use App\Service\Laboratory\Bilibili\VideoService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -153,35 +154,35 @@ class VideoController extends AbstractController
 
     /**
      * up主图表趋势
-     * @RequestMapping(path="up_user_chart_trend", methods="get")
+     * @RequestMapping(path="video_chart_trend", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
      * })
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function upUserChartTrend()
+    public function videoChartTrend()
     {
-        $mid = $this->request->input('mid') ?? '';
+        $bvid = $this->request->input('bvid') ?? '';
         $date = $this->request->input('date') ?? '';
 
-        $upUserReportQuery = $this->upUserReport->newQuery();
-        if (empty($mid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写搜索UP主mid');
-        if (!empty($mid)) $upUserReportQuery->where('mid', $mid);
+        $videoReportQuery = $this->videoReport->newQuery();
+        if (empty($bvid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写搜索视频ID');
+        $videoReportQuery->where('bvid', $bvid);
         // 处理时间
         $date = $date ?? [date('Y-m-d', strtotime('-6 days')), date('Y-m-d', time())];
         $beginTime = strtotime($date[0]);
-        $endTime = strtotime($date[1]) + 86400;
+        $endTime = strtotime($date[1]);
         $range = getRangeBetweenTime($beginTime, $endTime);
         if ($range > 7) $this->throwExp(StatusCode::ERR_EXCEPTION, '时间范围不能超过7天');
         $timestampList = [];
         for ($i = $beginTime; $i < $endTime; $i = $i + 3600) {
             $timestampList[] = $i;
         }
-        $upUserReportQuery->where('time', '>=', $beginTime);
-        $upUserReportQuery->where('time', '<=', $endTime);
+        $videoReportQuery->where('time', '>=', $beginTime);
+        $videoReportQuery->where('time', '<=', $endTime);
 
-        $rows = UpUserService::getInstance()->upUserChartTrend($upUserReportQuery, $timestampList);
+        $rows = VideoService::getInstance()->videoChartTrend($videoReportQuery, $timestampList);
 
         return $this->success([
             'rows' => $rows,
@@ -190,7 +191,7 @@ class VideoController extends AbstractController
 
     /**
      * up主图表趋势
-     * @RequestMapping(path="up_user_data_report", methods="get")
+     * @RequestMapping(path="video_data_report", methods="get")
      * @Middlewares({
      *     @Middleware(RequestMiddleware::class),
      *     @Middleware(PermissionMiddleware::class)
@@ -199,24 +200,24 @@ class VideoController extends AbstractController
      */
     public function upUserDataReport()
     {
-        $mid = $this->request->input('mid') ?? '';
+        $bvid = $this->request->input('bvid') ?? '';
         $date = $this->request->input('date') ?? '';
 
-        $upUserReportQuery = $this->upUserReport->newQuery();
-        if (empty($mid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写搜索UP主mid');
-        if (!empty($mid)) $upUserReportQuery->where('mid', $mid);
+        $videoReportQuery = $this->videoReport->newQuery();
+        if (empty($bvid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写视频ID');
+        $videoReportQuery->where('bvid', $bvid);
         // 处理时间
-        $date = $date ?? [date('Y-m-d', strtotime('-6 days')), date('Y-m-d', time())];
+        $date = empty($date) ? [date('Y-m-d', time()), date('Y-m-d', time())] : $date;
         $beginTime = strtotime($date[0]);
         $endTime = strtotime($date[1]) + 86400;
 
-        $upUserReportQuery->where('time', '>=', $beginTime);
-        $upUserReportQuery->where('time', '<=', $endTime);
+        $videoReportQuery->where('time', '>=', $beginTime);
+        $videoReportQuery->where('time', '<=', $endTime);
 
-        $total = $upUserReportQuery->count();
-        $upUserReportQuery = $this->pagingCondition($upUserReportQuery, $this->request->all());
+        $total = $videoReportQuery->count();
+        $videoReportQuery = $this->pagingCondition($videoReportQuery, $this->request->all());
 
-        $list = UpUserService::getInstance()->upUserDataReport($upUserReportQuery);
+        $list = VideoService::getInstance()->videoDataReport($videoReportQuery);
         return $this->success([
             'list' => $list,
             'total' => $total,

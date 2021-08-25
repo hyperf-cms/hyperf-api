@@ -46,7 +46,7 @@ class BilibiliVideoReport
                     $insertData['reply'] = $videoReport['reply'] ?? 0;
                     $insertData['favorite'] = $videoReport['favorite'] ?? 0;
                     $insertData['coin'] = $videoReport['coin'] ?? 0;
-                    $insertData['like'] = $videoReport['like'] ?? 0;
+                    $insertData['likes'] = $videoReport['likes'] ?? 0;
                     $insertData['dislike'] = $videoReport['dislike'] ?? 0;
                     VideoReport::query()->insert($insertData);
 
@@ -56,7 +56,7 @@ class BilibiliVideoReport
                     $updateData['reply'] = $videoReport['reply'] ?? 0;
                     $updateData['favorite'] = $videoReport['favorite'] ?? 0;
                     $updateData['coin'] = $videoReport['coin'] ?? 0;
-                    $updateData['like'] = $videoReport['like'] ?? 0;
+                    $updateData['likes'] = $videoReport['likes'] ?? 0;
                     $updateData['dislike'] = $videoReport['dislike'] ?? 0;
                     $updateData['owner'] = !empty($videoReport['owner']) ? json_encode($videoReport['owner']) : '';
                     $updateData['updated_at'] = date('Y-m-d H:i:s');

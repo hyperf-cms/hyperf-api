@@ -125,10 +125,12 @@ class UpUserController extends AbstractController
     {
         $mid = $this->request->input('mid') ?? '';
         $name =  $this->request->input('name') ?? '';
+        $timedStatus =  $this->request->input('time_status') ?? '';
 
         $upUserQuery = $this->upUser->newQuery();
         if (!empty($mid)) $upUserQuery->where('mid', $mid);
         if (!empty($name)) $upUserQuery->where('name', 'like', '%' . $name . '%');
+        if (strlen($timedStatus) > 0) $upUserQuery->where('timed_status', $timedStatus);
 
         $total = $upUserQuery->count();
         $this->pagingCondition($upUserQuery, $this->request->all());
@@ -160,7 +162,7 @@ class UpUserController extends AbstractController
         // 处理时间
         $date = $date ?? [date('Y-m-d', strtotime('-6 days')), date('Y-m-d', time())];
         $beginTime = strtotime($date[0]);
-        $endTime = strtotime($date[1]) + 86400;
+        $endTime = strtotime($date[1]);
         $range = getRangeBetweenTime($beginTime, $endTime);
         if ($range > 7) $this->throwExp(StatusCode::ERR_EXCEPTION, '时间范围不能超过7天');
         $timestampList = [];
@@ -195,7 +197,7 @@ class UpUserController extends AbstractController
         if (empty($mid)) $this->throwExp(StatusCode::ERR_VALIDATION, '请填写搜索UP主mid');
         if (!empty($mid)) $upUserReportQuery->where('mid', $mid);
         // 处理时间
-        $date = $date ?? [date('Y-m-d', strtotime('-6 days')), date('Y-m-d', time())];
+        $date = empty($date) ? [date('Y-m-d', time()), date('Y-m-d', time())] : $date;
         $beginTime = strtotime($date[0]);
         $endTime = strtotime($date[1]) + 86400;
 
