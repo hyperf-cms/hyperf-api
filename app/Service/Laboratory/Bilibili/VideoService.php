@@ -47,7 +47,7 @@ class VideoService extends BaseService
                 $updateData['reply'] = $videoInfo['reply'] ?? 0;
                 $updateData['favorite'] = $videoInfo['favorite'] ?? 0;
                 $updateData['coin'] = $videoInfo['coin'] ?? 0;
-                $updateData['likes'] = $videoInfo['like'] ?? 0;
+                $updateData['likes'] = $videoInfo['likes'] ?? 0;
                 $updateData['dislike'] = $videoInfo['dislike'] ?? 0;
                 $updateData['owner'] = !empty($videoInfo['owner']) ? json_encode($videoInfo['owner']) : '';
                 $updateData['updated_at'] = date('Y-m-d H:i:s');
