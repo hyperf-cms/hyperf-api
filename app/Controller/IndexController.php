@@ -8,6 +8,7 @@ use App\Foundation\Facades\Log;
 use App\Foundation\Utils\Mail;
 use App\Model\Laboratory\Bilibili\UpUser;
 use App\Model\Laboratory\Bilibili\UpUserReport;
+use App\Service\Laboratory\Bilibili\VideoService;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -30,6 +31,7 @@ class IndexController extends AbstractController
      */
     public function index()
    {
+       return count(VideoService::getInstance()->getVideoInfoFromUpUser('471303350'));
        return floor (166 / 60) ;
 
 //        $url = 'https://m.bilibili.com/video/BV1Q624y1q7sj';

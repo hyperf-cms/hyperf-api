@@ -137,7 +137,7 @@ class VideoController extends AbstractController
 
         $total = $videoQuery->count();
         $this->pagingCondition($videoQuery, $this->request->all());
-        $list = $videoQuery->get()->toArray();
+        $list = $videoQuery->orderBy('public_time', 'desc')->get()->toArray();
 
         foreach ($list as $key => $value) {
             $list[$key]['public_time'] = date('Y-m-d H:i:s', $value['public_time']);

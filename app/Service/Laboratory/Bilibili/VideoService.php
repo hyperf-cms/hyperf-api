@@ -18,6 +18,12 @@ class VideoService extends BaseService
     private $videoInfoApi = 'https://api.bilibili.com/x/web-interface/view?bvid=';
 
     /**
+     * 根据用户MID获取该用户下所有视频数据
+     * @var
+     */
+    private $videoInfoFromMidApi = 'https://api.bilibili.com/x/space/arc/search?mid=';
+
+    /**
      * 更新视频数据
      * @param array $videoBVid
      * @return bool
@@ -80,6 +86,33 @@ class VideoService extends BaseService
             'likes' => $videoInfo['data']['stat']['like'] ?? 0,
             'dislike' => $videoInfo['data']['stat']['dislike'] ?? 0,
         ];
+    }
+
+    /**
+     * 根据Up主Id获取视频列表
+     * @param string $mid
+     * @return array
+     * @throws \Exception
+     */
+    public function getVideoInfoFromUpUser(string $mid) : array
+    {
+        if (empty($mid)) return [];
+        $videoList = [];
+        //第一次获取视频数据
+        $videoInfo = curl_get($this->videoInfoFromMidApi . $mid . '&pn=1&&ps=30');
+        if (!empty($videoInfo['data']['list']['vlist'])) {
+            $videoList = array_merge($videoList, $videoInfo['data']['list']['vlist']);
+            $pageInfo = $videoInfo['data']['page'];
+
+            if ($pageInfo['count'] > 30) {
+                for ($i = 2; $i <= ceil($pageInfo['count'] / $pageInfo['ps']); $i++) {
+                    $temp = curl_get($this->videoInfoFromMidApi . $mid . '&pn=' . $i . '&&ps=30');
+                    $videoList = array_merge($videoList, $temp['data']['list']['vlist']);
+                }
+            }
+        }
+
+        return $videoList;
     }
 
     /**

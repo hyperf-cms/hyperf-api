@@ -7,6 +7,7 @@ use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
 use App\Foundation\Utils\Queue;
+use App\Job\Bilibili\SyncVideoFromUpUserJob;
 use App\Job\Bilibili\UpUserInfoRecordJob;
 use App\Model\Laboratory\Bilibili\UpUser;
 use App\Model\Laboratory\Bilibili\UpUserReport;
@@ -140,6 +141,31 @@ class UpUserController extends AbstractController
             'list' => $list,
             'total' => $total
         ]);
+    }
+
+    /**
+     * 获取Up用户列表
+     * @RequestMapping(path="sync_video_from_up_user", methods="post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function syncVideoReportFromUpUser()
+    {
+        $mid = $this->request->input('mid') ?? '';
+        if (empty($mid)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+
+        $upUser = $this->upUser->newQuery()->where('mid', $mid)->first();
+        if (empty($upUser)) $this->throwExp(StatusCode::ERR_EXCEPTION, '查询不到该Up主');
+
+        //推送一个队列，同步Up主视频信息
+        $this->queue->push(new SyncVideoFromUpUserJob([
+            'mid' => $mid,
+        ]));
+
+        return $this->successByMessage('正在同步视频中。。。请稍后转至视频列表查看');
     }
 
     /**
