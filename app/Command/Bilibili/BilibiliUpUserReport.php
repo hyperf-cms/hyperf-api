@@ -65,7 +65,7 @@ class BilibiliUpUserReport
                     $updateData['likes'] = $upUserReport['likes'] ?? 0;
                     $updateData['recharge_month'] = $upUserReport['recharge_month'] ?? 0;
                     $updateData['recharge_total'] = $upUserReport['recharge_total'] ?? 0;
-                    $updateData['live_room_info'] = empty($upUserReport['live_room_info']) ? '' : json_encode($upUserReport['live_room_info']);
+                    $updateData['live_room_info'] = $upUserReport['live_room_info'] ?? '';
                     $updateData['updated_at'] = date('Y-m-d H:i:s');
                     UpUser::where('mid', $upUserMid)->update($updateData);
                 }

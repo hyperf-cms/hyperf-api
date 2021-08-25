@@ -57,12 +57,12 @@ class UpUserService extends BaseService
                 $updateData['birthday'] = $upUserInfo['birthday'] ?? '';
                 $updateData['following'] = $upUserInfo['following'] ?? 0;
                 $updateData['follower'] = $upUserInfo['follower'] ?? 0;
-                $updateData['video_play'] = $upUserInfo['archive']['view'] ?? 0;
-                $updateData['readling'] = $upUserInfo['article']['view'] ?? 0;
+                $updateData['video_play'] = $upUserInfo['video_play'] ?? 0;
+                $updateData['readling'] = $upUserInfo['readling'] ?? 0;
                 $updateData['likes'] = $upUserInfo['likes'] ?? 0;
                 $updateData['recharge_month'] = $upUserInfo['count'] ?? 0;
                 $updateData['recharge_total'] = $upUserInfo['total'] ?? 0;
-                $updateData['live_room_info'] = empty($upUserInfo['live_room']) ? '' : json_encode($upUserInfo['live_room']);
+                $updateData['live_room_info'] = $upUserInfo['live_room_info'] ?? '';
                 $updateData['updated_at'] = date('Y-m-d H:i:s');
                 UpUser::where('mid', $mid)->update($updateData);
             }
