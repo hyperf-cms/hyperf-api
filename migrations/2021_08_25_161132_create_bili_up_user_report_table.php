@@ -14,7 +14,7 @@ class CreateBiliUpUserReportTable extends Migration
         Schema::create('bili_up_user_report', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->integer('time')->default('0')->comment('时间戳');
-            $table->string('mid', 255)->default('')->comment('用户ID')->primary();
+            $table->string('mid', 255)->default('')->comment('用户ID');
             $table->integer('following')->default('0')->comment('关注数');
             $table->integer('follower')->default('0')->comment('粉丝数');
             $table->integer('video_play')->default('0')->comment('视频播放数');

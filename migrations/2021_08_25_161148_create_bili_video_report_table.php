@@ -14,7 +14,7 @@ class CreateBiliVideoReportTable extends Migration
         Schema::create('bili_video_report', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->integer('time')->default('0')->comment('时间戳');
-            $table->string('bvid', 255)->default('')->comment('视频ID')->primary();
+            $table->string('bvid', 255)->default('')->comment('视频ID');
             $table->string('mid', 255)->default('')->comment('用户ID');
             $table->integer('view')->default('0')->comment('视频播放数');
             $table->integer('danmaku')->default('0')->comment('弹幕数');
