@@ -2,7 +2,6 @@
 
 return [
     'dict_type' => [
-
         [
             "dict_id"    => "1",
             "dict_name"  => "用户性别",
@@ -119,7 +118,26 @@ return [
             "status"     => "1",
             "created_at" => "2021-6-17 10:29:41",
             "updated_at" => "2021-6-17 10:29:41"
+        ],
+        [
+            "dict_id"    => "15",
+            "dict_name"  => "Up主定时统计开关状态",
+            "dict_type"  => "lab_up_user_time_status",
+            "remark"     => "bilibili助手Up主定时统计开关枚举",
+            "status"     => "1",
+            "created_at" => "2021-08-20 16:02:13",
+            "updated_at" => "2021-08-20 16:02:13"
+        ],
+        [
+            "dict_id"    => "16",
+            "dict_name"  => "视频定时统计开关状态",
+            "dict_type"  => "lab_video_time_status",
+            "remark"     => "Bilibili 视频定时统计开关状态",
+            "status"     => "1",
+            "created_at" => "2021-08-20 16:02:13",
+            "updated_at" => "2021-08-20 16:02:13"
         ]
+
 
     ],
     'dict_data' => [
@@ -569,9 +587,65 @@ return [
             "is_default" => "1",
             "status"     => "1",
             "remark"     => "json格式",
-            "created_at" => "2021-6-17 10:31:02",
-            "updated_at" => "2021-6-17 10:31:02"
-        ]
+            "created_at" => "2021-08-24 15:37:09",
+            "updated_at" => "2021-08-24 15:37:09"
+        ],
+        [
+            "dict_code"  => "33",
+            "dict_sort"  => "1",
+            "dict_label" => "开启",
+            "dict_value" => "1",
+            "dict_type"  => "lab_up_user_time_status",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "开启状态",
+            "created_at" => "2021-08-24 15:37:09",
+            "updated_at" => "2021-08-24 15:37:09"
+        ],
+        [
+            "dict_code"  => "34",
+            "dict_sort"  => "1",
+            "dict_label" => "关闭",
+            "dict_value" => "0",
+            "dict_type"  => "lab_up_user_time_status",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "0",
+            "status"     => "1",
+            "remark"     => "关闭状态",
+            "created_at" => "2021-08-24 15:37:09",
+            "updated_at" => "2021-08-24 15:37:09"
+        ],
+        [
+            "dict_code"  => "35",
+            "dict_sort"  => "1",
+            "dict_label" => "开启",
+            "dict_value" => "1",
+            "dict_type"  => "lab_video_time_status",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "1",
+            "status"     => "1",
+            "remark"     => "开启状态",
+            "created_at" => "2021-08-24 15:37:09",
+            "updated_at" => "2021-08-24 15:37:09"
+        ],
+        [
+            "dict_code"  => "36",
+            "dict_sort"  => "1",
+            "dict_label" => "关闭",
+            "dict_value" => "0",
+            "dict_type"  => "lab_video_time_status",
+            "css_class"  => "",
+            "list_class" => "",
+            "is_default" => "0",
+            "status"     => "1",
+            "remark"     => "关闭状态",
+            "created_at" => "2021-08-24 15:37:09",
+            "updated_at" => "2021-08-24 15:37:09"
+        ],
 
     ],
 ];
