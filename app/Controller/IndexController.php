@@ -31,8 +31,8 @@ class IndexController extends AbstractController
      */
     public function index()
    {
-       return count(VideoService::getInstance()->getVideoInfoFromUpUser('471303350'));
-       return floor (166 / 60) ;
+       $bvid = $this->request->input('bvid');
+       return curl_get('https://api.bilibili.com/x/web-interface/view?bvid=' . $bvid);
 
 //        $url = 'https://m.bilibili.com/video/BV1Q624y1q7sj';
 
