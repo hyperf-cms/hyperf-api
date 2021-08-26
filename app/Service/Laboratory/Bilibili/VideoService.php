@@ -37,6 +37,7 @@ class VideoService extends BaseService
             if (empty($videoBVid)) return false;
 
             foreach ($videoBVid as $bvid) {
+                $videoInfo = $this->getVideoInfoFromBilibili($bvid);
                 if (!empty($videoInfo)) {
                     $updateData['mid'] = $videoInfo['mid'] ?? '';
                     $updateData['cover'] = $videoInfo['cover'] ?? '';
