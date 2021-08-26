@@ -38,9 +38,7 @@ class VideoService extends BaseService
 
             foreach ($videoBVid as $bvid) {
                 $videoInfo = $this->getVideoInfoFromBilibili($bvid);
-                if (empty($videoInfo)) {
-                    Log::codeDebug()->info('获取信息为空');
-                }
+                Log::codeDebug()->info(json_encode($videoInfo));
                 if (!empty($videoInfo)) {
                     $updateData['mid'] = $videoInfo['mid'] ?? '';
                     $updateData['cover'] = $videoInfo['cover'] ?? '';
