@@ -104,7 +104,7 @@ class VideoController extends AbstractController
         $videoQuery = $this->video->newQuery();
         if (!empty($bvid)) $videoQuery->where('bvid', $bvid);
 
-        $list = $videoQuery->limit(10)->orderBy('created_at')->get()->toArray();
+        $list = $videoQuery->limit(10)->orderBy('public_time', 'desc')->get()->toArray();
         foreach ($list as $key => $value) {
             $list[$key]['title'] = $value['title'] . '(' . $value['bvid'] . ')';
         }
@@ -137,7 +137,7 @@ class VideoController extends AbstractController
 
         $total = $videoQuery->count();
         $this->pagingCondition($videoQuery, $this->request->all());
-        $list = $videoQuery->orderBy('public_time', 'desc')->get()->toArray();
+        $list = $videoQuery->orderBy('created_at', 'desc')->get()->toArray();
 
         foreach ($list as $key => $value) {
             $list[$key]['public_time'] = date('Y-m-d H:i:s', $value['public_time']);

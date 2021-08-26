@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Service\Laboratory\Bilibili;
 
+use App\Foundation\Facades\Log;
 use App\Foundation\Traits\Singleton;
 use App\Model\Laboratory\Bilibili\Video;
 use App\Service\BaseService;
@@ -29,32 +31,33 @@ class VideoService extends BaseService
      * @return bool
      * @throws \Exception
      */
-    public function recordVideoInfoFromBilibili(array $videoBVid) : bool
+    public function recordVideoInfoFromBilibili(array $videoBVid): bool
     {
-        if (empty($videoBVid)) return false;
+        go(function () use ($videoBVid) {
+            if (empty($videoBVid)) return false;
 
-        foreach ($videoBVid as $bvid) {
-            $videoInfo = $this->getVideoInfoFromBilibili($bvid);
-            if (!empty($videoInfo)) {
-                $updateData['mid'] = $videoInfo['mid'] ?? '';
-                $updateData['cover'] = $videoInfo['cover'] ?? '';
-                $updateData['title'] = $videoInfo['title'] ?? '';
-                $updateData['public_time'] = $videoInfo['public_time'] ?? '';
-                $updateData['desc'] = $videoInfo['desc'] ?? '';
-                $updateData['duration'] = $videoInfo['duration'] ?? '';
-                $updateData['view'] = $videoInfo['view'] ?? 0;
-                $updateData['danmaku'] = $videoInfo['danmaku'] ?? 0;
-                $updateData['reply'] = $videoInfo['reply'] ?? 0;
-                $updateData['favorite'] = $videoInfo['favorite'] ?? 0;
-                $updateData['coin'] = $videoInfo['coin'] ?? 0;
-                $updateData['likes'] = $videoInfo['likes'] ?? 0;
-                $updateData['dislike'] = $videoInfo['dislike'] ?? 0;
-                $updateData['owner'] = !empty($videoInfo['owner']) ? json_encode($videoInfo['owner']) : '';
-                $updateData['updated_at'] = date('Y-m-d H:i:s');
-                Video::where('bvid', $bvid)->update($updateData);
+            foreach ($videoBVid as $bvid) {
+                if (!empty($videoInfo)) {
+                    $updateData['mid'] = $videoInfo['mid'] ?? '';
+                    $updateData['cover'] = $videoInfo['cover'] ?? '';
+                    $updateData['title'] = $videoInfo['title'] ?? '';
+                    $updateData['public_time'] = $videoInfo['public_time'] ?? '';
+                    $updateData['desc'] = $videoInfo['desc'] ?? '';
+                    $updateData['duration'] = $videoInfo['duration'] ?? '';
+                    $updateData['view'] = $videoInfo['view'] ?? 0;
+                    $updateData['danmaku'] = $videoInfo['danmaku'] ?? 0;
+                    $updateData['reply'] = $videoInfo['reply'] ?? 0;
+                    $updateData['favorite'] = $videoInfo['favorite'] ?? 0;
+                    $updateData['coin'] = $videoInfo['coin'] ?? 0;
+                    $updateData['likes'] = $videoInfo['likes'] ?? 0;
+                    $updateData['dislike'] = $videoInfo['dislike'] ?? 0;
+                    $updateData['owner'] = !empty($videoInfo['owner']) ? json_encode($videoInfo['owner']) : '';
+                    $updateData['updated_at'] = date('Y-m-d H:i:s');
+                    Video::where('bvid', $bvid)->update($updateData);
+                }
             }
-        }
-
+            return true;
+        });
         return true;
     }
 
@@ -64,27 +67,27 @@ class VideoService extends BaseService
      * @return array
      * @throws \Exception
      */
-    public function getVideoInfoFromBilibili(string $videoBVid) : array
+    public function getVideoInfoFromBilibili(string $videoBVid): array
     {
         if (empty($videoBVid)) return [];
         $videoInfo = curl_get($this->videoInfoApi . $videoBVid);
 
-        return  [
-            'bvid' => $videoInfo['data']['bvid'] ?? '',
-            'mid' => $videoInfo['data']['owner']['mid'] ?? '',
-            'owner' => $videoInfo['data']['owner'] ?? [],
-            'cover' => $videoInfo['data']['pic'] ?? '',
-            'title' => $videoInfo['data']['title'] ?? '',
+        return [
+            'bvid'        => $videoInfo['data']['bvid'] ?? '',
+            'mid'         => $videoInfo['data']['owner']['mid'] ?? '',
+            'owner'       => $videoInfo['data']['owner'] ?? [],
+            'cover'       => $videoInfo['data']['pic'] ?? '',
+            'title'       => $videoInfo['data']['title'] ?? '',
             'public_time' => $videoInfo['data']['pubdate'] ?? 0,
-            'desc' => $videoInfo['data']['desc'] ?? '',
-            'duration' => $videoInfo['data']['duration'] ?? 0,
-            'view' => $videoInfo['data']['stat']['view'] ?? 0,
-            'danmaku' => $videoInfo['data']['stat']['danmaku'] ?? 0,
-            'reply' => $videoInfo['data']['stat']['reply'] ?? 0,
-            'favorite' => $videoInfo['data']['stat']['favorite'] ?? 0,
-            'coin' => $videoInfo['data']['stat']['coin'] ?? 0,
-            'likes' => $videoInfo['data']['stat']['like'] ?? 0,
-            'dislike' => $videoInfo['data']['stat']['dislike'] ?? 0,
+            'desc'        => $videoInfo['data']['desc'] ?? '',
+            'duration'    => $videoInfo['data']['duration'] ?? 0,
+            'view'        => $videoInfo['data']['stat']['view'] ?? 0,
+            'danmaku'     => $videoInfo['data']['stat']['danmaku'] ?? 0,
+            'reply'       => $videoInfo['data']['stat']['reply'] ?? 0,
+            'favorite'    => $videoInfo['data']['stat']['favorite'] ?? 0,
+            'coin'        => $videoInfo['data']['stat']['coin'] ?? 0,
+            'likes'       => $videoInfo['data']['stat']['like'] ?? 0,
+            'dislike'     => $videoInfo['data']['stat']['dislike'] ?? 0,
         ];
     }
 
@@ -94,12 +97,13 @@ class VideoService extends BaseService
      * @return array
      * @throws \Exception
      */
-    public function getVideoInfoFromUpUser(string $mid) : array
+    public function getVideoInfoFromUpUser(string $mid): array
     {
         if (empty($mid)) return [];
         $videoList = [];
         //第一次获取视频数据
         $videoInfo = curl_get($this->videoInfoFromMidApi . $mid . '&pn=1&&ps=30');
+
         if (!empty($videoInfo['data']['list']['vlist'])) {
             $videoList = array_merge($videoList, $videoInfo['data']['list']['vlist']);
             $pageInfo = $videoInfo['data']['page'];
@@ -121,11 +125,18 @@ class VideoService extends BaseService
      * @param array $timestampList
      * @return array
      */
-    public function videoChartTrend(Builder $query, array $timestampList = []) : array
+    public function videoChartTrend(Builder $query, array $timestampList = []): array
     {
         $query->orderBy('time');
         $videoReport = $query->get([
-            'time', 'view', 'danmaku', 'reply', 'favorite', 'coin', 'likes', 'dislike'
+            'time',
+            'view',
+            'danmaku',
+            'reply',
+            'favorite',
+            'coin',
+            'likes',
+            'dislike'
         ])->toArray();
         $minVideoReport = $query->select(Db::raw(
             'min(view) as view, 
@@ -153,7 +164,7 @@ class VideoService extends BaseService
 
         foreach ($list as $key => $value) {
             $rows[$key]['columns'] = ['time'];
-            for ($i = 0; $i < 24; $i ++) {
+            for ($i = 0; $i < 24; $i++) {
                 $temp = [];
                 foreach ($value as $k => $v) {
                     $temp['time'] = $i;
@@ -193,11 +204,18 @@ class VideoService extends BaseService
      * @param Builder $query
      * @return array
      */
-    public function videoDataReport(Builder $query) : array
+    public function videoDataReport(Builder $query): array
     {
         $query->orderBy('time', 'desc');
         $videoReport = $query->get([
-            'time', 'view', 'danmaku', 'reply', 'favorite', 'coin', 'likes', 'dislike'
+            'time',
+            'view',
+            'danmaku',
+            'reply',
+            'favorite',
+            'coin',
+            'likes',
+            'dislike'
         ])->toArray();
 
         foreach ($videoReport as $key => $value) {

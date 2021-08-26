@@ -135,7 +135,7 @@ class UpUserController extends AbstractController
 
         $total = $upUserQuery->count();
         $this->pagingCondition($upUserQuery, $this->request->all());
-        $list = $upUserQuery->get()->toArray();
+        $list = $upUserQuery->orderBy('created_at', 'desc')->get()->toArray();
 
         return $this->success([
             'list' => $list,
