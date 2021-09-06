@@ -32,7 +32,7 @@ class CreateBiliVideoTable extends Migration
             $table->index('mid', 'mid_index');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `bili_video` comment'视频数据表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".env('DB_PREFIX','')."bili_video` comment'视频数据表'");//表注释一定加上前缀
     }
 
     /**

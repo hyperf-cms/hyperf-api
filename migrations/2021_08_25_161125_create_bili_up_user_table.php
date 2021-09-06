@@ -33,7 +33,7 @@ class CreateBiliUpUserTable extends Migration
             $table->index('name', 'name_index');
             $table->timestamps();
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `bili_up_user` comment'Up主信息表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".env('DB_PREFIX','')."bili_up_user` comment'Up主信息表'");//表注释一定加上前缀
     }
 
     /**

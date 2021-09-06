@@ -24,7 +24,7 @@ class CreateBiliUpUserReportTable extends Migration
             $table->integer('recharge_total')->default('0')->comment('总充电数');
             $table->primary(['time', 'mid']);
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `bili_up_user_report` comment'Up主信息数据报表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".env('DB_PREFIX','')."bili_up_user_report` comment'Up主信息数据报表'");//表注释一定加上前缀
     }
 
     /**

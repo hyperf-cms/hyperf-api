@@ -26,7 +26,7 @@ class CreateBiliVideoReportTable extends Migration
             $table->primary(['time', 'bvid']);
             $table->index('mid', 'mid_index');
         });
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `bili_video_report` comment'视频报表数据表'");//表注释一定加上前缀
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".env('DB_PREFIX','')."bili_video_report` comment'视频报表数据表'");//表注释一定加上前缀
     }
 
     /**
