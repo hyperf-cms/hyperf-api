@@ -53,6 +53,8 @@ return [
         'task_worker_num' => 8,
         // 因为 `Task` 主要处理无法协程化的方法，所以这里推荐设为 `false`，避免协程下出现数据混淆的情况
         'task_enable_coroutine' => false,
+        'max_wait_time' => env('MAX_WAIT_TIME', 600),
+        'document_root' => BASE_PATH.'/'.env('UPLOAD_PATH','uploads'),
     ],
     'callbacks' => [
         SwooleEvent::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],

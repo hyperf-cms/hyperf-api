@@ -90,6 +90,61 @@
 13. 聊天模块增加消息合并转发，逐条转发，批量删除功能
 14. 聊天模块增加视频消息类型，支持在线播放视频
 
+## 本地静态文件访问
+
+新增本地静态文件直接访问功能
+
+.env文件中 UPLOAD_PATH 配置为 uploads (默认值)
+
+```php
+  # 例如上传文件保存到 xxx目录
+  $uploadResult = UploadService::getInstance()->uploadSinglePic($this->request->file('file'), 'xxx');
+
+```
+
+上传的真实路径为  root_path/uploads/xxx/xxx.jpg
+
+我们可以通过服务器直接访问该静态文件
+http://xxx.xxx:port/xxx/xxx.jpg
+
+
+
+### 静态文件目录 Nginx反向代理配置
+
+如果服务器有通过反向代理访问，也可以配置静态文件反向代理到对应路径
+
+```conf
+server {
+    # 监听端口
+    listen 80;
+    # 绑定的域名，填写您的域名
+    server_name my.server
+
+    ...
+    # 转发静态资源请求  上传文件到后台前端可访问
+    # 改转发条件要设置在 nginx默认静态配置之前
+    # admin_face 是上传头像的目录 其它目录可根据后台值自定义配置 可通过 | 配置多个目录
+    location ~ .*/(admin_face|xxx)/.*\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires      30d;
+        # 将客户端的 Host 和 IP 信息一并转发到对应节点
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        client_max_body_size 100M;
+        # 转发Cookie，设置 SameSite
+        proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+        # 执行代理访问真实服务器
+        proxy_pass http://hyperf;
+    }
+}
+
+```
+
+
+
+
+
 ## 结语
 
 如果这个框架对你有帮助的话，请不要吝啬你的 star
