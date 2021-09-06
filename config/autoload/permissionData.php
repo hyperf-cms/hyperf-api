@@ -1148,4 +1148,245 @@ return [
         ],
     ],
 
+    [
+        "name"         => "Api:data",
+        "display_name" => "数据",
+        "display_desc" => "数据模块",
+        "url"          => "/data",
+        "component"    => "Layout",
+        "guard_name"   => "web",
+        "icon"         => "chart",
+        "type"         => "1",
+        "hidden"       => "0",
+        "status"       => "1",
+        "sort"         => "2",
+        "subfield"     => [
+
+            [
+                "name"         => "Api:data/table_data",
+                "display_name" => "表格数据",
+                "display_desc" => "表格相关一些数据展示",
+                "url"          => "/data/table_data",
+                "component"    => "Layout",
+                "guard_name"   => "web",
+                "icon"         => "table",
+                "type"         => "1",
+                "hidden"       => "0",
+                "status"       => "1",
+                "sort"         => "99",
+                "subfield"     => [
+
+                    [
+                        "name"         => "Api:data/table_data/basic_data",
+                        "display_name" => "基础表格",
+                        "display_desc" => "基础表格数据展示",
+                        "url"          => "/data/table_data/basic_data",
+                        "component"    => "data/table/basic_data",
+                        "guard_name"   => "web",
+                        "icon"         => "build",
+                        "type"         => "2",
+                        "hidden"       => "0",
+                        "status"       => "1",
+                        "sort"         => "99",
+                    ],
+            
+                ],
+            ],
+            [
+                "name"         => "Api:data/chart_data",
+                "display_name" => "图表数据",
+                "display_desc" => "图表的一些展示数据",
+                "url"          => "/data/chart_data",
+                "component"    => "Layout",
+                "guard_name"   => "web",
+                "icon"         => "monitor",
+                "type"         => "1",
+                "hidden"       => "0",
+                "status"       => "1",
+                "sort"         => "99",
+                "subfield"     => [
+
+
+            
+
+                ],
+            ],
+
+
+        ],
+    ],
+
+    [
+        "name"         => "Api:laboratory",
+        "display_name" => "实验",
+        "display_desc" => "一些特殊的功能模块，例如bilibili助手",
+        "url"          => "/laboratory",
+        "component"    => "Layout",
+        "guard_name"   => "web",
+        "icon"         => "experiment",
+        "type"         => "1",
+        "hidden"       => "0",
+        "status"       => "1",
+        "sort"         => "4",
+        "subfield"     => [
+
+            [
+                "name"         => "Api:laboratory/bilibili_module",
+                "display_name" => "Bilibili助手",
+                "display_desc" => "Bilibili助手，提供数据分析功能",
+                "url"          => "/laboratory/bilibili_module",
+                "component"    => "Layout",
+                "guard_name"   => "web",
+                "icon"         => "bilibili",
+                "type"         => "1",
+                "hidden"       => "0",
+                "status"       => "1",
+                "sort"         => "1",
+                "subfield"     => [
+
+                    [
+                        "name"         => "Api:laboratory/bilibili_module/up_user",
+                        "display_name" => "用户数据分析",
+                        "display_desc" => "用来分析UP用户的数据",
+                        "url"          => "/laboratory/bilibili_module/up_user",
+                        "component"    => "Layout",
+                        "guard_name"   => "web",
+                        "icon"         => "up_user",
+                        "type"         => "1",
+                        "hidden"       => "0",
+                        "status"       => "1",
+                        "sort"         => "1",
+                        "subfield"     => [
+
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/up_user/up_user_add-upUserAdd",
+                                "display_name" => "UP主录入",
+                                "display_desc" => "用来添加UP主的页面",
+                                "url"          => "/laboratory/bilibili_module/up_user/up_user_add",
+                                "component"    => "laboratory/bilibili_module/upUser/upUserAdd",
+                                "guard_name"   => "web",
+                                "icon"         => "group_manager_add",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "1",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/up_user/up_user-upUserList",
+                                "display_name" => "Up主列表",
+                                "display_desc" => "Up主的数据信息列表",
+                                "url"          => "/laboratory/bilibili_module/up_user/up_user",
+                                "component"    => "laboratory/bilibili_module/upUser/upUser",
+                                "guard_name"   => "web",
+                                "icon"         => "user_list",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "2",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/up_user/up_user_chart_trend-upUserChartTrend",
+                                "display_name" => "Up主数据趋势",
+                                "display_desc" => "记录Up主个人信息数据的趋势图情况",
+                                "url"          => "/laboratory/bilibili_module/up_user/up_user_chart_trend",
+                                "component"    => "laboratory/bilibili_module/upUser/upUserChartTrend",
+                                "guard_name"   => "web",
+                                "icon"         => "statistics",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "3",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/up_user/up_user_data_report-upUserDataReport",
+                                "display_name" => "Up主数据报表",
+                                "display_desc" => "记录Up主数据报表",
+                                "url"          => "/laboratory/bilibili_module/up_user/up_user_data_report",
+                                "component"    => "laboratory/bilibili_module/upUser/upUserDataReport",
+                                "guard_name"   => "web",
+                                "icon"         => "chart",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "4",
+                            ],
+
+                        ]
+                    ],
+                    [
+                        "name"         => "Api:laboratory/bilibili_module/video",
+                        "display_name" => "视频数据分析",
+                        "display_desc" => "bilibili的视频数据分析模块",
+                        "url"          => "/laboratory/bilibili_module/video",
+                        "component"    => "Layout",
+                        "guard_name"   => "web",
+                        "icon"         => "video",
+                        "type"         => "1",
+                        "hidden"       => "0",
+                        "status"       => "1",
+                        "sort"         => "2",
+                        "subfield"     => [
+
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/video/video_add-videoAdd",
+                                "display_name" => "视频录入",
+                                "display_desc" => "导出视频链接录入视频数据",
+                                "url"          => "/laboratory/bilibili_module/video/video_add",
+                                "component"    => "laboratory/bilibili_module/video/videoAdd",
+                                "guard_name"   => "web",
+                                "icon"         => "upload",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "1",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/video/video-videoList",
+                                "display_name" => "视频列表",
+                                "display_desc" => "视频数据列表",
+                                "url"          => "/laboratory/bilibili_module/video/video",
+                                "component"    => "laboratory/bilibili_module/video/video",
+                                "guard_name"   => "web",
+                                "icon"         => "tableList",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "1",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/video/video_chart_trend-videoChartTrend",
+                                "display_name" => "视频数据趋势",
+                                "display_desc" => "记录视频数据的趋势图情况",
+                                "url"          => "/laboratory/bilibili_module/video/video_chart_trend",
+                                "component"    => "laboratory/bilibili_module/video/videoChartTrend",
+                                "guard_name"   => "web",
+                                "icon"         => "statistics",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "3",
+                            ],
+                            [
+                                "name"         => "Api:laboratory/bilibili_module/video/video_data_report-videoDataReport",
+                                "display_name" => "视频数据报表",
+                                "display_desc" => "记录视频数据报表",
+                                "url"          => "/laboratory/bilibili_module/video/video_data_report",
+                                "component"    => "laboratory/bilibili_module/video/videoDataReport",
+                                "guard_name"   => "web",
+                                "icon"         => "chart",
+                                "type"         => "2",
+                                "hidden"       => "0",
+                                "status"       => "1",
+                                "sort"         => "4",
+                            ]
+
+                        ]
+                    ]
+
+                ],
+            ],
+
+        ],
+    ],
+
 ];

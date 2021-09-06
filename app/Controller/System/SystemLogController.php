@@ -31,9 +31,45 @@ class SystemLogController extends AbstractController
     protected $log_path;
 
     /**
-     * 广告项目日志内容正则匹配表达式
+     * 错误日志正则匹配表达式
      */
-    const LOG_PATTER = '/^\[(?<datetime>.*)\]\s(?<env>\w+)\.(?<level>\w+):(?<message>.*)/m';
+    const LOG_ERROR_PATTER = '/^(?<datetime>.*)\|\|(?<env>\w+)\|\|(?<level>\w+)\|\|(.*?)\:(?<message>.*)/m';
+
+    /**
+     * SQL查询正则匹配表达式
+     */
+    const LOG_SQL_PATTER = '';
+
+    /**
+     * 错误日志
+     * @RequestMapping(path="error_log", methods="get")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     *     @Middleware(PermissionMiddleware::class)
+     * })
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function errorLog()
+    {
+        $logPath = config('log_path') . 'hyperf_error';
+        $fileList = SystemLogService::getInstance()->scanDirectory($logPath);
+        if (!$fileList) $this->throwExp(StatusCode::ERR_EXCEPTION, '该项目暂无日志记录文件');
+
+        $list = [];
+        $total = 0;
+        // 获取文件树形列表
+        $files = $fileList['files'];
+        $total = count($files);
+        // 循环目录查找该目录下的文件
+        foreach ($files as $key => $value) {
+
+        }
+
+    }
+
+
+
+
 
     /**
      * 获取系统日志列表
@@ -46,7 +82,7 @@ class SystemLogController extends AbstractController
      */
     public function getLogPath()
     {
-        $this->log_path = config('log_path');
+
 
         $fileList = SystemLogService::getInstance()->scanDirectory($this->log_path);
         if (!$fileList) $this->throwExp(StatusCode::ERR_EXCEPTION, '该项目暂无日志记录文件');
@@ -67,7 +103,8 @@ class SystemLogController extends AbstractController
                     if (!isset($fileTree[$key]['children'])) $fileTree[$key]['children'] = [];
                     array_unshift($fileTree[$key]['children'], [
                         'type' => 'file',
-                        'path' => $files[$k]
+                        'path' => $files[$k],
+                        'dir' => substr($value, strripos($value, "/") + 1)
                     ]);
                     unset($files[$k]);
                 };

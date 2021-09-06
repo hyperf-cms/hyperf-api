@@ -217,8 +217,14 @@ class AdviceController extends AbstractController
      */
     public function destroy(int $id)
     {
-        if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-        if (!Advice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        if ($id == 0) {
+            $idArr = $this->request->input('id') ?? [];
+            if (empty($idArr) || !is_array($idArr)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
+            if (!Advice::whereIn('id', $idArr)->delete()) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }else {
+            if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+            if (!Advice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }
 
         return $this->successByMessage('删除系统建议成功');
     }

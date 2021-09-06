@@ -102,3 +102,19 @@ if (!function_exists('getMillisecond')) {
         return (float) sprintf('%.0f', (floatval($t1)+floatval($t2)) * 1000);
     }
 }
+
+
+if (!function_exists('getRangeBetweenTime')) {
+    /**
+     * 获取时间范围
+     * @param $begin
+     * @param $end
+     * @return float|int
+     */
+    function getRangeBetweenTime($begin, $end) {
+        $beginDate = strtotime(date('Y-m-d', $begin));
+        $endDate = strtotime(date('Y-m-d', $end));
+
+        return ($endDate - $beginDate) / 86400;
+    }
+}

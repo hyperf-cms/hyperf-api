@@ -12,4 +12,6 @@ declare(strict_types=1);
 return [
     //注册任务调度器进程
     Hyperf\Crontab\Process\CrontabDispatcherProcess::class,
+    //注册队列进程
+    Hyperf\AsyncQueue\Process\ConsumerProcess::class,
 ];

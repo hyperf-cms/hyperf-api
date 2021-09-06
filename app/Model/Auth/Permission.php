@@ -84,6 +84,7 @@ class Permission extends DonjanPermission
             }
            return array_values($item);
         }
+        return [];
     }
 
     /**

@@ -7,6 +7,8 @@ namespace App\Controller\System;
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
+use App\Foundation\Utils\Queue;
+use App\Job\EmailNotificationJob;
 use App\Model\System\Notice;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -31,6 +33,12 @@ class NoticeController extends AbstractController
      * @var Notice
 */
     private $notice;
+
+    /**
+     * @Inject()
+     * @var Queue
+     */
+    private $queue;
 
     /**
      * 获取系统通知列表
@@ -105,6 +113,11 @@ class NoticeController extends AbstractController
 
         if (!$noticeQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统通知错误');
 
+        //分发队列
+        $this->queue->push(new EmailNotificationJob([
+            'title' => $params['title'],
+            'content' => $params['content'],
+        ]));
         return $this->successByMessage('添加系统通知成功');
     }
 
@@ -188,8 +201,14 @@ class NoticeController extends AbstractController
      */
     public function destroy(int $id)
     {
-        if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-        if (!Notice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        if ($id == 0) {
+            $idArr = $this->request->input('id') ?? [];
+            if (empty($idArr) || !is_array($idArr)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
+            if (!Notice::whereIn('id', $idArr)->delete()) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }else {
+            if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+            if (!Notice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }
 
         return $this->successByMessage('删除系统通知成功');
     }

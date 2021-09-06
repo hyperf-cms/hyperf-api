@@ -8,6 +8,7 @@ use App\Constants\StatusCode;
 use App\Constants\UploadCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
+use App\Model\Laboratory\FriendRelation;
 use App\Service\Auth\UserService;
 use App\Model\Auth\User;
 use Donjan\Permission\Models\Role;
@@ -128,7 +129,7 @@ class UserController extends AbstractController
         $user->username = $postData['username'];
         $user->password = md5($postData['password']);
         $user->status = $postData['status'] ?? '1';
-        $user->avatar = empty($postData['avatar']) ? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png' : $postData['avatar'];
+        $user->avatar = empty($postData['avatar']) ? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png' : $postData['avatar'];
         $user->last_login = time();
         $user->last_ip = getClientIp($this->request);
         $user->creater = $postData['creater'] ?? '无';
@@ -312,7 +313,7 @@ class UserController extends AbstractController
 
         $user = User::getOneByUid($id);
         $user->status = $postData['status'] ?? '1';
-        $user->avatar = $postData['avatar'] ?? 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->avatar = $postData['avatar'] ?? 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
         $user->desc = $postData['desc'] ?? '';
         $user->mobile = $postData['mobile'] ?? '';
         $user->sex = $postData['sex'] ?? '';
@@ -347,9 +348,18 @@ class UserController extends AbstractController
      */
     public function destroy(int $id)
     {
-        if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-        if (!User::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        if ($id == 0) {
+            $idArr = $this->request->input('id') ?? [];
+            if (empty($idArr) || !is_array($idArr)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
+            if (!User::whereIn('id', $idArr)->delete()) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
 
+            //清理聊天好友关系
+            FriendRelation::query()->whereIn('uid', $idArr)->orWhereIn('friend_id', $idArr)->delete();
+        }else {
+            if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+            if (!User::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+            FriendRelation::query()->where('uid', $id)->orWhere('friend_id', $id)->delete();
+        }
         return $this->successByMessage('删除用户成功');
     }
 

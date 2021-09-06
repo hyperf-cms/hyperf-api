@@ -30,7 +30,7 @@ $handlers = [
     [
         'class' => App\Foundation\Handler\LogFileHandler::class,
         'constructor' => [
-            'filename' => BASE_PATH . '/runtime/logs/hyperf/hyperf-debug.log',
+            'filename' => BASE_PATH . '/runtime/logs/hyperf_debug/hyperf-debug.log',
             'level' => Monolog\Logger::DEBUG,
         ],
         'formatter' => [
@@ -46,7 +46,7 @@ $handlers = [
     [
         'class' => App\Foundation\Handler\LogFileHandler::class,
         'constructor' => [
-            'filename' => BASE_PATH . '/runtime/logs/hyperf/hyperf-error.log',
+            'filename' => BASE_PATH . '/runtime/logs/hyperf_error/hyperf-error.log',
             'level' => Monolog\Logger::ERROR,
         ],
         'formatter' => [
@@ -108,6 +108,42 @@ $logConfig = [
             'constructor' => [
                 'filename' => BASE_PATH . '/runtime/logs/response_log/response.log',
                 'level' => Monolog\Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'job_log' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler ::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/job_log/job.log',
+                'level' => Monolog\Logger::ERROR,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+
+    'crontab_log' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler ::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/crontab_log/crontab_log',
+                'level' => Monolog\Logger::ERROR,
             ],
         ],
         'formatter' => [

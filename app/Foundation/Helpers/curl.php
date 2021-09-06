@@ -1,7 +1,7 @@
 <?PHP
 if (!function_exists('curl_get')) {
     // 传递数据以易于阅读的样式格式化后输出
-    function curl_get($apiUrl = '', $sendData = [], $header = [])
+    function curl_get($apiUrl = '', $sendData = [], $header = [], $cookie = '')
     {
         if (!empty($sendData)) $apiUrl .= '?' . http_build_query($sendData);
 
@@ -21,10 +21,12 @@ if (!function_exists('curl_get')) {
             curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
             curl_setopt($curl, CURLOPT_HEADER, 1);
         }
+        if (!empty($cookie))  curl_setopt($curl, CURLOPT_COOKIE, $cookie);
         $response = curl_exec($curl);
         if (empty($response)) Throw new Exception(curl_error($curl), 400);
         curl_close($curl);
-        return $response;
+
+        return json_decode($response, true);
     }
 }
 

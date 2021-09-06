@@ -52,7 +52,6 @@ class Log
     public static function responseLog()
     {
         return self::channel('response_log', config('app_env', 'app'));
-
     }
 
     /**
@@ -62,6 +61,23 @@ class Log
     public static function sqlLog()
     {
         return self::channel('sql_log', config('app_env', 'app'));
+    }
 
+    /**
+     * 队列错误日志
+     * @return \Psr\Log\LoggerInterface
+     */
+    public static function jobLog()
+    {
+        return self::channel('job_log', config('app_env', 'app'));
+    }
+
+    /**
+     * 定时任务错误日志
+     * @return \Psr\Log\LoggerInterface
+     */
+    public static function crontabLog()
+    {
+        return self::channel('crontab_log', config('app_env', 'app'));
     }
 }

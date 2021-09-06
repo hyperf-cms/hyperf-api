@@ -94,7 +94,7 @@ class LoginService extends BaseService
         $user->username = $postData['username'];
         $user->password = md5($postData['password']);
         $user->status = User::STATUS_ON;
-        $user->avatar = 'http://landlord-res.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
+        $user->avatar = 'https://shmily-album.oss-cn-shenzhen.aliyuncs.com/admin_face/face' . rand(1,10) .'.png';
         $user->last_login = time();
         $user->last_ip = getClientIp($this->request);
         $user->creater = '无';

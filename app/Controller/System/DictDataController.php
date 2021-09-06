@@ -8,6 +8,7 @@ use App\Constants\StatusCode;
 use App\Controller\AbstractController;
 use App\Foundation\Annotation\Explanation;
 use App\Model\System\DictData;
+use App\Model\System\DictType;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -57,7 +58,6 @@ class DictDataController extends AbstractController
             'total' => $total,
         ]);
     }
-
     /**
      * 根据字典类型获取字典数据
      * @param string $dictType
@@ -207,10 +207,16 @@ class DictDataController extends AbstractController
      */
     public function destroy(int $id)
     {
-        if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-        if (!DictData::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        if ($id == 0) {
+            $idArr = $this->request->input('id') ?? [];
+            if (empty($idArr) || !is_array($idArr)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
+            if (!DictData::whereIn('dict_code', $idArr)->delete()) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }else {
+            if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+            if (!DictData::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+        }
 
-        return $this->successByMessage('删除字典数据成功');
+        return $this->successByMessage('删除定时任务成功');
     }
 
 }
