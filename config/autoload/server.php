@@ -55,6 +55,7 @@ return [
         'task_enable_coroutine' => false,
         'max_wait_time' => env('MAX_WAIT_TIME', 600),
         'document_root' => BASE_PATH.'/'.env('UPLOAD_PATH','uploads'),
+        'enable_static_handler' => env('ENABLE_STATIC',true),
     ],
     'callbacks' => [
         SwooleEvent::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
