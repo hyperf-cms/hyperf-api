@@ -56,13 +56,13 @@ class AppExceptionHandler extends ExceptionHandler
         if ($throwable instanceof TokenValidException) {
             // 阻止异常冒泡
             $this->stopPropagation();
-            return $this->error($throwable->getCode(), $throwable->getMessage());
+            return $this->error($throwable->getCode(), $throwable->getMessage(), false);
         }
 
         if ($throwable instanceof JWTException) {
             // 阻止异常冒泡
             $this->stopPropagation();
-            return $this->error($throwable->getCode(), $throwable->getMessage());
+            return $this->error($throwable->getCode(), $throwable->getMessage(), false);
         }
 
         // 判断是否由业务异常类抛出的异常

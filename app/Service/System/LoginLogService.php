@@ -36,7 +36,7 @@ class LoginLogService extends BaseService
         $loginTime = date('Y-m-d H:i:s');
 
         return [
-           'username' => $requireParams['username'],
+           'username' => $requireParams['username'] ?? '',
            'login_ip' => $loginIp,
            'login_address' => $loginAddress,
            'login_browser' => $browser,

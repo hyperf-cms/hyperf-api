@@ -44,6 +44,7 @@ class UploadController extends AbstractController
         ];
         $this->verifyParams($params, $rules, $message);
 
+        base64DecImg($params['file']);
         $uploadResult = UploadService::getInstance()->uploadSinglePicByBase64($params['file'], $params['savePath']);
         return $this->success($uploadResult);
     }

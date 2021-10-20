@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Foundation\Facades\Log;
 use App\Foundation\Utils\Mail;
+use App\Job\EmailNotificationJob;
 use App\Model\Laboratory\Bilibili\UpUser;
 use App\Model\Laboratory\Bilibili\UpUserReport;
 use App\Service\Laboratory\Bilibili\VideoService;
@@ -31,8 +32,11 @@ class IndexController extends AbstractController
      */
     public function index()
    {
-       $bvid = $this->request->input('bvid');
-       return curl_get('https://api.bilibili.com/x/web-interface/view?bvid=' . $bvid);
+       //分发队列
+       $this->queue->push(new EmailNotificationJob([
+           'title' => $params['title'],
+           'content' => $params['content'],
+       ]));
 
 //        $url = 'https://m.bilibili.com/video/BV1Q624y1q7sj';
 

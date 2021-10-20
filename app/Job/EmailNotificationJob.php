@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Job;
 
 use App\Foundation\Facades\Log;
+use App\Foundation\Facades\MessageParser;
 use App\Foundation\Utils\Mail;
 use App\Model\Auth\User;
 use Hyperf\AsyncQueue\Job;
@@ -48,7 +49,7 @@ class EmailNotificationJob extends Job
                     ->send();
             }
         } catch (\Exception $e) {
-            Log::jobLog()->error($e->getMessage());
+            Log::jobLog()->error(MessageParser::expMessageParser($e));
         }
     }
 

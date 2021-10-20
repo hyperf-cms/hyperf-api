@@ -59,9 +59,10 @@ trait ApiTrait
      * 错误响应
      * @param int $statusCode
      * @param string|null $message
+     * @param bool $isRecordLog
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function error(int $statusCode = StatusCode::ERR_EXCEPTION, string $message = null)
+    protected function error(int $statusCode = StatusCode::ERR_EXCEPTION, string $message = null, bool $isRecordLog = true)
     {
         $message = $message ?? StatusCode::ERR_EXCEPTION;
 
@@ -73,8 +74,7 @@ trait ApiTrait
             $loginLogData['response_code'] = $statusCode;
             $loginLogData['response_result'] = $message;
             LoginLog::add($loginLogData);
-            return $this->response->json($this->formatResponse([], $message, $statusCode));
-        }else {
+        }else if ($isRecordLog) {
             //记录操作异常日志
             $logData = OperateLogService::getInstance()->collectLogInfo();
             if(!empty($logData)) {
@@ -82,8 +82,8 @@ trait ApiTrait
                 $logData['response_code'] = $statusCode;
                 if (!empty($logData['action'])) OperateLog::add($logData);
             }
-            return $this->response->json($this->formatResponse([], $message, $statusCode));
         }
+        return $this->response->json($this->formatResponse([], $message, $statusCode));
     }
 
     /**
