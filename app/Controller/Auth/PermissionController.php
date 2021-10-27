@@ -227,7 +227,7 @@ class PermissionController extends AbstractController
         ];
 
         $this->verifyParams($params, $rules, $message);
-        $permission = Permission::findById($id);
+        $permission = Permission::find($id);
         $permission->parent_id = $params['parent_id'];
         $permission->type = $params['type'];
         $permission->name = $params['name'];
