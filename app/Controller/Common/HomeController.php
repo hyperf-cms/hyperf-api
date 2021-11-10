@@ -73,4 +73,25 @@ class HomeController extends AbstractController
             'total' => $total
         ];
     }
+
+    /**
+     * 获取地图数据
+     * @RequestMapping(path="/world_map_data", methods="get,post")
+     * @Middlewares({
+     *     @Middleware(RequestMiddleware::class),
+     * })
+     */
+    public function getWorldMapData()
+    {
+        return $this->success($this->_getWorldMapData(), '获取地图数据成功');
+    }
+
+    /**
+     * 获取地图数据
+     * @return array
+     */
+    private function _getWorldMapData() : array
+    {
+        return config('worldMap.data');
+    }
 }

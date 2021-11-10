@@ -374,9 +374,9 @@ class UserController extends AbstractController
      */
     public function resetPassword()
     {
-        $postData = $this->request->all()['postData'] ?? [];
+        $postData = $this->request->all() ?? [];
         $params = [
-            'id' => $postData['uid'],
+            'id' => $postData['id'],
             'old_password' => $postData['old_password'] ?? '',
             'new_password' => $postData['new_password'] ?? '',
             'confirm_password' => $postData['confirm_password'] ?? '',
@@ -447,5 +447,4 @@ class UserController extends AbstractController
 
         return $this->success([], '更改用户状态成功');
     }
-
 }
