@@ -70,7 +70,7 @@ $logConfig = [
         'handler' => [
             'class' => Monolog\Handler\RotatingFileHandler ::class,
             'constructor' => [
-                'filename' => BASE_PATH . '/runtime/logs/code_debug.log',
+                'filename' => BASE_PATH . '/runtime/logs/code_debug/code_debug.log',
                 'level' => Monolog\Logger::DEBUG,
             ],
         ],

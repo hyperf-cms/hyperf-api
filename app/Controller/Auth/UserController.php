@@ -374,9 +374,9 @@ class UserController extends AbstractController
      */
     public function resetPassword()
     {
-        $postData = $this->request->all() ?? [];
+        $postData = $this->request->all()['postData'] ?? [];
         $params = [
-            'id' => $postData['id'],
+            'id' => $postData['uid'],
             'old_password' => $postData['old_password'] ?? '',
             'new_password' => $postData['new_password'] ?? '',
             'confirm_password' => $postData['confirm_password'] ?? '',
