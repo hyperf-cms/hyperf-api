@@ -102,7 +102,7 @@ if (!function_exists('getClientIp')) {
      * @return mixed|string
      */
     function getClientIp(\Hyperf\HttpServer\Contract\RequestInterface $request){
-      return $request->getHeaders()['x-real-ip'][0];
+      return $request->getHeaders()['x-real-ip'][0] ?? '127.0.0.1';
     }
 }
 
