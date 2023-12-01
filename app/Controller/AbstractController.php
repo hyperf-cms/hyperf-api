@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -22,22 +22,4 @@ use Psr\Container\ContainerInterface;
 abstract class AbstractController
 {
     use ApiTrait, ValidationTrait, QueryTrait;
-
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $request;
-
-    /**
-     * @Inject
-     * @var ResponseInterface
-     */
-    protected $response;
 }

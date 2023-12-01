@@ -37,18 +37,6 @@ class AppExceptionHandler extends ExceptionHandler
 {
     use ApiTrait;
 
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $request;
-
-    /**
-     * @Inject
-     * @var \Hyperf\HttpServer\Contract\ResponseInterface
-     */
-    protected $response;
-
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         $message = '服务器错误 ' . $throwable->getMessage() . ':: FILE:' . $throwable->getFile() . ':: LINE: ' . $throwable->getLine();
@@ -72,7 +60,6 @@ class AppExceptionHandler extends ExceptionHandler
             return $this->error($throwable->getCode(), $throwable->getMessage());
         }
         return $this->error(500, $message);
-
     }
 
     public function isValid(Throwable $throwable): bool

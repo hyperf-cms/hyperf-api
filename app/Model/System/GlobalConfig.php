@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Model\System;
 
 use App\Model\Model;
-
 /**
  * 参数配置
  * Class GlobalConfig
@@ -20,29 +18,25 @@ class GlobalConfig extends Model
      *
      * @var string
      */
-    protected $table = 'global_config';
-
+    protected ?string $table = 'global_config';
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
-
+    protected ?string $connection = 'default';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
-
+    protected array $casts = [];
     /**
      * 定义参数类型枚举
      */
@@ -50,7 +44,6 @@ class GlobalConfig extends Model
     const TYPE_BY_JSON = 'json';
     const TYPE_BY_HTML = 'html';
     const TYPE_BY_BOOLEAN = 'boolean';
-
     /**
      * 根据KeyName获取参数信息
      * @param string $keyName
@@ -58,8 +51,9 @@ class GlobalConfig extends Model
      */
     public static function getOneByKeyName(string $keyName)
     {
-        if (empty($keyName)) return [];
-
+        if (empty($keyName)) {
+            return [];
+        }
         return static::query()->where('key_name', $keyName)->first();
     }
 }

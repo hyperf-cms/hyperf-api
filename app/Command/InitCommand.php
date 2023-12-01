@@ -18,18 +18,13 @@ use Donjan\Permission\Models\Role;
  */
 class InitCommand extends HyperfCommand
 {
-    /**
-     * 执行的命令行
-     *
-     * @var string
-     */
-    protected $name = 'init';
+    protected ?string $name = 'init';
 
     public function configure()
     {
         parent::configure();
-        $this->setHelp('HyperfCms 项目初始化');
-        $this->setDescription('HyperfCms 项目初始化');
+        $this->setHelp('项目初始化');
+        $this->setDescription('项目初始化');
     }
 
     /**

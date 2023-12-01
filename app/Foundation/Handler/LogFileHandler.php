@@ -6,6 +6,7 @@ namespace App\Foundation\Handler;
 
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
 
 /**
  * LogFileHandler
@@ -28,10 +29,10 @@ class LogFileHandler extends RotatingFileHandler
 
     /**
      * 改写父类方法，增加判断日志输出，框架日志
-     * @param array $record
+     * @param array|LogRecord $record
      * @return bool
      */
-    public function handle(array $record): bool
+    public function handle(array|\Monolog\LogRecord $record): bool
     {
         if (!$this->isHandling($record)) {
             return false;
@@ -57,10 +58,10 @@ class LogFileHandler extends RotatingFileHandler
     /**
      * 重写该方法，作用改变日志的存储文件的方式。
      * 将debug,error，单独存储，其它的按着原来规则
-     * @param array $record
+     * @param array|LogRecord $record
      * @return bool
      */
-    public function isHandling(array $record) : bool
+    public function isHandling(array|LogRecord $record) : bool
     {
         switch ($record['level']) {
             case Logger::DEBUG:

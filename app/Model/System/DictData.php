@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Model\System;
 
 use App\Model\Model;
-
 class DictData extends Model
 {
     /**
@@ -13,28 +11,24 @@ class DictData extends Model
      *
      * @var string
      */
-    protected $table = 'dict_data';
-
+    protected ?string $table = 'dict_data';
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
-
+    protected ?string $connection = 'default';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
-
-    protected $primaryKey = 'dict_code';
+    protected array $casts = [];
+    protected string $primaryKey = 'dict_code';
 }

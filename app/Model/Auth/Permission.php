@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace App\Model\Auth;
@@ -43,7 +44,7 @@ class Permission extends DonjanPermission
 
     /**
      * 获取用户对应的菜单树状列表
-     * @param Object [用户模型对象] $user
+     * @param Object $user [用户模型对象] $user
      * @return array
      */
     public static function getUserMenuList(Object $user) : array
@@ -89,7 +90,7 @@ class Permission extends DonjanPermission
 
     /**
      * 获取用户拥有所有权限
-     * @param object [用户模型对象] $user
+     * @param object $user [用户模型对象] $user
      * @return array
      */
     public static function getUserPermissions(object $user) : array

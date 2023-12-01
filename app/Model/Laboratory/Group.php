@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Model\Laboratory;
 
 use App\Model\Model;
 use Hyperf\Database\Model\SoftDeletes;
-
 class Group extends Model
 {
     /**
@@ -14,44 +12,37 @@ class Group extends Model
      *
      * @var string
      */
-    protected $table = 'ct_group';
-
+    protected ?string $table = 'ct_group';
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
-
+    protected ?string $connection = 'default';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
-
+    protected array $casts = [];
     /**
      * 声明主键
      * @var
      */
-    public $primaryKey = 'group_id';
-
-    protected $keyType = 'string';
-
+    public string $primaryKey = 'group_id';
+    protected string $keyType = 'string';
     /**
      * 声明是否群组标识
      * 1：是 0：否
      */
     const IS_GROUP_TYPE = 1;
     const IS_NOT_GROUP_TYPE = 0;
-
     /**
      * 声明群聊默认头像
      */

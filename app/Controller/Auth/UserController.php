@@ -13,42 +13,35 @@ use App\Service\Auth\UserService;
 use App\Model\Auth\User;
 use Donjan\Permission\Models\Role;
 use Hyperf\DbConnection\Db;
+use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use App\Middleware\RequestMiddleware;
-use App\Middleware\PermissionMiddleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use League\Flysystem\Filesystem;
 
 /**
  * 用户控制器
  * Class UserController
- * @Controller(prefix="setting/user_module/user")
  */
+#[Controller(prefix: 'setting/user_module/user')]
 class UserController extends AbstractController
 {
-    /**
-     * @Inject()
-     * @var User
-     */
-    private $user;
+    #[Inject]
+    private User $user;
 
-    /**
-     * @Inject()
-     * @var Filesystem
-     */
-    private $filesystem;
+    #[Inject]
+    private Filesystem $filesystem;
 
     /**
      * 获取用户数据列表
-     * @RequestMapping(path="list", methods="get")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
     {
         $userQuery = $this->user->newQuery();
@@ -80,13 +73,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Explanation(content="添加用户操作")
-     * @RequestMapping(path="store", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 添加
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '添加用户操作')]
+    #[RequestMapping(path: 'store', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
         $postData = $this->request->all();
@@ -151,11 +146,12 @@ class UserController extends AbstractController
 
     /**
      * 获取单个用户的数据
-     * @param int $id
-     * @RequestMapping(path="edit/{id}", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'edit/{id}', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
         $userInfo = User::getOneByUid($id);
@@ -168,13 +164,14 @@ class UserController extends AbstractController
         ]);
     }
 
-
     /**
      * 获取当前登陆用户的数据
-     * @RequestMapping(path="profile", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'profile', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function profile()
     {
         $userInfo = UserService::getInstance()->getUserInfoByToken();
@@ -192,11 +189,12 @@ class UserController extends AbstractController
 
     /**
      * 获取当前登陆用户的数据
-     * @param int $id
-     * @RequestMapping(path="profile/{id}", methods="put")
-     * @Middleware(RequestMiddleware::class)
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'profile/{id}', methods: array('put'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function profileEdit($id)
     {
         if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
@@ -215,10 +213,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Explanation(content="上传用户头像")
-     * @RequestMapping(path="upload_avatar", methods="post")
-     * @Middleware(RequestMiddleware::class)
+     * 上传用户头像
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\Flysystem\FilesystemException
      */
+    #[Explanation(content: '上传用户头像')]
+    #[RequestMapping(path: 'upload_avatar', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function uploadAvatar()
     {
         $params = [
@@ -268,17 +271,16 @@ class UserController extends AbstractController
         ], '上传图片成功');
     }
 
-
     /**
-     * @Explanation(content="修改用户资料")
-     * @param int $id
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
-     * @RequestMapping(path="update/{id}", methods="put")
+     * 修改
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '修改用户资料')]
+    #[RequestMapping(path: 'update/{id}', methods: array('put'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
         if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
@@ -337,15 +339,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Explanation(content="删除用户")
-     * @param int $id
-     * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 删除用户
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '删除用户')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('delete'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)
     {
         if ($id == 0) {
@@ -364,14 +366,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Explanation(content="修改用户密码")
-     * @RequestMapping(path="reset_password", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 修改用户密码
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '修改用户密码')]
+    #[RequestMapping(path: 'reset_password', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function resetPassword()
     {
         $postData = $this->request->all() ?? [];
@@ -409,15 +412,17 @@ class UserController extends AbstractController
         return $this->success([], '修改密码成功');
     }
 
+
     /**
-     * @Explanation(content="修改用户状态")
-     * @RequestMapping(path="change_status", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 修改用户状态
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '修改用户状态')]
+    #[RequestMapping(path: 'change_status', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function changeStatus()
     {
         $postData = $this->request->all() ?? [];

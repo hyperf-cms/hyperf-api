@@ -7,8 +7,9 @@ use App\Service\BaseService;
 use App\Model\Auth\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Phper666\JWTAuth\JWT;
+use Phper666\JWTAuth\Util\JWTUtil;
 
 /**
  * 用户服务基础类
@@ -21,11 +22,8 @@ class UserService extends BaseService
 {
     use Singleton;
 
-    /**
-     * @Inject()
-     * @var JWT
-     */
-    private $jwt;
+    #[Inject]
+    private JWT $jwt;
 
     /**
      * 根据Token获取用户的信息
@@ -33,11 +31,8 @@ class UserService extends BaseService
      */
     public function getUserInfoByToken() : object
     {
-        //获取Token解析的数据
-        $parserData = $this->jwt->getParserData();
-        $userId = $parserData['uid'];
+        $parserData = JWTUtil::getParserData($this->request);
 
-        $userInfo = User::getOneByUid($userId);
-        return $userInfo;
+        return User::getOneByUid($parserData['uid']);
     }
 }

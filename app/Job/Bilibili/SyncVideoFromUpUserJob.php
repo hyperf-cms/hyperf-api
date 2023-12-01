@@ -26,7 +26,7 @@ class SyncVideoFromUpUserJob extends Job
      * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
      * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {

@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Model\Laboratory\Bilibili;
 
 use App\Model\Model;
-
 /**
  * 视频信息表
  * Class Video
@@ -20,29 +18,25 @@ class Video extends Model
      *
      * @var string
      */
-    protected $table = 'bili_video';
-
+    protected ?string $table = 'bili_video';
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
-
+    protected ?string $connection = 'default';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
-
+    protected array $casts = [];
     /**
      * 定时任务开关状态
      */

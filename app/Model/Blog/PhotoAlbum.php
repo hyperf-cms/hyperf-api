@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Model\Blog;
 
 use App\Model\Model;
-
 /**
  * 相册模型类
  * Class PhotoAlbum
@@ -20,26 +18,23 @@ class PhotoAlbum extends Model
      *
      * @var string
      */
-    protected $table = 'photo_album';
-
+    protected ?string $table = 'photo_album';
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
-
+    protected ?string $connection = 'default';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
-
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
+    protected array $casts = [];
 }

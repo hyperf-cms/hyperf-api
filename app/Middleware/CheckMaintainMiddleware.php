@@ -9,7 +9,7 @@ use App\Exception\Handler\BusinessException;
 use App\Model\System\GlobalConfig;
 use App\Service\Auth\UserService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -26,7 +26,7 @@ class CheckMaintainMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $writeRoute = ['/common/sys_config', '/common/auth/verification_code', '/auth/login', '/auth/register', '/test', ];
+        $writeRoute = ['/common/sys_config', '/common/auth/verification_code', '/auth/login', '/auth/register', '/test'];
         if (in_array($request->getUri()->getPath(), $writeRoute)) return $handler->handle($request);
 
         //获取当前用户

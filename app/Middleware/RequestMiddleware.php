@@ -9,7 +9,7 @@ use App\Exception\Handler\BusinessException;
 use App\Foundation\Facades\Log;
 use App\Service\Auth\UserService;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Phper666\JWTAuth\Exception\TokenValidException;
 use Phper666\JWTAuth\Exception\JWTException;
 use Phper666\JWTAuth\JWT;
@@ -22,21 +22,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RequestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
+
+    protected RequestInterface $request;
+
+    protected JWT $jwt;
 
     /**
-     * @var RequestInterface
+     * @param ContainerInterface $container
+     * @param RequestInterface $request
+     * @param JWT $jwt
      */
-    protected $request;
-
-    /**
-     * @var JWT
-     */
-    protected $jwt;
-
     public function __construct(ContainerInterface $container, RequestInterface $request, JWT $jwt)
     {
         $this->container = $container;
@@ -63,7 +59,7 @@ class RequestMiddleware implements MiddlewareInterface
             $token = $request->getHeaderLine('Authorization') ?? '';
             if (strlen($token) > 0) {
                 $token = JWTUtil::handleToken($token);
-                if ($token !== false && $this->jwt->checkToken($token)) $isValidToken = true;
+                if ($token !== false && $this->jwt->verifyToken($token)) $isValidToken = true;
 
                 //如果校验成功
                 if ($isValidToken) {
@@ -78,12 +74,10 @@ class RequestMiddleware implements MiddlewareInterface
             //我们在这里需要做的是刷新该用户的 token 并将它添加到响应头中
             try {
                 // 刷新用户的 token
-                $token = $request->getHeaderLine('Authorization') ?? '';
-                $token = JWTUtil::handleToken($token);
-                $tokenData = $this->jwt->getParserData($token);
-
+                $tokenData = JWTUtil::getParserData($this->request);
+                $tokenData = objToArray($tokenData);
                 //判断token是否在缓存时间内，如果是刷新token
-                if (time()-$tokenData['exp'] < intval(config('jwt.ttl_cache'))) {
+                if (time() - strtotime($tokenData['exp']['date']) < intval(env('JWT_TTL_CACHE', 86400))) {
                     $token = $this->jwt->refreshToken();
                     //从协程获取全局的Response 对象， 并将刷新TOKEN写进去头部返回给前端供前端刷新token
                     $response = conGet(ResponseInterface::class);

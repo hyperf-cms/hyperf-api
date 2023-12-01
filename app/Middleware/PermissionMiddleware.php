@@ -11,7 +11,7 @@ use App\Model\Auth\Role;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Phper666\JWTAuth\JWT;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

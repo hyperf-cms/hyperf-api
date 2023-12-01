@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Controller\Common;
 
 use App\Model\System\Notice;
@@ -12,31 +11,21 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-
 /**
  * 仪表盘数据
- * @Controller
  */
+#[Controller]
 class HomeController extends AbstractController
 {
-    /**
-     * 获取首页数据
-     * @RequestMapping(path="/home", methods="get,post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     * })
-     */
+    
+    #[RequestMapping(path: '/home')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function home()
     {
         $noticeList = $this->getNoticeInfo();
         $operateLogList = $this->getOperateLog();
-
-        return $this->success([
-            'notice_list' => $noticeList,
-            'operate_log' => $operateLogList
-        ], '获取首页数据成功');
+        return $this->success(['notice_list' => $noticeList, 'operate_log' => $operateLogList], '获取首页数据成功');
     }
-
     /**
      * 获取通知信息
      * @return array
@@ -47,13 +36,10 @@ class HomeController extends AbstractController
         $noticeQuery->where('public_time', '<=', time());
         $noticeQuery->where('status', Notice::ON_STATUS);
         $noticeQuery->orderBy('public_time', 'desc');
-
         $noticeQuery->select('title', 'content', 'public_time');
         $list = $noticeQuery->get()->toArray();
-
         return $list;
     }
-
     /**
      * 获取操作日志列表
      * @return array
@@ -65,27 +51,16 @@ class HomeController extends AbstractController
         $operateLog->where('uid', conGet('user_info')['id']);
         $total = $operateLog->count();
         $operateLog = $this->pagingCondition($operateLog, $this->request->all());
-
         $list = $operateLog->get()->toArray();
-
-        return [
-            'list' => $list,
-            'total' => $total
-        ];
+        return ['list' => $list, 'total' => $total];
     }
-
-    /**
-     * 获取地图数据
-     * @RequestMapping(path="/world_map_data", methods="get,post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     * })
-     */
+    
+    #[RequestMapping(path: '/world_map_data')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function getWorldMapData()
     {
         return $this->success($this->_getWorldMapData(), '获取地图数据成功');
     }
-
     /**
      * 获取地图数据
      * @return array

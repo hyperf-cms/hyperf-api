@@ -1,5 +1,6 @@
 <?php
 
+
 declare(strict_types=1);
 
 namespace App\Model\Auth;
@@ -34,5 +35,4 @@ class Role extends DonjanRole
 
         return $query->first();
     }
-
 }

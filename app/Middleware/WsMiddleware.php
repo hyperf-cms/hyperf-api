@@ -6,7 +6,7 @@ namespace App\Middleware;
 
 use App\Model\Auth\User;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\WebSocketServer\Security;
 use Phper666\JWTAuth\JWT;
 use Psr\Container\ContainerInterface;

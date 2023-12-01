@@ -8,10 +8,12 @@ use App\Service\System\LoginLogService;
 use App\Model\Auth\Permission;
 use App\Model\Auth\User;
 use App\Model\System\LoginLog;
-use Hyperf\DbConnection\Db;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Utils\ApplicationContext;
 use Phper666\JWTAuth\JWT;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * 登陆服务基础类
@@ -24,17 +26,17 @@ class LoginService extends BaseService
 {
     use Singleton;
 
-    /**
-     * @Inject()
-     * @var JWT
-     */
-    private $jwt;
+    #[Inject]
+    private JWT $jwt;
 
     /**
      * 处理登陆逻辑
      * @param array $params
      * @return array
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws \RedisException
      */
     public function login(array $params) : array
     {
@@ -57,7 +59,7 @@ class LoginService extends BaseService
             'uid' => $user->id, //如果使用单点登录，必须存在配置文件中的sso_key的值，一般设置为用户的id
             'username' => $user->username,
         ];
-        $token = $this->jwt->getToken($userData);
+        $token = $this->jwt->getToken('default', $userData)->toString();
 
         //更新用户信息
         $user->last_login = time();
@@ -77,7 +79,10 @@ class LoginService extends BaseService
     /**
      * 处理注册逻辑
      * @param array $params
-     * @return array
+     * @return bool
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \RedisException
      */
     public function register(array $params) : bool
     {
@@ -176,11 +181,10 @@ class LoginService extends BaseService
                         'icon' => $value['icon'],
                         'title' => $value['display_name'],
                     ],
-                    'children' => []
                 ];
                 $routers[$value['id']]['children'] = $this->dealRouteChildren($value['children']);
             }else {
-                array_push($routers['default']['children'], [
+                $routers['default']['children'][] = [
                     'name' => $value['name'],
                     'path' => $value['url'],
                     'hidden' => $value['hidden'],
@@ -190,7 +194,7 @@ class LoginService extends BaseService
                         'icon' => $value['icon'],
                         'title' => $value['display_name'],
                     ],
-                ]);
+                ];
             }
         }
         return array_values($routers);
@@ -229,17 +233,16 @@ class LoginService extends BaseService
 
     /**
      * 处理TOKEN数据
-     * @param $token
+     * @param string $token
      * @return array
      */
     protected function respondWithToken(string $token) : array
     {
-        $data = [
+        return [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' =>  $this->jwt->getTTL(),
+            'expires_in' =>  $this->jwt->getTTL($token),
         ];
-        return $data;
     }
 
     /**
@@ -276,6 +279,4 @@ class LoginService extends BaseService
             'permission_info' => $permission,
         ];
     }
-
-
 }

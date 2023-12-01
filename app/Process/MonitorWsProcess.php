@@ -13,17 +13,17 @@ use Hyperf\WebSocketServer\Sender;
 /**
  * 监听Ws的链接情况
  * Class MonitorWsProcess
- * @Process(name="monitor_ws")
  * @package App\Process
  * @Author YiYuan-Lin
  * @Date: 2021/3/13
  */
+#[Process(name: 'monitor_ws')]
 class MonitorWsProcess extends AbstractProcess
 {
     /**
-     * @Inject()
      * @var Sender
      */
+    #[Inject]
     private $sender;
 
     /**

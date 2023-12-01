@@ -6,17 +6,13 @@ use App\Foundation\Traits\Singleton;
 use App\Service\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use League\Flysystem\Filesystem;
-use phpDocumentor\Reflection\Types\Resource_;
 
 class UploadService extends BaseService
 {
     use Singleton;
 
-    /**
-     * @Inject()
-     * @var Filesystem
-     */
-    private $filesystem;
+    #[Inject]
+    private Filesystem $filesystem;
 
     /**
      * 上传图片

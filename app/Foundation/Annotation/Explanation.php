@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Foundation\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 
@@ -11,11 +12,13 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  * @Annotation
  * @Target({"METHOD"})
  */
+
+#[Attribute(Attribute::TARGET_METHOD)]
 class Explanation extends AbstractAnnotation
 {
     /**
      * @var string
      */
-    public $content = '';
+    public string $content = '';
 }
 

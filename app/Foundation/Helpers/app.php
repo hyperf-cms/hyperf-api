@@ -28,7 +28,7 @@ if(! function_exists('conSet')) {
      * @return mixed
      */
     function conSet(string $id, $value) {
-        return \Hyperf\Utils\Context::set($id, $value);
+        return \Hyperf\Context\Context::set($id, $value);
     }
 }
 
@@ -40,6 +40,6 @@ if(! function_exists('conGet')) {
      * @return mixed
      */
     function conGet(string $id, $default = null) {
-        return \Hyperf\Utils\Context::get($id, $default);
+        return \Hyperf\Context\Context::get($id, $default);
     }
 }

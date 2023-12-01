@@ -14,32 +14,27 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use App\Middleware\RequestMiddleware;
-use App\Middleware\PermissionMiddleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
  * 权限控制器
  * Class PermissionController
- * @Controller(prefix="setting/user_module/permission")
  */
+#[Controller(prefix: 'setting/user_module/permission')]
 class PermissionController extends AbstractController
 {
-    /**
-     * @Inject()
-     * @var Permission
-     */
-    private $permission;
+    #[Inject]
+    private Permission $permission;
 
     /**
      * 获取权限数据列表
-     * @RequestMapping(path="list", methods="get")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'list', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
     {
         $permissionQuery = $this->permission->newQuery();
@@ -66,10 +61,13 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 根据用户获取权限树状列表（用于分配用户权限）
-     * @RequestMapping(path="tree_by_user", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * 根据用户获取权限树状列表
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'tree_by_user', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function treeByUser()
     {
         $userId = $this->request->all()['user_id'] ?? '';
@@ -92,10 +90,13 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * 根据角色获取权限树状列表（用于分配角色权限）
-     * @RequestMapping(path="tree_by_role", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * 根据角色获取权限树状列表
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'tree_by_role', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function treeByRole()
     {
         $roleId = $this->request->all()['role_id'] ?? '';
@@ -118,13 +119,15 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * @Explanation(content="添加权限操作")
-     * @RequestMapping(path="store", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 添加权限操作
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '添加权限操作')]
+    #[RequestMapping(path: 'store', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
         $postData = $this->request->all();
@@ -174,14 +177,14 @@ class PermissionController extends AbstractController
 
     /**
      * 获取单个权限的数据
-     * @param int $id
-     * @RequestMapping(path="edit/{id}", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'edit/{id}', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
-
         $permissionInfo = Permission::findById($id);
         if (empty($permissionInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '获取权限信息失败');
 
@@ -191,15 +194,15 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * @Explanation(content="修改权限操作")
-     * @param int $id
-     * @RequestMapping(path="update/{id}", methods="put")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 修改权限操作
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '修改权限操作')]
+    #[RequestMapping(path: 'update/{id}', methods: array('put'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
         $postData = $this->request->all();
@@ -248,15 +251,15 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * @Explanation(content="删除权限操作")
-     * @param int $id
-     * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 删除权限操作
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '删除权限操作')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('delete'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)
     {
         $params = [
@@ -273,20 +276,21 @@ class PermissionController extends AbstractController
         $this->verifyParams($params, $rules, $message);
 
         if (!Permission::query()->where('parent_id', $id)->get()->isEmpty()) $this->throwExp(StatusCode::ERR_VALIDATION, '该权限下还有子权限，删除失败');
-            
+
         if (!Permission::query()->where('id', $id)->delete()) $this->throwExp(StatusCode::ERR_VALIDATION, '删除权限信息失败');
         return $this->successByMessage('删除权限信息成功');
     }
 
     /**
-     * @Explanation(content="分配用户角色")
-     * @RequestMapping(path="accord_user_role", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 分配用户角色
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '分配用户角色')]
+    #[RequestMapping(path: 'accord_user_role', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function accordUserRole()
     {
         $postData = $this->request->all() ?? [];
@@ -317,16 +321,16 @@ class PermissionController extends AbstractController
         return $this->successByMessage( '分配用户角色成功');
     }
 
-
     /**
-     * @Explanation(content="分配角色权限")
-     * @RequestMapping(path="accord_role_permission", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 分配角色权限
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '分配角色权限')]
+    #[RequestMapping(path: 'accord_role_permission', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function accordRolePermission()
     {
         $postData = $this->request->all() ?? [];
@@ -359,14 +363,15 @@ class PermissionController extends AbstractController
     }
 
     /**
-     * @Explanation(content="分配用户权限")
-     * @RequestMapping(path="accord_user_permission", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 分配用户权限
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '分配用户权限')]
+    #[RequestMapping(path: 'accord_user_permission', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function accordUserPermission()
     {
             $postData = $this->request->all() ?? '';

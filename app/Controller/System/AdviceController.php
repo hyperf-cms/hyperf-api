@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace App\Controller\System;
 
 use App\Constants\StatusCode;
@@ -19,24 +18,23 @@ use App\Middleware\PermissionMiddleware;
 /**
  * 系统建议控制器
  * Class IndexController
- * @Controller(prefix="setting/system_module/advice")
  */
+#[Controller(prefix: 'setting/system_module/advice')]
 class AdviceController extends AbstractController
 {
-    /**
-     * @Inject()
-     * @var Advice
-     */
-    private $advice;
+    #[Inject]
+    private Advice $advice;
 
     /**
-     * 获取系统建议列表
-     * @RequestMapping(path="list", methods="get")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '建议列表')]
+    #[RequestMapping(path: 'list', methods: array('GET'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
     {
         $adviceQuery = $this->advice->newQuery();
@@ -54,41 +52,22 @@ class AdviceController extends AbstractController
 
         return $this->success([
             'list' => $data,
-            'total' => $total,
+            'total' => $total
         ]);
     }
-
-    /**
-     * @Explanation(content="添加系统建议")
-     * @RequestMapping(path="store", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
-     */
+    
+    #[RequestMapping(methods: array('POST'), path: 'store')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
         $postData = $this->request->all();
-        $params = [
-            'title' => $postData['title'] ?? '',
-            'type' => $postData['type'] ?? '',
-            'content' => $postData['content'] ?? '',
-        ];
+        $params = ['title' => $postData['title'] ?? '', 'type' => $postData['type'] ?? '', 'content' => $postData['content'] ?? ''];
         //配置验证
-        $rules = [
-            'title' => 'required',
-            'type' => 'required|integer',
-            'content' => 'required',
-        ];
+        $rules = ['title' => 'required', 'type' => 'required|integer', 'content' => 'required'];
         //错误信息
-        $message = [
-            'title.required' => '[title]缺失',
-            'type.required' => '[type]缺失',
-            'type.integer' => '[type]类型不正确',
-            'content.required' => '[content]缺失',
-        ];
+        $message = ['title.required' => '[title]缺失', 'type.required' => '[type]缺失', 'type.integer' => '[type]类型不正确', 'content.required' => '[content]缺失'];
         $this->verifyParams($params, $rules, $message);
-
         $adviceQuery = new Advice();
         $adviceQuery->title = $params['title'];
         $adviceQuery->type = $params['type'];
@@ -96,137 +75,93 @@ class AdviceController extends AbstractController
         $adviceQuery->reply = '';
         $adviceQuery->status = 0;
         $adviceQuery->user_id = conGet('user_info')['id'];
-
-        if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统建议错误');
-
+        if (!$adviceQuery->save()) {
+            $this->throwExp(StatusCode::ERR_EXCEPTION, '添加系统建议错误');
+        }
         return $this->successByMessage('添加系统建议成功');
     }
-
-    /**
-     * 获取单个系统建议信息
-     * @param int $id
-     * @RequestMapping(path="edit/{id}", methods="get")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     * })
-     * @return \Psr\Http\Message\ResponseInterface
-     */
+    
+    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
         $adviceInfo = Advice::findById($id);
-        if (empty($adviceInfo)) $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取字典信息失败');
-
-        return $this->success([
-            'list' => $adviceInfo
-        ]);
+        if (empty($adviceInfo)) {
+            $this->throwExp(StatusCode::ERR_USER_ABSENT, '获取字典信息失败');
+        }
+        return $this->success(['list' => $adviceInfo]);
     }
-
-    /**
-     * @Explanation(content="修改系统建议信息")
-     * @param int $id
-     * @RequestMapping(path="update/{id}", methods="put")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
-     * @return \Psr\Http\Message\ResponseInterface
-     */
+    
+    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
-        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        if (empty($id)) {
+            $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        }
         $postData = $this->request->all();
-        $params = [
-            'title' => $postData['title'] ?? '',
-            'type' => $postData['type'] ?? '',
-            'content' => $postData['content'] ?? '',
-        ];
+        $params = ['title' => $postData['title'] ?? '', 'type' => $postData['type'] ?? '', 'content' => $postData['content'] ?? ''];
         //配置验证
-        $rules = [
-            'title' => 'required',
-            'type' => 'required|integer',
-            'content' => 'required',
-        ];
+        $rules = ['title' => 'required', 'type' => 'required|integer', 'content' => 'required'];
         //错误信息
-        $message = [
-            'title.required' => '[title]缺失',
-            'type.required' => '[type]缺失',
-            'type.integer' => '[type]类型不正确',
-            'content.required' => '[content]缺失',
-        ];
+        $message = ['title.required' => '[title]缺失', 'type.required' => '[type]缺失', 'type.integer' => '[type]类型不正确', 'content.required' => '[content]缺失'];
         $this->verifyParams($params, $rules, $message);
-
         $adviceQuery = Advice::findById($id);
         $adviceQuery->title = $params['title'];
         $adviceQuery->type = $params['type'];
         $adviceQuery->content = $params['content'];
-
-        if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '修改系统建议错误');
-
+        if (!$adviceQuery->save()) {
+            $this->throwExp(StatusCode::ERR_EXCEPTION, '修改系统建议错误');
+        }
         return $this->successByMessage('修改系统建议成功');
     }
-
-    /**
-     * @Explanation(content="回复建议")
-     * @param int $id
-     * @RequestMapping(path="reply/{id}", methods="put")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
-     * @return \Psr\Http\Message\ResponseInterface
-     */
+    
+    #[RequestMapping(methods: array('PUT'), path: 'reply/{id}')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function reply(int $id)
     {
-        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        if (empty($id)) {
+            $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        }
         $postData = $this->request->all();
-        $params = [
-            'reply' => $postData['reply'] ?? '',
-            'status' => $postData['status'] ?? '',
-        ];
+        $params = ['reply' => $postData['reply'] ?? '', 'status' => $postData['status'] ?? ''];
         //配置验证
-        $rules = [
-            'reply' => 'required',
-            'status' => 'required|integer',
-        ];
+        $rules = ['reply' => 'required', 'status' => 'required|integer'];
         //错误信息
-        $message = [
-            'reply.required' => '[reply]缺失',
-            'status.required' => '[status]缺失',
-            'status.integer' => '[status]类型不正确',
-        ];
+        $message = ['reply.required' => '[reply]缺失', 'status.required' => '[status]缺失', 'status.integer' => '[status]类型不正确'];
         $this->verifyParams($params, $rules, $message);
-
         $adviceQuery = Advice::findById($id);
         $adviceQuery->reply = $params['reply'];
         $adviceQuery->status = $params['status'];
-
-        if (!$adviceQuery->save()) $this->throwExp(StatusCode::ERR_EXCEPTION, '回复系统建议错误');
-
+        if (!$adviceQuery->save()) {
+            $this->throwExp(StatusCode::ERR_EXCEPTION, '回复系统建议错误');
+        }
         return $this->successByMessage('回复系统建议成功');
     }
-
-    /**
-     * @Explanation(content="删除系统建议")
-     * @param int $id
-     * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
-     * @return \Psr\Http\Message\ResponseInterface
-     */
+    
+    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)
     {
         if ($id == 0) {
             $idArr = $this->request->input('id') ?? [];
-            if (empty($idArr) || !is_array($idArr)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
-            if (!Advice::whereIn('id', $idArr)->delete()) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
-        }else {
-            if (!intval($id)) $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
-            if (!Advice::destroy($id)) $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+            if (empty($idArr) || !is_array($idArr)) {
+                $this->throwExp(StatusCode::ERR_VALIDATION, '参数类型不正确');
+            }
+            if (!Advice::whereIn('id', $idArr)->delete()) {
+                $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+            }
+        } else {
+            if (!intval($id)) {
+                $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
+            }
+            if (!Advice::destroy($id)) {
+                $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
+            }
         }
-
         return $this->successByMessage('删除系统建议成功');
     }
-
 }

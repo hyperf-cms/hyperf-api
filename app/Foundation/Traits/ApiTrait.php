@@ -15,23 +15,14 @@ use Hyperf\Di\Annotation\Inject;
 
 trait ApiTrait
 {
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
+    #[Inject]
+    protected ContainerInterface $container;
 
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $request;
+    #[Inject]
+    protected RequestInterface $request;
 
-    /**
-     * @Inject
-     * @var ResponseInterface
-     */
-    protected $response;
+    #[Inject]
+    protected ResponseInterface $response;
 
     /**
      * 成功响应
@@ -39,7 +30,7 @@ trait ApiTrait
      * @param string $message
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function success($data = [], $message = '')
+    protected function success(array $data = [], string $message = '')
     {
         return $this->response->json($this->formatResponse($data, $message));
     }

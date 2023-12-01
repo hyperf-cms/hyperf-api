@@ -11,32 +11,27 @@ use App\Model\Auth\Role;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use App\Middleware\RequestMiddleware;
-use App\Middleware\PermissionMiddleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
 /**
  * 角色控制器
  * Class RoleController
- * @Controller(prefix="setting/user_module/role")
  */
+#[Controller(prefix: 'setting/user_module/role')]
 class RoleController extends AbstractController
 {
-    /**
-     * @Inject()
-     * @var Role
-     */
-    private $role;
+    #[Inject]
+    private Role $role;
 
     /**
      * 获取角色数据列表
-     * @RequestMapping(path="list", methods="get")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'list', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
     {
         $roleQuery = $this->role->newQuery();
@@ -54,10 +49,13 @@ class RoleController extends AbstractController
     }
 
     /**
-     * 获取角色数据列表
-     * @RequestMapping(path="tree", methods="get")
+     * 获取角色数据树状列表
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'tree', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function tree()
     {
         $roleQuery = $this->role->newQuery();
@@ -70,13 +68,15 @@ class RoleController extends AbstractController
     }
 
     /**
-     * @Explanation(content="添加角色操作")
-     * @RequestMapping(path="store", methods="post")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 添加角色操作
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '添加角色操作')]
+    #[RequestMapping(path: 'store', methods: array('post'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
         $postData = $this->request->all();
@@ -100,11 +100,12 @@ class RoleController extends AbstractController
 
     /**
      * 获取单个角色的数据
-     * @param int $id
-     * @RequestMapping(path="edit/{id}", methods="get")
-     * @Middleware(RequestMiddleware::class)
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[RequestMapping(path: 'edit/{id}', methods: array('get'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
         $roleInfo = Role::getOneByRoleId($id);
@@ -116,15 +117,15 @@ class RoleController extends AbstractController
     }
 
     /**
-     * @Explanation(content="修改角色操作")
-     * @param int $id
-     * @RequestMapping(path="update/{id}", methods="put")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 修改角色操作
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '修改角色操作')]
+    #[RequestMapping(path: 'update/{id}', methods: array('put'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
         $postData = $this->request->all();
@@ -151,15 +152,15 @@ class RoleController extends AbstractController
     }
 
     /**
-     * @Explanation(content="删除角色操作")
-     * @param int $id
-     * @RequestMapping(path="destroy/{id}", methods="delete")
-     * @Middlewares({
-     *     @Middleware(RequestMiddleware::class),
-     *     @Middleware(PermissionMiddleware::class)
-     * })
+     * 删除角色操作
+     * @Author YiYuan
+     * @Date 2023/12/1
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[Explanation(content: '删除角色操作')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('delete'))]
+    #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
+    #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)
     {
         $params = [
@@ -179,5 +180,4 @@ class RoleController extends AbstractController
 
         return $this->successByMessage('删除角色信息成功');
     }
-
 }

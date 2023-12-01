@@ -11,44 +11,38 @@ use Donjan\Permission\Traits\HasRoles;
 use Hyperf\Database\Model\Events\Created;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Di\Annotation\Inject;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class User extends Model
 {
-    /**
-     * @Inject()
-     * @var ContainerInterface
-     */
-    protected $container;
+    #[Inject]
+    protected ContainerInterface $container;
 
     use HasRoles;
+
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'users';
+    protected ?string $table = 'users';
 
     /**
      * The connection name for the model.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected ?string $connection = 'default';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [];
+    protected array $casts = [];
 
     /**
      * 定义状态枚举
@@ -80,6 +74,8 @@ class User extends Model
     /**
      * 监听用户添加事件
      * @param Created $event
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function created(Created $event)
     {
@@ -101,6 +97,8 @@ class User extends Model
     /**
      * 监听用户删除事件
      * @param Deleted $event
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function deleted(Deleted $event)
     {

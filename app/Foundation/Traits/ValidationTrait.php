@@ -3,9 +3,6 @@ namespace App\Foundation\Traits;
 
 use App\Constants\StatusCode;
 use App\Exception\Handler\BusinessException;
-use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\HttpServer\Contract\ResponseInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
@@ -16,29 +13,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
  */
 trait ValidationTrait
 {
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @Inject
-     * @var RequestInterface
-     */
-    protected $request;
-
-    /**
-     * @Inject
-     * @var ResponseInterface
-     */
-    protected $response;
-
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     /**
      * 验证异常

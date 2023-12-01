@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Foundation\Traits\Singleton;
 use App\Service\BaseService;
 use Hyperf\DbConnection\Db;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 class IndexService
 {

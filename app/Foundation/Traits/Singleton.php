@@ -8,7 +8,7 @@
 
 namespace App\Foundation\Traits;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 /**
  * 构建单例基类

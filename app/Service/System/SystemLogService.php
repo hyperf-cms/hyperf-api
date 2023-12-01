@@ -68,7 +68,6 @@ class SystemLogService extends BaseService
     {
         $content = $this->filesystem->sharedGet($filePath);
         preg_match_all($pattern, $content, $matches, PREG_SET_ORDER, 0);
-        var_dump($matches);
 
         $logs = [];
         foreach ($matches as $match) {
