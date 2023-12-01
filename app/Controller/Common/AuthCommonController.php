@@ -8,7 +8,6 @@ use App\Model\System\GlobalConfig;
 use App\Pool\Redis;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\Utils\ApplicationContext;
 
 #[Controller(prefix: 'common/auth')]
 class AuthCommonController extends AbstractController
