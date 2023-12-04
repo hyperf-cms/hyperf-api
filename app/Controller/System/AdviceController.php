@@ -28,10 +28,9 @@ class AdviceController extends AbstractController
     /**
      * 列表
      * @Author YiYuan
-     * @Date 2023/12/1
+     * @Date 2023/12/4
      * @return \Psr\Http\Message\ResponseInterface
      */
-    #[Explanation(content: '建议列表')]
     #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
@@ -55,8 +54,15 @@ class AdviceController extends AbstractController
             'total' => $total
         ]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'store')]
+
+    /**
+     * 添加
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加系统建议')]
+    #[RequestMapping(path: 'store', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
@@ -80,8 +86,15 @@ class AdviceController extends AbstractController
         }
         return $this->successByMessage('添加系统建议成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+
+    /**
+     * 获取编辑选项
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'edit/{id}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
@@ -91,8 +104,16 @@ class AdviceController extends AbstractController
         }
         return $this->success(['list' => $adviceInfo]);
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+
+    /**
+     * 修改
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '修改系统建议')]
+    #[RequestMapping(path: 'update/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
@@ -116,8 +137,16 @@ class AdviceController extends AbstractController
         }
         return $this->successByMessage('修改系统建议成功');
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'reply/{id}')]
+
+    /**
+     * 回复系统建议
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '回复建议')]
+    #[RequestMapping(path: 'reply/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function reply(int $id)
@@ -140,8 +169,16 @@ class AdviceController extends AbstractController
         }
         return $this->successByMessage('回复系统建议成功');
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+
+    /**
+     * 删除
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '删除系统建议')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)

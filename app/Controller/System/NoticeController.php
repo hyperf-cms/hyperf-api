@@ -26,14 +26,19 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/system_module/notice')]
 class NoticeController extends AbstractController
 {
-    
     #[Inject]
     private Notice $notice;
     
     #[Inject]
     private Queue $queue;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -51,21 +56,44 @@ class NoticeController extends AbstractController
         $noticeQuery->with('getUserName:id,desc');
         $noticeQuery->orderBy('created_at', 'desc');
         $noticeQuery = $this->pagingCondition($noticeQuery, $this->request->all());
-        $data = $noticeQuery->get();
-        return $this->success(['list' => $data, 'total' => $total]);
+        $data = $noticeQuery->get()->toArray();
+        return $this->success([
+            'list' => $data,
+            'total' => $total
+        ]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'store')]
+
+    /**
+     * 添加
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加公告操作')]
+    #[RequestMapping(path: 'store', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
-        $postData = $this->request->all();
-        $params = ['title' => $postData['title'] ?? '', 'content' => $postData['content'] ?? '', 'status' => $postData['status'] ?? '', 'public_time' => $postData['public_time'] ?? ''];
-        //配置验证
-        $rules = ['title' => 'required', 'status' => 'required|integer', 'content' => 'required', 'public_time' => 'required'];
-        //错误信息
-        $message = ['title.required' => '[title]缺失', 'status.required' => '[status]缺失', 'status.integer' => '[status]类型不正确', 'content.required' => '[content]缺失', 'public_time.required' => '[public_time]缺失'];
+        $params = [
+            'title' => $this->params('title') ?? '',
+            'content' => $this->params('content') ?? '',
+            'status' => $this->params('status') ?? '',
+            'public_time' => $this->params('public_time') ?? ''
+        ];
+        $rules = [
+            'title' => 'required',
+            'status' => 'required|integer',
+            'content' => 'required',
+            'public_time' => 'required'
+        ];
+        $message = [
+            'title.required' => '[title]缺失',
+            'status.required' => '[status]缺失',
+            'status.integer' => '[status]类型不正确',
+            'content.required' => '[content]缺失',
+            'public_time.required' => '[public_time]缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $noticeQuery = new Notice();
         $noticeQuery->title = $params['title'];
@@ -81,8 +109,15 @@ class NoticeController extends AbstractController
         $this->queue->push(new EmailNotificationJob(['title' => $params['title'], 'content' => $params['content']]));
         return $this->successByMessage('添加系统通知成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+
+    /**
+     * 获取编辑数据
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'edit/{id}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
@@ -93,21 +128,42 @@ class NoticeController extends AbstractController
         }
         return $this->success(['list' => $noticeInfo]);
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+
+    /**
+     * 修改公告
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '修改公告操作')]
+    #[RequestMapping(path: 'update/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
-        if (empty($id)) {
-            $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
-        }
-        $postData = $this->request->all();
-        $params = ['title' => $postData['title'] ?? '', 'content' => $postData['content'] ?? '', 'status' => $postData['status'] ?? '', 'public_time' => $postData['public_time'] ?? ''];
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        $params = [
+            'title' => $this->params('title') ?? '',
+            'content' => $this->params('content') ?? '',
+            'status' => $this->params('status') ?? '',
+            'public_time' => $this->params('public_time') ?? ''
+        ];
         //配置验证
-        $rules = ['title' => 'required', 'status' => 'required|integer', 'content' => 'required', 'public_time' => 'required'];
+        $rules = [
+            'title' => 'required',
+            'status' => 'required|integer',
+            'content' => 'required',
+            'public_time' => 'required'
+        ];
         //错误信息
-        $message = ['title.required' => '[title]缺失', 'status.required' => '[status]缺失', 'status.integer' => '[status]类型不正确', 'content.required' => '[content]缺失', 'public_time.required' => '[public_time]缺失'];
+        $message = [
+            'title.required' => '[title]缺失',
+            'status.required' => '[status]缺失',
+            'status.integer' => '[status]类型不正确',
+            'content.required' => '[content]缺失',
+            'public_time.required' => '[public_time]缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $noticeQuery = Notice::findById($id);
         $noticeQuery->title = $params['title'];
@@ -119,8 +175,16 @@ class NoticeController extends AbstractController
         }
         return $this->successByMessage('修改系统通知成功');
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+
+    /**
+     * 删除
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '删除公告操作')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)

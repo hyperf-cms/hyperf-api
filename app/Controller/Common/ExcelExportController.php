@@ -15,8 +15,11 @@ class ExcelExportController extends AbstractController
 {
     /**
      * 获取Excel内容数据
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    #[RequestMapping(methods: array('POST'), path: 'excel_content')]
+    #[RequestMapping(path: 'excel_content', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function getExcelContent()
     {
@@ -43,7 +46,7 @@ class ExcelExportController extends AbstractController
             $tableContent .= '<tr>';
             foreach ($tableHeader as $k1 => $v1) {
                 //判断是否为时间戳格式
-                if (($v1 == $time || preg_match('/_time/', $v1)) && is_numeric($v[$v1])) {
+                if (($v1 == $time || str_contains($v1, '_time')) && is_numeric($v[$v1])) {
                     if (in_array($v1, $stringArr)) {
                         $tableContent .= '<td style="mso-number-format:\'\\@\';" data-tableexport-msonumberformat="\\@">' . date('Y-m-d H:i:s', $v[$v1]) . '</td>';
                     } else {

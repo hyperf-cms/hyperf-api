@@ -3,13 +3,12 @@
 declare (strict_types=1);
 namespace App\Controller\Laboratory;
 
-use App\Middleware\RequestMiddleware;
 use App\Controller\AbstractController;
-use App\Service\Laboratory\UploadService;
+use App\Service\Laboratory\Ws\UploadService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+
 /**
  * 聊天模块上传接口控制器
  */

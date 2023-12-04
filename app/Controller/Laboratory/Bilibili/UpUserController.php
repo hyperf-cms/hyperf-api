@@ -26,7 +26,6 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'laboratory/bilibili_module/up_user')]
 class UpUserController extends AbstractController
 {
-    
     #[Inject]
     private UpUser $upUser;
     
@@ -35,16 +34,22 @@ class UpUserController extends AbstractController
     
     #[Inject]
     private Queue $queue;
-    
-    #[RequestMapping(methods: array('POST'), path: 'up_user_add')]
+
+    /**
+     * 添加Up主
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加Up主')]
+    #[RequestMapping(path: 'up_user_add', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function upUserAdd()
     {
         $upUserInfo = $this->request->all()['up_user_info'] ?? [];
-        if (empty($upUserInfo)) {
-            $this->throwExp(StatusCode::ERR_VALIDATION, 'Up主信息不能为空');
-        }
+        if (empty($upUserInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, 'Up主信息不能为空');
+
         //是否存在空的upUserUrl
         $isExistEmptyUrl = false;
         $addMidArr = [];
@@ -73,24 +78,34 @@ class UpUserController extends AbstractController
         }
         return $this->successByMessage('录入Up主成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'up_user_search')]
+
+    /**
+     * Up主搜索
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'up_user_search', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function upUserSearchList()
     {
         $mid = $this->request->input('mid') ?? '';
         $upUserQuery = $this->upUser->newQuery();
-        if (!empty($mid)) {
-            $upUserQuery->where('mid', $mid);
-        }
+        if (!empty($mid)) $upUserQuery->where('mid', $mid);
         $list = $upUserQuery->limit(10)->orderBy('created_at')->get()->toArray();
         foreach ($list as $key => $value) {
             $list[$key]['name'] = $value['name'] . '(' . $value['mid'] . ')';
         }
         return $this->success(['list' => $list]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'up_user')]
+
+    /**
+     * Up主列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'up_user', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function upUserList()
@@ -113,8 +128,15 @@ class UpUserController extends AbstractController
         $list = $upUserQuery->orderBy('created_at', 'desc')->get()->toArray();
         return $this->success(['list' => $list, 'total' => $total]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'sync_video_from_up_user')]
+
+    /**
+     * 从Up主同步视频
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '从Up主同步视频')]
+    #[RequestMapping(path: 'sync_video_from_up_user', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function syncVideoReportFromUpUser()
@@ -131,8 +153,14 @@ class UpUserController extends AbstractController
         $this->queue->push(new SyncVideoFromUpUserJob(['mid' => $mid]));
         return $this->successByMessage('正在同步视频中。。。请稍后转至视频列表查看');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'up_user_chart_trend')]
+
+    /**
+     * Up主数据趋势
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'up_user_chart_trend', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function upUserChartTrend()
@@ -163,8 +191,14 @@ class UpUserController extends AbstractController
         $rows = UpUserService::getInstance()->upUserChartTrend($upUserReportQuery, $timestampList);
         return $this->success(['rows' => $rows]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'up_user_data_report')]
+
+    /**
+     * Up主日常数据报表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'up_user_data_report', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function upUserDataReport()

@@ -18,8 +18,13 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/monitoring_module')]
 class MonitoringController extends AbstractController
 {
-    
-    #[RequestMapping(methods: array('GET'), path: 'serve')]
+    /**
+     * 系统监控
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'serve', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function serve()

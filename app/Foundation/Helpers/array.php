@@ -123,3 +123,23 @@ if (!function_exists('arrayToTree')) {
         return $returnData;
     }
 }
+
+if (!function_exists('arrayToXml')) {
+    /**
+     * 数组转XML
+     * @param array $data
+     * @return string
+     */
+    function arrayToXml(array $data){
+        $xml = "<xml>";
+        foreach ($data as $key => $val) {
+            if (is_array($val)) {
+                $xml .= "<" . $key . ">" . arrayToXml($val) . "</" . $key . ">";
+            } else {
+                $xml .= "<" . $key . ">" . $val . "</" . $key . ">";
+            }
+        }
+        $xml .= "</xml>";
+        return $xml;
+    }
+}

@@ -12,11 +12,12 @@ use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
-use App\Service\Laboratory\GroupService;
-use App\Service\Laboratory\MessageService;
+use App\Service\Laboratory\Ws\GroupService;
+use App\Service\Laboratory\Ws\MessageService;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Task\Annotation\Task;
+use Hyperf\WebSocketServer\Sender;
 
 /**
  * 组消息传递异步任务
@@ -27,11 +28,8 @@ use Hyperf\Task\Annotation\Task;
  */
 class GroupWsTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\WebSocketServer\Sender
-     */
-    private $sender;
+    #[Inject]
+    private Sender $sender;
 
     /**
      * @Task()
@@ -279,7 +277,7 @@ class GroupWsTask
     {
         if (empty($groupInfo)) return false;
         //如果不是默认头像则不替换
-        if (!strstr($groupInfo['avatar'], 'composite_avatar')) return false;
+        if (!str_contains($groupInfo['avatar'], 'composite_avatar')) return false;
         $message = [];
         $message['id'] = generate_rand_id();
         $message['status'] = GroupChatHistory::GROUP_CHAT_MESSAGE_STATUS_SUCCEED;
@@ -336,9 +334,9 @@ class GroupWsTask
      */
     function forwardMessage(array $groupInfo, array $user, array $content)
     {
-        if (is_array($content)) {
+        if (!empty($content)) {
             foreach ($content as $item) {
-                $messageSource = $item['is_group'] == true ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
+                $messageSource = $item['is_group'] ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
                 $messageSource = objToArray($messageSource);
                 if (empty($messageSource)) continue;
                 //添加聊天记录

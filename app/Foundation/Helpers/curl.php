@@ -30,40 +30,50 @@ if (!function_exists('curl_get')) {
     }
 }
 
-if (!function_exists('fetch_url')) {
-    function fetch_url($url, $type = 0,$post = '',$other_curl_opt = array(), $try_num = 0, $timeout=10, $http_status=0){
-        $curl_opt = array(
-            CURLOPT_URL => $url,
-            CURLOPT_AUTOREFERER => TRUE,
-            CURLOPT_RETURNTRANSFER => TRUE,
-            CURLOPT_SSL_VERIFYPEER => FALSE,
-            CURLOPT_SSL_VERIFYHOST => FALSE,
-            CURLOPT_CONNECTTIMEOUT => 30, //秒
-            CURLOPT_TIMEOUT => $timeout, //The maximum number of seconds to allow cURL functions to execute.
-        );
-        if($type == 1){
-            $curl_opt[CURLOPT_POST] = TRUE;
-            $curl_opt[CURLOPT_POSTFIELDS] = $post;//username=abc&passwd=bcd,也可以为数组array('username'=>'abc','passwd'=>'bcd')
+if (!function_exists('curl_post')) {
+    /**
+     * CURL post请求
+     * @param $apiUrl
+     * @param $sendData
+     * @param array $header
+     * @param array $cookIe
+     * @param bool $isReturnResponse
+     * @return mixed
+     * @throws Exception
+     */
+    function curl_post($apiUrl, $sendData, array $header = [], array $cookIe = [], $isReturnResponse = false)
+    {
+        $curl = curl_init();
+        //判断请求头部，如果为空，默认Json传输
+        if (empty($header)){
+            $header[] = 'Content-Type:application/json';
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($sendData, JSON_UNESCAPED_UNICODE));
+        } else {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $sendData);
+        }
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($curl, CURLOPT_URL, $apiUrl);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        if (!empty($cookIe))  curl_setopt($curl,CURLOPT_COOKIE, $cookIe);
+
+        $response = curl_exec($curl);
+        if (empty($response)) Throw new Exception(curl_error($curl),\App\Constants\StatusCode::ERR_SERVER);
+        curl_close($curl);
+
+        $result =  json_decode($response, true);
+        if (is_null($result)) {
+            \App\Foundation\Facades\Log::curlLog()->info($response);
+            Throw new Exception('接口地址：' . $apiUrl . ' 接口返回结果不是json格式', \App\Constants\StatusCode::ERR_SERVER);
         }
 
-        if($other_curl_opt)
-            foreach ($other_curl_opt as $key => $val)
-                $curl_opt[$key] = $val;
+        if ($isReturnResponse) return $response;
 
-        $ch = curl_init(); //初始化curl会话
-        curl_setopt_array($ch, $curl_opt); //以数组的形式为curl设置会话参数
-        $contents = curl_exec($ch); //执行curl会话
-        if($http_status) $http_status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-        $err = curl_error($ch);
-        curl_close($ch); //关闭curl会话，它唯一的参数是curl_init()函数返回的句柄
-        if(!empty($err)){
-            return $err;
-        }else{
-            if($http_status){
-                return $http_status;
-            }else{
-                return $contents;
-            }
-        }
+        return $result;
     }
 }

@@ -3,27 +3,23 @@
 declare (strict_types=1);
 namespace App\Controller\Laboratory\Ws;
 
+use App\Constants\Laboratory\ChatRedisKey;
 use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
+use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Pool\Redis;
+use App\Service\Laboratory\Ws\InitService;
 use App\Task\Laboratory\FriendWsTask;
-use App\Task\Laboratory\GroupWsTask;
-use Hyperf\Di\Annotation\Inject;
-use Hyperf\HttpMessage\Exception\HttpException;
-use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\Context\Context;
-use Hyperf\WebSocketServer\Sender;
-use Swoole\Http\Request;
-use Swoole\Websocket\Frame;
-use App\Constants\Laboratory\ChatRedisKey;
-use App\Foundation\Facades\MessageParser;
-use App\Service\Laboratory\InitService;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\WebSocketServer\Sender;
+use Swoole\Http\Request;
+use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 
 /**
@@ -35,7 +31,6 @@ use Swoole\WebSocket\Server as WebSocketServer;
  */
 class WebsocketController extends AbstractController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    
     #[Inject]
     private Sender $sender;
     /**
@@ -77,6 +72,7 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
         //是否重连，如果是断线重连择不通知好友新用户上线提示
         $isReconnection = conGet('is_reconnection') ?? false;
         //获取聊天初始化信息
+        //TODO 该方法效率有待提高
         $initInfo = InitService::getInstance()->initialization();
         //获取用户信息
         $userInfo = conGet('user_info');
@@ -89,6 +85,7 @@ class WebsocketController extends AbstractController implements OnMessageInterfa
         //通知好友该用户登陆状态
         $this->container->get(FriendWsTask::class)->friendOnlineAndOfflineNotify($userInfo, WsMessage::FRIEND_ONLINE_MESSAGE, $isReconnection);
     }
+
     /**
      * 用户关闭连接
      * @param \Swoole\Http\Response|WebSocketServer $server

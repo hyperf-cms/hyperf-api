@@ -41,7 +41,10 @@
         "hyperf/code-generator": "^0.3.3",
         "mogody/hyperf-permission": "^3.0",
         "hyperf/validation": "^3.0",
-        "hyperf/flysystem-oss": "*"
+        "hyperf/flysystem-oss": "*",
+        "chinayin/ip2region": "^2.0",
+        "qcloud_sts/qcloud-sts-sdk": "3.0.8",
+        "tencentcloud/tencentcloud-sdk-php": "^3.0"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",

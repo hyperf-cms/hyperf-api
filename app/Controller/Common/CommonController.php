@@ -18,7 +18,7 @@ class CommonController extends AbstractController
      * @return  \Psr\Http\Message\ResponseInterface
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    #[RequestMapping(methods: array('GET'), path: 'sys_config')]
+    #[RequestMapping(path: 'sys_config', methods: array('GET'))]
     public function getSysConfig()
     {
         $configList = GlobalConfig::query()->select('key_name', 'data')->where('type', GlobalConfig::TYPE_BY_BOOLEAN)->get()->toArray();

@@ -21,11 +21,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/log_module/login_log')]
 class LoginLogController extends AbstractController
 {
-    
     #[Inject]
     protected LoginLog $loginLog;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 登录日志列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -57,6 +62,9 @@ class LoginLogController extends AbstractController
         $total = $loginLogQuery->count();
         $loginLogQuery = $this->pagingCondition($loginLogQuery, $this->request->all());
         $data = $loginLogQuery->get()->toArray();
-        return $this->success(['list' => $data, 'total' => $total]);
+        return $this->success([
+            'list' => $data,
+            'total' => $total
+        ]);
     }
 }

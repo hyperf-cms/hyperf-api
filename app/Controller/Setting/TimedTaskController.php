@@ -24,11 +24,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/monitoring_module/timed_task')]
 class TimedTaskController extends AbstractController
 {
-    
     #[Inject]
     private TimedTask $timedTask;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -51,8 +56,16 @@ class TimedTaskController extends AbstractController
         $data = $timedTaskQuery->get();
         return $this->success(['list' => $data, 'total' => $total]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'store')]
+
+    /**
+     * 添加定时任务
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
+    #[Explanation(content: '添加定时任务')]
+    #[RequestMapping(path: 'store', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
@@ -80,8 +93,15 @@ class TimedTaskController extends AbstractController
         }
         return $this->successByMessage('添加定时任务成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+
+    /**
+     * 获取编辑选项
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'edit/{id}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
@@ -92,8 +112,17 @@ class TimedTaskController extends AbstractController
         }
         return $this->success(['list' => $timedTaskInfo]);
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'change_status/{id}')]
+
+    /**
+     * 更新定时任务状态
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
+    #[Explanation(content: '更新定时任务状态')]
+    #[RequestMapping(path: 'change_status/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function changeStatus(int $id)
@@ -112,8 +141,17 @@ class TimedTaskController extends AbstractController
         TimedTask::query()->where('id', $id)->update(['status' => $status, 'next_execute_time' => $nextExecuteTime]);
         return $this->successByMessage('修改状态成功');
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+
+    /**
+     * 编辑
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Exception
+     */
+    #[Explanation(content: '编辑定时任务')]
+    #[RequestMapping(path: 'update/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
@@ -142,8 +180,16 @@ class TimedTaskController extends AbstractController
         }
         return $this->successByMessage('修改定时任务成功');
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+
+    /**
+     * 删除
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '删除定时任务')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)

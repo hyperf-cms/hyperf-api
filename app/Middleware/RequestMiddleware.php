@@ -53,6 +53,11 @@ class RequestMiddleware implements MiddlewareInterface
         $requireParams = $this->request->all();
         //记录请求参数日志记录
         if (config('request_log')) Log::requestLog()->info('请求参数：' . json_encode($requireParams));
+
+        conSet('request_ip', getRealIp());
+        conSet('server_params', $this->request->getServerParams());
+        conSet('request_start_time', getMillisecond());
+
         try {
             $isValidToken = false;
             // 根据具体业务判断逻辑走向，这里假设用户携带的token有效

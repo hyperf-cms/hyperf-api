@@ -24,11 +24,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/system_module/global_config')]
 class GlobalConfigController extends AbstractController
 {
-    
     #[Inject]
     private GlobalConfig $globalConfig;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -49,21 +54,42 @@ class GlobalConfigController extends AbstractController
         $total = $globalConfigQuery->count();
         $globalConfigQuery->orderBy('created_at', 'desc');
         $globalConfigQuery = $this->pagingCondition($globalConfigQuery, $this->request->all());
-        $data = $globalConfigQuery->get();
-        return $this->success(['list' => $data, 'total' => $total]);
+        $data = $globalConfigQuery->get()->toArray(0);
+        return $this->success([
+            'list' => $data,
+            'total' => $total
+        ]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'store')]
+
+    /**
+     * 添加
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加全局参数')]
+    #[RequestMapping(path: 'store', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
-        $postData = $this->request->all();
-        $params = ['name' => $postData['name'] ?? '', 'key_name' => $postData['key_name'] ?? '', 'data' => $postData['data'] ?? '', 'remark' => $postData['remark'] ?? '', 'type' => $postData['type'] ?? ''];
-        //配置验证
-        $rules = ['name' => 'required', 'key_name' => 'required', 'type' => 'required'];
-        //错误信息
-        $message = ['name.required' => '[name]缺失', 'key_name.required' => '[key_name]缺失', 'type.required' => '[type]缺失'];
+        $params = [
+            'name' => $this->params('name') ?? '',
+            'key_name' => $this->params('key_name') ?? '',
+            'data' => $this->params('data') ?? '',
+            'remark' => $this->params('remark') ?? '',
+            'type' => $this->params('type') ?? ''
+        ];
+        $rules = [
+            'name' => 'required',
+            'key_name' => 'required',
+            'type' => 'required'
+        ];
+        $message = [
+            'name.required' => '[name]缺失',
+            'key_name.required' => '[key_name]缺失',
+            'type.required' => '[type]缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $globalConfigQuery = new GlobalConfig();
         $globalConfigQuery->name = $params['name'];
@@ -76,8 +102,15 @@ class GlobalConfigController extends AbstractController
         }
         return $this->successByMessage('添加全局参数成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+
+    /**
+     * 获取编辑数据
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'edit/{id}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
@@ -90,21 +123,34 @@ class GlobalConfigController extends AbstractController
         }
         return $this->success(['list' => $globalConfigInfo]);
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+
+    /**
+     * 修改
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '修改全局参数')]
+    #[RequestMapping(path: 'update/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
-        if (empty($id)) {
-            $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
-        }
-        $postData = $this->request->all();
-        $params = ['name' => $postData['name'] ?? '', 'key_name' => $postData['key_name'] ?? '', 'data' => $postData['data'] ?? '', 'remark' => $postData['remark'] ?? '', 'type' => $postData['type'] ?? ''];
-        //配置验证
-        $rules = ['name' => 'required', 'key_name' => 'required', 'type' => 'required'];
-        //错误信息
-        $message = ['name.required' => '[name]缺失', 'key_name.required' => '[key_name]缺失', 'type.required' => '[type]缺失'];
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        $params = [
+            'name' => $this->params('name') ?? '',
+            'key_name' => $this->params('key_name') ?? '',
+            'data' => $this->params('data') ?? '',
+            'remark' => $this->params('remark') ?? '',
+            'type' => $this->params('type') ?? ''];
+        $rules = [
+            'name' => 'required',
+            'key_name' => 'required', 'type' => 'required'];
+        $message = [
+            'name.required' => '[name]缺失',
+            'key_name.required' => '[key_name]缺失',
+            'type.required' => '[type]缺失'];
         $this->verifyParams($params, $rules, $message);
         $globalConfigQuery = GlobalConfig::findById($id);
         $globalConfigQuery->name = $params['name'];
@@ -117,8 +163,16 @@ class GlobalConfigController extends AbstractController
         }
         return $this->successByMessage('修改全局参数成功');
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+
+    /**
+     * 删除
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '删除全局参数')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)

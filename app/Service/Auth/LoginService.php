@@ -63,7 +63,7 @@ class LoginService extends BaseService
 
         //更新用户信息
         $user->last_login = time();
-        $user->last_ip = getClientIp($this->request);
+        $user->last_ip = getRealIp();
         $user->save();
         $responseData = $this->respondWithToken($token);
 

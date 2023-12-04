@@ -9,17 +9,17 @@ use App\Constants\Laboratory\WsMessage;
 use App\Controller\AbstractController;
 use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
-use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\Group;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Model\Laboratory\GroupRelation;
 use App\Pool\Redis;
-use App\Service\Laboratory\GroupService;
-use App\Service\Laboratory\MessageService;
+use App\Service\Laboratory\Ws\GroupService;
+use App\Service\Laboratory\Ws\MessageService;
 use App\Task\Laboratory\GroupWsTask;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+
 /**
  * 组聊天控制器
  * Class GroupController

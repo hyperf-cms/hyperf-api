@@ -26,7 +26,6 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'laboratory/bilibili_module/video')]
 class VideoController extends AbstractController
 {
-    
     #[Inject]
     private Video $video;
     
@@ -35,16 +34,21 @@ class VideoController extends AbstractController
     
     #[Inject]
     private Queue $queue;
-    
-    #[RequestMapping(methods: array('POST'), path: 'video_add')]
+
+    /**
+     * 添加视频
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加视频')]
+    #[RequestMapping(path: 'video_add', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function videoAdd()
     {
         $videoInfo = $this->request->all()['video_info'] ?? [];
-        if (empty($videoInfo)) {
-            $this->throwExp(StatusCode::ERR_VALIDATION, '视频链接信息不能为空');
-        }
+        if (empty($videoInfo)) $this->throwExp(StatusCode::ERR_VALIDATION, '视频链接信息不能为空');
         //是否存在空的URL
         $isExistEmptyUrl = false;
         $addBVidArr = [];
@@ -73,8 +77,14 @@ class VideoController extends AbstractController
         }
         return $this->successByMessage('录入视频成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'video_title_search')]
+
+    /**
+     * 视频标题搜索
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'video_title_search', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function videoTitleSearch()
     {
@@ -89,8 +99,14 @@ class VideoController extends AbstractController
         }
         return $this->success(['list' => $list]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'video')]
+
+    /**
+     * 视频列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'video', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function videoList()
@@ -123,8 +139,14 @@ class VideoController extends AbstractController
         }
         return $this->success(['list' => $list, 'total' => $total]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'video_chart_trend')]
+
+    /**
+     * 视频趋势图表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'video_chart_trend', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function videoChartTrend()
@@ -153,8 +175,14 @@ class VideoController extends AbstractController
         $rows = VideoService::getInstance()->videoChartTrend($videoReportQuery, $timestampList);
         return $this->success(['rows' => $rows]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'video_data_report')]
+
+    /**
+     * Up视频数据报表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'video_data_report', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function upUserDataReport()

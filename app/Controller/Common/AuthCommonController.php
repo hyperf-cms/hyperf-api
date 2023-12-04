@@ -9,6 +9,12 @@ use App\Pool\Redis;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
+/**
+ * 登录公共
+ * @Author YiYuan
+ * @Date 2023/12/4
+ * Class AuthCommonController
+ */
 #[Controller(prefix: 'common/auth')]
 class AuthCommonController extends AbstractController
 {

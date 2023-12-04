@@ -3,6 +3,7 @@ namespace App\Service\System;
 
 use App\Foundation\Traits\Singleton;
 use App\Foundation\Utils\FreeApi;
+use App\Foundation\Utils\IP;
 use App\Service\BaseService;
 
 /**
@@ -26,10 +27,9 @@ class LoginLogService extends BaseService
         $requireParams = $this->request->all();
 
         //获取登陆信息
-        $loginIp = getClientIp($this->request) ?? '';
-        $ipAddress = FreeApi::getResult($loginIp);
-        $province = empty($ipAddress['province']) ? '' : $ipAddress['province'];
-        $city = empty($ipAddress['city']) ? '' : $ipAddress['city'];
+        $loginIp = getRealIp();
+        $province = IP::province($loginIp);
+        $city = IP::city($loginIp);
         $loginAddress = $province . $city;
         $browser = get_browser_os();
         $os = get_os();
@@ -44,5 +44,4 @@ class LoginLogService extends BaseService
            'login_date' => $loginTime,
         ];
     }
-
 }

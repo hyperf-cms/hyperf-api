@@ -5,6 +5,7 @@ namespace App\Controller\System;
 
 use App\Constants\StatusCode;
 use App\Controller\AbstractController;
+use App\Foundation\Annotation\Explanation;
 use App\Model\System\GlobalConfig;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -20,11 +21,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/technique_module/control')]
 class ControlController extends AbstractController
 {
-    
     #[Inject]
     private GlobalConfig $globalConfig;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function getConfigList()
@@ -37,16 +43,32 @@ class ControlController extends AbstractController
         }
         return $this->success(['list' => $result]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'change_control')]
+
+    /**
+     * 修改控制状态
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '修改控制状态')]
+    #[RequestMapping(path: 'change_control', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function changeControl()
     {
         $requestData = $this->request->all();
-        $params = ['key' => $requestData['key'] ?? '', 'value' => $requestData['value'] ?? ''];
-        $rules = ['key' => 'required', 'value' => 'required'];
-        $message = ['key.required' => 'key 缺失', 'value.required' => 'value 缺失'];
+        $params = [
+            'key' => $requestData['key'] ?? '',
+            'value' => $requestData['value'] ?? ''
+        ];
+        $rules = [
+            'key' => 'required',
+            'value' => 'required'
+        ];
+        $message = [
+            'key.required' => 'key 缺失',
+            'value.required' => 'value 缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $configQuery = GlobalConfig::where('key_name', $params['key'])->first();
         $configQuery->data = $params['value'];

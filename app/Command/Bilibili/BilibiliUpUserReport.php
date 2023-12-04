@@ -9,17 +9,11 @@ use App\Service\Laboratory\Bilibili\UpUserService;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="BilibiliUpUserReport", rule="00 * * * *", callback="execute", memo="BilibiliUp主数据采集定时任务")
- */
+#[Crontab(rule: "00 * * * *", name: "BilibiliUpUserReport", callback: "execute", memo: "BilibiliUp主数据采集定时任务")]
 class BilibiliUpUserReport
 {
-    /**
-     *
-     * @Inject()
-     * @var UpUser
-     */
-    private $biliUpUser;
+    #[Inject]
+    private UpUser $biliUpUser;
 
     /**
      * 定时记录主播数据变化情况

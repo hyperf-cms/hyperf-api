@@ -11,6 +11,8 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Class OperateLogController
  * @package App\Controller\System
@@ -20,11 +22,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/log_module/operate_log')]
 class OperateLogController extends AbstractController
 {
-    
     #[Inject]
     protected OperateLog $operate;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 操作日志列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -56,6 +63,9 @@ class OperateLogController extends AbstractController
         $total = $operateLogQuery->count();
         $operateLogQuery = $this->pagingCondition($operateLogQuery, $this->request->all());
         $data = $operateLogQuery->get()->toArray();
-        return $this->success(['list' => $data, 'total' => $total]);
+        return $this->success([
+            'list' => $data,
+            'total' => $total
+        ]);
     }
 }

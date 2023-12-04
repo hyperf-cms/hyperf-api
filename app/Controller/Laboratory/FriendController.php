@@ -8,13 +8,11 @@ use App\Controller\AbstractController;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
-use App\Service\Laboratory\MessageService;
+use App\Service\Laboratory\Ws\MessageService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
-use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use App\Middleware\RequestMiddleware;
-use App\Middleware\PermissionMiddleware;
+
 /**
  * 好友模块
  * Class FriendController

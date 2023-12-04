@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Model\Auth\User;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Context\Context;
 use Hyperf\WebSocketServer\Security;
 use Phper666\JWTAuth\JWT;
+use Phper666\JWTAuth\Util\JWTUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,20 +32,14 @@ class WsMiddleware implements MiddlewareInterface
 
     private const HANDLE_BAD_REQUEST_CODE = 400;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    #[Inject]
+    protected JWT $jwt;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    #[Inject]
+    protected ContainerInterface $container;
 
-    /**
-     * @var JWT
-     */
-    protected $jwt;
+    #[Inject]
+    protected RequestInterface $request;
 
     public function __construct(ContainerInterface $container, RequestInterface $request, JWT $jwt)
     {
@@ -62,29 +58,29 @@ class WsMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-            $isValidToken = false;
-            $response = Context::get(ResponseInterface::class);
-            $request = Context::get(ServerRequestInterface::class);
-            $token = $request->getHeaderLine(Security::SEC_WEBSOCKET_PROTOCOL) ?? '';
+        $isValidToken = false;
+        $response = Context::get(ResponseInterface::class);
+        $request = Context::get(ServerRequestInterface::class);
+        $token = $request->getHeaderLine(Security::SEC_WEBSOCKET_PROTOCOL) ?? '';
 
-            try {
-                if (strlen($token) > 0 && $this->jwt->checkToken($token)) $isValidToken = true;
-            } catch (Throwable $e) {
-                return $response
-                    ->withStatus(self::HANDLE_BAD_REQUEST_CODE);
+        try {
+            if (strlen($token) > 0 && $this->jwt->verifyToken($token)) $isValidToken = true;
+        } catch (Throwable $e) {
+            return $response
+                ->withStatus(self::HANDLE_BAD_REQUEST_CODE);
+        }
+
+        if ($isValidToken) {
+            $jwtData = $this->jwt->getClaimsByToken($token);
+            $userInfo = User::query()->where(['id' => $jwtData['uid']])->first();
+            $userInfo = objToArray($userInfo);
+            conSet('user_info', $userInfo);
+            if (!empty($request->getQueryParams()['is_reconnection'])) {
+                conSet('is_reconnection', true);
             }
+            return $handler->handle($request);
+        }
 
-            if ($isValidToken) {
-                $jwtData = $this->jwt->getParserData($token);
-                $userInfo = User::query()->where(['id' => $jwtData['uid']])->first();
-                $userInfo = objToArray($userInfo);
-                conSet('user_info', $userInfo);
-                if (!empty($request->getQueryParams()['is_reconnection'])) {
-                    conSet('is_reconnection', true);
-                }
-                return $handler->handle($request);
-            }
-
-            return $response->withStatus(self::HANDLE_FAIL_CODE);
+        return $response->withStatus(self::HANDLE_FAIL_CODE);
     }
 }

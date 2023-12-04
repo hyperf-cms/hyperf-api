@@ -1,4 +1,7 @@
 <?php
+
+use Hyperf\HttpServer\Contract\RequestInterface;
+
 /**
  * 公共函数
  * create by linyiyuan
@@ -169,5 +172,61 @@ if (!function_exists('is_true')) {
     function is_true($val, $return_null=false){
         $boolval = ( is_string($val) ? filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $val );
         return ( $boolval===null && !$return_null ? false : $boolval );
+    }
+}
+
+if (!function_exists('getClientIp')) {
+    /**
+     * 获取客户端请求的IP
+     * @return mixed|string
+     */
+    function getClientIp(\Hyperf\HttpServer\Contract\RequestInterface $request){
+        $res = $request->getServerParams();
+        if(isset($res['http_client_ip'])){
+            return $res['http_client_ip'];
+        }elseif(isset($res['http_x_real_ip'])){
+            return $res['http_x_real_ip'];
+        }elseif(isset($res['http_x_forwarded_for'])){
+            //部分CDN会获取多层代理IP，所以转成数组取第一个值
+            $arr = explode(',',$res['http_x_forwarded_for']);
+            return $arr[0];
+        }else{
+            return $res['remote_addr'];
+        }
+    }
+}
+
+if (!function_exists('getRealIp')) {
+    /**
+     * 获取客户端真实IP
+     * @return string
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    function getRealIp(): string
+    {
+        $request = \Hyperf\Context\ApplicationContext::getContainer()->get(RequestInterface::class);
+        $headers = $request->getHeaders();
+
+        if(isset($headers['x-forwarded-for'][0]) && !empty($headers['x-forwarded-for'][0])) {
+            return $headers['x-forwarded-for'][0];
+        } elseif (isset($headers['x-real-ip'][0]) && !empty($headers['x-real-ip'][0])) {
+            return $headers['x-real-ip'][0];
+        }
+
+        $serverParams = $request->getServerParams();
+        return $serverParams['remote_addr'] ?? '';
+    }
+}
+
+if (!function_exists('mic_time')) {
+    /**
+     * 获取时间戳（毫秒）
+     * @return false|string
+     */
+    function mic_time() {
+        list($msec, $sec) = explode(' ', microtime());
+        $msectime =  (float)sprintf('%.0f', (floatval($msec) + floatval($sec)) * 1000);
+        return substr($msectime,0,13);
     }
 }

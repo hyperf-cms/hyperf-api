@@ -12,6 +12,7 @@ declare (strict_types=1);
 namespace App\Controller;
 
 use App\Foundation\Traits\ApiTrait;
+use App\Foundation\Traits\ParamsTrait;
 use App\Foundation\Traits\QueryTrait;
 use App\Foundation\Traits\ValidationTrait;
 use Hyperf\Di\Annotation\Inject;
@@ -21,5 +22,5 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
 {
-    use ApiTrait, ValidationTrait, QueryTrait;
+    use ApiTrait, ValidationTrait, QueryTrait, ParamsTrait;
 }

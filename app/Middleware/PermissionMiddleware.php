@@ -24,22 +24,22 @@ class PermissionMiddleware implements MiddlewareInterface
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * @var RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     /**
      * @var HttpResponse
      */
-    protected $response;
+    protected HttpResponse $response;
 
     /**
      * @var JWT
      */
-    protected $jwt;
+    protected JWT $jwt;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request, JWT $jwt)
     {

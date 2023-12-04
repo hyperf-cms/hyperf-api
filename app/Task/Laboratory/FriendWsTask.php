@@ -10,10 +10,11 @@ use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
 use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
-use App\Service\Laboratory\FriendService;
-use App\Service\Laboratory\MessageService;
+use App\Service\Laboratory\Ws\FriendService;
+use App\Service\Laboratory\Ws\MessageService;
 use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\WebSocketServer\Sender;
 
 /**
  * 好友消息传递异步任务
@@ -24,11 +25,8 @@ use Hyperf\Di\Annotation\Inject;
  */
 class FriendWsTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\WebSocketServer\Sender
-     */
-    private $sender;
+    #[Inject]
+    private Sender $sender;
 
     /**
      * 通知用户上线下线
@@ -91,7 +89,7 @@ class FriendWsTask
 
         //添加消息记录
         FriendChatHistory::addMessage($message, $receptionState);
-        if ($message['type'] == FriendChatHistory::FRIEND_CHAT_MESSAGE_TYPE_FORWARD) $message['content'] = MessageService::getInstance()->formatForwardMessage($message['content'], $message['fromUser']);
+        $message['content'] = MessageService::getInstance()->formatForwardMessage($message['content'], $message['fromUser']);
 
         $sendMessage = [
             'message' => $message,
@@ -112,7 +110,7 @@ class FriendWsTask
     {
         if (is_array($content)) {
             foreach ($content as $item) {
-                $messageSource = $item['is_group'] == true ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
+                $messageSource = $item['is_group'] ? GroupChatHistory::query()->where('message_id', $item['id'])->first() : FriendChatHistory::query()->where('message_id', $item['id'])->first();
                 $messageSource = objToArray($messageSource);
                 if (empty($messageSource)) continue;
                 //添加聊天记录

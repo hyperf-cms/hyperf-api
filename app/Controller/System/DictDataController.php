@@ -22,11 +22,16 @@ use App\Middleware\PermissionMiddleware;
 #[Controller(prefix: 'setting/system_module/dict_data')]
 class DictDataController extends AbstractController
 {
-    
     #[Inject]
     private DictData $dictData;
-    
-    #[RequestMapping(methods: array('GET'), path: 'list')]
+
+    /**
+     * 列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'list', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function index()
@@ -46,15 +51,26 @@ class DictDataController extends AbstractController
         }
         $total = $dictDataQuery->count();
         $dictDataQuery = $this->pagingCondition($dictDataQuery, $this->request->all());
-        $data = $dictDataQuery->get();
-        return $this->success(['list' => $data, 'total' => $total]);
+        $data = $dictDataQuery->get()->toArray();
+
+        return $this->success([
+            'list' => $data,
+            'total' => $total
+        ]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'dict/{dictType}')]
+
+    /**
+     * 选项
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param string $dictType
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'dict/{dictType}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function getDict(string $dictType)
     {
-        if (!is_string($dictType) && empty($dictType)) {
+        if (empty($dictType)) {
             $this->throwExp(StatusCode::ERR_VALIDATION, '字典类型为空或者参数格式不正确');
         }
         $list = DictData::query()->where('dict_type', $dictType)->get()->toArray();
@@ -63,20 +79,42 @@ class DictDataController extends AbstractController
                 $list[$key]['dict_value'] = intval($val['dict_value']);
             }
         }
-        return $this->success(['list' => $list]);
+        return $this->success([
+            'list' => $list
+        ]);
     }
-    
-    #[RequestMapping(methods: array('POST'), path: 'store')]
+
+    /**
+     * 添加
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '添加字典数据')]
+    #[RequestMapping(path: 'store', methods: array('POST'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function store()
     {
-        $postData = $this->request->all();
-        $params = ['dict_type' => $postData['dict_type'] ?? '', 'dict_label' => $postData['dict_label'] ?? '', 'dict_value' => $postData['dict_value'] ?? '', 'dict_sort' => $postData['dict_sort'] ?? 1, 'status' => $postData['status'] ?? 1, 'remark' => $postData['remark'] ?? ''];
-        //配置验证
-        $rules = ['dict_type' => 'required', 'dict_label' => 'required', 'dict_value' => 'required'];
+        $params = [
+            'dict_type' => $this->params('dict_type') ?? '',
+            'dict_label' => $this->params('dict_label') ?? '',
+            'dict_value' => $this->params('dict_value') ?? '',
+            'dict_sort' => $this->params('dict_sort') ?? 1,
+            'status' => $this->params('status') ?? 1,
+            'remark' => $this->params('remark') ?? ''
+        ];
+        $rules = [
+            'dict_type' => 'required',
+            'dict_label' => 'required',
+            'dict_value' => 'required'
+        ];
         //错误信息
-        $message = ['dict_type.required' => '[dict_type]缺失', 'dict_label.required' => '[dict_label]缺失', 'dict_value.required' => '[dict_value]缺失'];
+        $message = [
+            'dict_type.required' => '[dict_type]缺失',
+            'dict_label.required' => '[dict_label]缺失',
+            'dict_value.required' => '[dict_value]缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $dictDataQuery = new DictData();
         $dictDataQuery->dict_type = $params['dict_type'];
@@ -92,8 +130,15 @@ class DictDataController extends AbstractController
         }
         return $this->successByMessage('添加字典数据成功');
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'edit/{id}')]
+
+    /**
+     * 获取编辑数据
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[RequestMapping(path: 'edit/{id}', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function edit(int $id)
     {
@@ -103,21 +148,39 @@ class DictDataController extends AbstractController
         }
         return $this->success(['list' => $dictDataInfo]);
     }
-    
-    #[RequestMapping(methods: array('PUT'), path: 'update/{id}')]
+
+    /**
+     * 修改
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '修改字典数据')]
+    #[RequestMapping(path: 'update/{id}', methods: array('PUT'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function update(int $id)
     {
-        if (empty($id)) {
-            $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
-        }
-        $postData = $this->request->all();
-        $params = ['dict_type' => $postData['dict_type'] ?? '', 'dict_label' => $postData['dict_label'] ?? '', 'dict_value' => $postData['dict_value'] ?? '', 'dict_sort' => $postData['dict_sort'] ?? 1, 'status' => $postData['status'] ?? 1, 'remark' => $postData['remark'] ?? ''];
-        //配置验证
-        $rules = ['dict_type' => 'required', 'dict_label' => 'required', 'dict_value' => 'required'];
-        //错误信息
-        $message = ['dict_type.required' => '[dict_type]缺失', 'dict_label.required' => '[dict_label]缺失', 'dict_value.required' => '[dict_value]缺失'];
+        if (empty($id)) $this->throwExp(StatusCode::ERR_VALIDATION, 'ID 不能为空');
+        $params = [
+            'dict_type' => $this->params('dict_type') ?? '',
+            'dict_label' => $this->params('dict_label') ?? '',
+            'dict_value' => $this->params('dict_value') ?? '',
+            'dict_sort' => $this->params('dict_sort') ?? 1,
+            'status' => $this->params('status') ?? 1,
+            'remark' => $this->params('remark') ?? ''
+        ];
+        $rules = [
+            'dict_type' => 'required',
+            'dict_label' => 'required',
+            'dict_value' => 'required'
+        ];
+        $message = [
+            'dict_type.required' => '[dict_type]缺失',
+            'dict_label.required' => '[dict_label]缺失',
+            'dict_value.required' => '[dict_value]缺失'
+        ];
         $this->verifyParams($params, $rules, $message);
         $dictDataQuery = DictData::findById($id);
         $dictDataQuery->dict_type = $params['dict_type'];
@@ -132,8 +195,17 @@ class DictDataController extends AbstractController
         }
         return $this->successByMessage('修改字典数据成功');
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy/{id}')]
+
+
+    /**
+     * 删除
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @param int $id
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    #[Explanation(content: '删除字典数据')]
+    #[RequestMapping(path: 'destroy/{id}', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function destroy(int $id)

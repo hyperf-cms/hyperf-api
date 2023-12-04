@@ -13,9 +13,7 @@ use Hyperf\Command\Annotation\Command;
 use Donjan\Permission\Models\Permission;
 use Donjan\Permission\Models\Role;
 
-/**
- * @Command
- */
+#[Command]
 class InitCommand extends HyperfCommand
 {
     protected ?string $name = 'init';

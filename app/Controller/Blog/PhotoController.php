@@ -98,7 +98,7 @@ class PhotoController extends AbstractController
                 $this->throwExp(StatusCode::ERR_EXCEPTION, '删除失败');
             }
         } else {
-            if (!intval($id)) {
+            if (!$id) {
                 $this->throwExp(StatusCode::ERR_VALIDATION, '参数错误');
             }
             if (!Photo::destroy($id)) {

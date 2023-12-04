@@ -17,7 +17,12 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
 #[Controller]
 class HomeController extends AbstractController
 {
-    
+    /**
+     * 首页数据
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     #[RequestMapping(path: '/home')]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function home()
@@ -26,6 +31,7 @@ class HomeController extends AbstractController
         $operateLogList = $this->getOperateLog();
         return $this->success(['notice_list' => $noticeList, 'operate_log' => $operateLogList], '获取首页数据成功');
     }
+
     /**
      * 获取通知信息
      * @return array
@@ -40,6 +46,7 @@ class HomeController extends AbstractController
         $list = $noticeQuery->get()->toArray();
         return $list;
     }
+
     /**
      * 获取操作日志列表
      * @return array
@@ -54,13 +61,20 @@ class HomeController extends AbstractController
         $list = $operateLog->get()->toArray();
         return ['list' => $list, 'total' => $total];
     }
-    
+
+    /**
+     * 获取世界地图
+     * @Author YiYuan
+     * @Date 2023/12/1
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     #[RequestMapping(path: '/world_map_data')]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     public function getWorldMapData()
     {
         return $this->success($this->_getWorldMapData(), '获取地图数据成功');
     }
+
     /**
      * 获取地图数据
      * @return array

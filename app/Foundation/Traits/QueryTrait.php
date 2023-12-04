@@ -22,8 +22,7 @@ trait QueryTrait
 
         $offset = ($cur_page- 1) * $page_size;
         $limit  = $page_size;
-        $query = $query->offset($offset)->limit($limit);
 
-        return $query;
+        return $query->offset($offset)->limit($limit);
     }
 }

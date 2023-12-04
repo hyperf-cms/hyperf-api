@@ -13,6 +13,8 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use App\Middleware\RequestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Class SystemLogController
  * @package App\Controller\System
@@ -35,8 +37,14 @@ class SystemLogController extends AbstractController
      * SQL查询正则匹配表达式
      */
     const LOG_SQL_PATTER = '';
-    
-    #[RequestMapping(methods: array('GET'), path: 'error_log')]
+
+    /**
+     * 错误日志列表
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return void
+     */
+    #[RequestMapping(path: 'error_log', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function errorLog()
@@ -55,8 +63,14 @@ class SystemLogController extends AbstractController
         foreach ($files as $key => $value) {
         }
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'log_path')]
+
+    /**
+     * 日志路径
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return ResponseInterface
+     */
+    #[RequestMapping(path: 'log_path', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function getLogPath()
@@ -94,8 +108,14 @@ class SystemLogController extends AbstractController
         }
         return $this->success(['list' => $fileTree, 'total' => count($fileTree)]);
     }
-    
-    #[RequestMapping(methods: array('GET'), path: 'log_content')]
+
+    /**
+     * 获取日志内容
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return ResponseInterface
+     */
+    #[RequestMapping(path: 'log_content', methods: array('GET'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function getLogContent()
@@ -117,8 +137,15 @@ class SystemLogController extends AbstractController
         $content = $contents[$curPage - 1];
         return $this->success(['list' => $content, 'total' => $total]);
     }
-    
-    #[RequestMapping(methods: array('DELETE'), path: 'destroy_log')]
+
+    /**
+     * 删除日志
+     * @Author YiYuan
+     * @Date 2023/12/4
+     * @return ResponseInterface
+     */
+    #[Explanation(content: '删错日志操作')]
+    #[RequestMapping(path: 'destroy_log', methods: array('DELETE'))]
     #[Middleware(middleware: 'App\\Middleware\\RequestMiddleware')]
     #[Middleware(middleware: 'App\\Middleware\\PermissionMiddleware')]
     public function deleteLog()

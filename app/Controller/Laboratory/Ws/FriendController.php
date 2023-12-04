@@ -10,11 +10,11 @@ use App\Foundation\Facades\MessageParser;
 use App\Model\Auth\User;
 use App\Model\Laboratory\FriendChatHistory;
 use App\Model\Laboratory\FriendRelation;
-use App\Model\Laboratory\GroupChatHistory;
 use App\Pool\Redis;
-use App\Service\Laboratory\MessageService;
+use App\Service\Laboratory\Ws\MessageService;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+
 /**
  * 好友聊天控制器
  * Class FriendController
