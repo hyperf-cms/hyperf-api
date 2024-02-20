@@ -41,6 +41,10 @@
 - vue >= 2.0
 - element >= 2.15.3
 
+## Star
+
+![](https://starchart.cc/hyperf-cms/hyperf-api.svg)
+
 ## 项目源码
 
 码云作为国内同步仓库，可解决 Github 克隆缓慢的问题，两个平台的代码都是同步更新的，按需选择
